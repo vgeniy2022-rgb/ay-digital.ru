@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #101114;
+  background: #ffffff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(246, 248, 252, 0.86) 0%, rgba(255, 255, 255, 0) 28%),
+    #ffffff;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  color: #ffffff;
+  background: #1d4ed8;
+}
+
+.glass {
+  border: 1px solid rgba(224, 229, 238, 0.76);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+.noise {
+  position: relative;
+  overflow: hidden;
+}
+
+.noise::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  opacity: 0.22;
+  background-image: radial-gradient(rgba(16, 17, 20, 0.13) 0.8px, transparent 0.8px);
+  background-size: 18px 18px;
+  mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+}
+
+.tech-slab {
+  transform-style: preserve-3d;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(238, 243, 252, 0.78)),
+    linear-gradient(135deg, rgba(29, 78, 216, 0.18), rgba(16, 17, 20, 0.02));
+}
+
+.tech-slab::after {
+  position: absolute;
+  inset: 16px;
+  content: '';
+  border: 1px solid rgba(29, 78, 216, 0.12);
+  border-radius: 22px;
+}
