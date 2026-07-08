@@ -63,6 +63,12 @@ export const site = {
   phones: ['+7 924 130-86-26', '+7 953 215-00-50'],
 };
 
+export const homeHero = {
+  title: 'Сайты, приложения и IT-помощь во Владивостоке',
+  subtitle: 'Александр — частный специалист',
+  description: site.description,
+};
+
 export const navItems: NavItem[] = [
   { label: 'Услуги', href: '/services' },
   { label: 'Цены', href: '/prices' },
@@ -280,9 +286,26 @@ export const trustPoints = [
 export const serviceOptions = services.map((service) => service.title);
 
 export const quickStats = [
-  { value: '7', label: 'направлений помощи' },
-  { value: '24/7', label: 'заявка через мессенджер' },
-  { value: 'ВЛ', label: 'Владивосток и удаленно' },
+  { value: '7 направлений', label: 'сайты, приложения, техника и помощь' },
+  { value: 'Заявка в мессенджер', label: 'отвечаю по возможности' },
+  { value: 'Владивосток + удалённо', label: 'очно и онлайн' },
+];
+
+export const workSteps = [
+  'Вы описываете задачу',
+  'Я уточняю детали',
+  'Называю цену и сроки',
+  'Выполняю работу',
+  'Передаю результат и объясняю, что дальше',
+];
+
+export const commonRequests = [
+  'Нужен сайт для услуги',
+  'Есть идея приложения',
+  'Нужно выбрать телефон или ноутбук',
+  'Компьютер начал тормозить',
+  'Нужна презентация',
+  'Нужно проверить сайт на очевидные риски',
 ];
 
 export const contacts = [

@@ -5,9 +5,11 @@ import { AboutPage } from './pages/AboutPage';
 import { CasesPage } from './pages/CasesPage';
 import { ContactsPage } from './pages/ContactsPage';
 import { HomePage } from './pages/HomePage';
+import { LegalPage } from './pages/LegalPage';
 import { PricesPage } from './pages/PricesPage';
 import { ServiceDetailPage } from './pages/ServiceDetailPage';
 import { ServicesPage } from './pages/ServicesPage';
+import { privacyContent, termsContent } from './data/legal';
 
 export default function App() {
   const location = useLocation();
@@ -23,6 +25,8 @@ export default function App() {
           <Route path="/cases" element={<CasesPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contacts" element={<ContactsPage />} />
+          <Route path="/privacy" element={<LegalPage content={privacyContent} />} />
+          <Route path="/terms" element={<LegalPage content={termsContent} />} />
         </Routes>
       </AnimatePresence>
     </AppLayout>

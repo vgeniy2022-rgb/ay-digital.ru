@@ -1,5 +1,6 @@
 import { MessageCircle, Phone, Send } from 'lucide-react';
 import { FormEvent, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { contactActions, createContactHref, createRequestText, serviceOptions, site } from '../data/site';
 
 type PreparedRequest = {
@@ -11,9 +12,12 @@ type PreparedRequest = {
 
 export function ContactForm() {
   const [preparedRequest, setPreparedRequest] = useState<PreparedRequest | null>(null);
+  const [hasConsent, setHasConsent] = useState(false);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (!hasConsent) return;
 
     const formData = new FormData(event.currentTarget);
     const name = String(formData.get('name') || '');
@@ -125,9 +129,24 @@ export function ContactForm() {
               name="description"
             />
           </label>
+          <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-line bg-slate-50 p-4 text-sm leading-6 text-muted">
+            <input
+              className="mt-1 h-4 w-4 shrink-0 accent-blue-700"
+              type="checkbox"
+              checked={hasConsent}
+              onChange={(event) => setHasConsent(event.target.checked)}
+            />
+            <span>
+              Я соглашаюсь с{' '}
+              <Link className="font-semibold text-accent hover:text-ink" to="/privacy">обработкой персональных данных</Link>
+              {' '}и принимаю{' '}
+              <Link className="font-semibold text-accent hover:text-ink" to="/terms">условия обращения</Link>.
+            </span>
+          </label>
           <button
-            className="mt-2 inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-ink px-6 py-4 text-sm font-bold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-graphite"
+            className="mt-2 inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-ink px-6 py-4 text-sm font-bold text-white shadow-soft transition enabled:hover:-translate-y-0.5 enabled:hover:bg-graphite disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
             type="submit"
+            disabled={!hasConsent}
           >
             Отправить заявку
             <Send className="h-4 w-4" />

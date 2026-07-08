@@ -5,6 +5,7 @@ import { CallToAction } from '../components/CallToAction';
 import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
+import { ServiceVisual } from '../components/ServiceVisual';
 import { services, site } from '../data/site';
 
 export function ServiceDetailPage() {
@@ -47,7 +48,9 @@ export function ServiceDetailPage() {
                   </ButtonLink>
                 </div>
               </div>
-              <div className="rounded-premium border border-line bg-white/84 p-6 shadow-soft sm:p-8">
+              <div className="grid gap-5">
+                <ServiceVisual slug={service.slug} />
+                <div className="rounded-premium border border-line bg-white/84 p-6 shadow-soft sm:p-8">
                 <h2 className="text-2xl font-extrabold">Что входит</h2>
                 <div className="mt-6 grid gap-4">
                   {service.bullets.map((bullet) => (
@@ -60,6 +63,7 @@ export function ServiceDetailPage() {
                 <p className="mt-6 rounded-3xl border border-line bg-white p-5 text-base font-semibold leading-7 text-muted">
                   {service.outcome}
                 </p>
+                </div>
               </div>
             </div>
           </Reveal>

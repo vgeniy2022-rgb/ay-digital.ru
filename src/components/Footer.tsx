@@ -33,6 +33,18 @@ export function Footer() {
             </div>
           </div>
         </div>
+        <div className="mt-10 border-t border-line pt-6">
+          <div className="flex flex-col gap-4 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap gap-x-5 gap-y-2">
+              <Link className="transition hover:text-ink" to="/privacy">Политика обработки данных</Link>
+              <Link className="transition hover:text-ink" to="/terms">Условия обращения</Link>
+            </div>
+            <span>{site.domain}</span>
+          </div>
+          <p className="mt-5 max-w-5xl text-xs leading-5 text-muted">
+            Информация на сайте носит справочный характер. Цены ориентировочные и зависят от задачи. Аудит сайта является предварительной проверкой и не является юридическим заключением.
+          </p>
+        </div>
       </Container>
     </footer>
   );

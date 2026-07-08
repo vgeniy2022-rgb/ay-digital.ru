@@ -23,7 +23,7 @@ export function ContactsPage() {
                     <a
                       className="flex gap-4 rounded-3xl bg-slate-50 p-4 transition hover:bg-blue-50"
                       href={contact.href}
-                      key={contact.value}
+                      key={`${contact.label}-${contact.value}`}
                     >
                       <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white text-accent shadow-glass">
                         <Phone className="h-5 w-5" />
