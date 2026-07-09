@@ -6,10 +6,12 @@ import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { ServiceVisual } from '../components/ServiceVisual';
-import { services, site } from '../data/site';
+import { useSiteData } from '../hooks/useSiteData';
 
 export function ServiceDetailPage() {
   const { slug } = useParams();
+  const { data } = useSiteData();
+  const { services, site } = data;
   const service = services.find((item) => item.slug === slug);
 
   if (!service) {

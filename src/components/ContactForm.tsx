@@ -1,7 +1,7 @@
 import { MessageCircle, Phone, Send } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { contactActions, createContactHref, createRequestText, serviceOptions, site } from '../data/site';
+import { useSiteData } from '../hooks/useSiteData';
 
 type PreparedRequest = {
   name: string;
@@ -13,6 +13,30 @@ type PreparedRequest = {
 export function ContactForm() {
   const [preparedRequest, setPreparedRequest] = useState<PreparedRequest | null>(null);
   const [hasConsent, setHasConsent] = useState(false);
+  const { data } = useSiteData();
+  const { serviceOptions, site } = data;
+
+  const createRequestText = (name: string, service: string, description: string) => {
+    const cleanName = name.trim() || 'не указано';
+    const cleanDescription = description.trim() || 'не указано';
+
+    return `Здравствуйте, ${site.name}! Меня зовут ${cleanName}. Интересует услуга: ${service}. Задача: ${cleanDescription}.`;
+  };
+
+  const createContactHref = (channel: 'telegram' | 'whatsappPrimary' | 'whatsappSecondary' | 'sms', text: string) => {
+    const encodedText = encodeURIComponent(text);
+
+    if (channel === 'telegram') {
+      return `${site.telegramUrl}?text=${encodedText}`;
+    }
+
+    if (channel === 'sms') {
+      return `${site.smsUrl}?body=${encodedText}`;
+    }
+
+    const whatsappUrl = channel === 'whatsappSecondary' ? site.whatsappSecondaryUrl : site.whatsappUrl;
+    return `${whatsappUrl}?text=${encodedText}`;
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,7 +45,7 @@ export function ContactForm() {
 
     const formData = new FormData(event.currentTarget);
     const name = String(formData.get('name') || '');
-    const service = String(formData.get('service') || serviceOptions[0]);
+    const service = String(formData.get('service') || serviceOptions[0] || 'Услуга не выбрана');
     const description = String(formData.get('description') || '');
 
     setPreparedRequest({
@@ -75,7 +99,7 @@ export function ContactForm() {
               </a>
               <a
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-line bg-white px-5 text-sm font-bold text-ink shadow-glass transition hover:-translate-y-0.5 hover:border-slate-300"
-                href={contactActions.call.href}
+                href={site.phoneUrl}
               >
                 <Phone className="h-4 w-4" />
                 Позвонить

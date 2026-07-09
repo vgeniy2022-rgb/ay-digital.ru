@@ -1,8 +1,12 @@
 import { Link } from 'react-router-dom';
-import { contacts, navItems, site } from '../data/site';
+import { navItems } from '../data/site';
+import { useSiteData } from '../hooks/useSiteData';
 import { Container } from './Container';
 
 export function Footer() {
+  const { data } = useSiteData();
+  const { contacts, site } = data;
+
   return (
     <footer className="border-t border-line bg-slate-50/80 py-12">
       <Container>

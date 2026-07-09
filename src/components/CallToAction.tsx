@@ -1,9 +1,12 @@
 import { MessageCircle, Phone } from 'lucide-react';
-import { site } from '../data/site';
+import { useSiteData } from '../hooks/useSiteData';
 import { Container } from './Container';
 import { Reveal } from './Reveal';
 
 export function CallToAction() {
+  const { data } = useSiteData();
+  const { site } = data;
+
   return (
     <section className="py-12 sm:py-16">
       <Container>

@@ -1,12 +1,15 @@
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { navItems, site } from '../data/site';
+import { navItems } from '../data/site';
+import { useSiteData } from '../hooks/useSiteData';
 import { ButtonLink } from './ButtonLink';
 import { Container } from './Container';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { data } = useSiteData();
+  const { site } = data;
 
   const close = () => setIsOpen(false);
 

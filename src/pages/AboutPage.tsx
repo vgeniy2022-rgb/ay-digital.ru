@@ -7,10 +7,13 @@ import { PageHero } from '../components/PageHero';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { pageMeta } from '../data/pageMeta';
-import { aboutText, services, trustPoints } from '../data/site';
+import { aboutText } from '../data/site';
+import { useSiteData } from '../hooks/useSiteData';
 
 export function AboutPage() {
   const [isPortraitVisible, setIsPortraitVisible] = useState(Boolean(businessPortraitUrl));
+  const { data } = useSiteData();
+  const { services, trustPoints } = data;
 
   return (
     <PageTransition>

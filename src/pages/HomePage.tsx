@@ -6,10 +6,14 @@ import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { ServiceCard } from '../components/ServiceCard';
+import { SpecialistStatus } from '../components/SpecialistStatus';
 import { TechVisual } from '../components/TechVisual';
-import { commonRequests, homeHero, quickStats, services, site, workSteps } from '../data/site';
+import { useSiteData } from '../hooks/useSiteData';
 
 export function HomePage() {
+  const { data, isLoading } = useSiteData();
+  const { commonRequests, faq, homeHero, quickStats, reviews, services, site, workSteps } = data;
+
   return (
     <PageTransition>
       <section className="relative overflow-hidden py-14 sm:py-20 lg:py-24">
@@ -28,6 +32,9 @@ export function HomePage() {
                   Написать в Telegram
                 </ButtonLink>
                 <ButtonLink to="/prices" variant="ghost">Смотреть цены</ButtonLink>
+              </div>
+              <div className="mt-6 max-w-2xl">
+                <SpecialistStatus />
               </div>
             </Reveal>
             <Reveal delay={0.12}>
@@ -80,13 +87,15 @@ export function HomePage() {
               Все услуги
             </Link>
           </Reveal>
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {services.map((service, index) => (
-              <Reveal delay={index * 0.04} key={service.path}>
-                <ServiceCard service={service} />
-              </Reveal>
-            ))}
-          </div>
+          {services.length ? (
+            <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3" aria-busy={isLoading}>
+              {services.map((service, index) => (
+                <Reveal delay={index * 0.04} key={service.path}>
+                  <ServiceCard service={service} />
+                </Reveal>
+              ))}
+            </div>
+          ) : null}
         </Container>
       </section>
 
@@ -114,6 +123,71 @@ export function HomePage() {
           </Reveal>
         </Container>
       </section>
+
+      {reviews.length ? (
+        <section className="py-12 sm:py-16">
+          <Container>
+            <Reveal>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Отзывы</p>
+              <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">Что говорят клиенты</h2>
+            </Reveal>
+            <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {reviews.map((review, index) => (
+                <Reveal delay={index * 0.04} key={`${review.name}-${index}`}>
+                  <article className="h-full rounded-premium border border-line bg-white/82 p-6 shadow-glass">
+                    <div className="flex items-center gap-4">
+                      {review.photoUrl ? (
+                        <img
+                          className="h-12 w-12 rounded-full object-cover"
+                          src={review.photoUrl}
+                          alt={review.name}
+                        />
+                      ) : (
+                        <div className="grid h-12 w-12 place-items-center rounded-full bg-slate-100 text-sm font-extrabold text-ink">
+                          {review.name.slice(0, 1)}
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="font-extrabold">{review.name}</h3>
+                        {review.service && <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-muted">{review.service}</p>}
+                      </div>
+                    </div>
+                    {review.text && <p className="mt-5 text-base leading-7 text-muted">{review.text}</p>}
+                    {review.reviewImageUrl && (
+                      <img
+                        className="mt-5 max-h-72 w-full rounded-3xl border border-line object-cover"
+                        src={review.reviewImageUrl}
+                        alt={`Отзыв: ${review.name}`}
+                      />
+                    )}
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
+      {faq.length ? (
+        <section className="py-12 sm:py-16">
+          <Container>
+            <Reveal>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">FAQ</p>
+              <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">Частые вопросы</h2>
+            </Reveal>
+            <div className="mt-8 grid gap-4">
+              {faq.map((item, index) => (
+                <Reveal delay={index * 0.035} key={`${item.question}-${index}`}>
+                  <article className="rounded-premium border border-line bg-white/82 p-6 shadow-glass">
+                    <h3 className="text-xl font-extrabold leading-tight">{item.question}</h3>
+                    {item.answer && <p className="mt-3 text-base leading-7 text-muted">{item.answer}</p>}
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
 
       <CallToAction />
     </PageTransition>
