@@ -1,9 +1,12 @@
 import { AppWindow, ArrowDownRight, Check, Code2, Computer, Laptop, MessageCircle, Presentation, Smartphone } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { ButtonLink } from '../components/ButtonLink';
 import { CallToAction } from '../components/CallToAction';
 import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
+import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
 import { SpecialistStatus } from '../components/SpecialistStatus';
 import { TechVisual } from '../components/TechVisual';
 import { useSiteData } from '../hooks/useSiteData';
@@ -13,31 +16,70 @@ const mainDirections = [
     title: 'Сайты и админки',
     text: 'Сайты для специалистов и небольшого бизнеса: услуги, цены, отзывы, контакты и возможность управлять контентом через админку.',
     icon: Code2,
+    href: '/services',
   },
   {
     title: 'Приложения и прототипы',
     text: 'Прототипы и простые приложения под задачу: идея, структура, интерфейс и рабочая первая версия.',
     icon: AppWindow,
+    href: '/services',
   },
   {
     title: 'Настройка ноутбуков и ПК',
     text: 'Windows, MacBook, программы, браузеры, базовая настройка системы и подготовка устройства к работе.',
     icon: Laptop,
+    href: '/services',
   },
   {
     title: 'Телефоны и перенос данных',
     text: 'Перенос данных, настройка нового телефона, подготовка устройства к продаже и базовая цифровая безопасность.',
     icon: Smartphone,
+    href: '/services',
   },
   {
     title: 'Сборка ПК под ключ',
     text: 'Подбор комплектующих, покупка, сборка, тестирование, установка Windows и программ.',
     icon: Computer,
+    href: '/prices',
   },
   {
     title: 'Презентации и цифровые задачи',
     text: 'Презентации, оформление материалов, консультации по технике и помощь с цифровыми задачами.',
     icon: Presentation,
+    href: '/services',
+  },
+];
+
+const beforeItems = [
+  'услуги объясняются в переписке',
+  'цены приходится уточнять каждый раз',
+  'фото работ разбросаны',
+  'клиенту сложно быстро принять решение',
+];
+
+const afterItems = [
+  'услуги и цены собраны в одном месте',
+  'отзывы и фото работ выглядят аккуратно',
+  'есть кнопки Telegram / WhatsApp',
+  'сайт можно обновлять через админку',
+];
+
+const taskExamples = [
+  {
+    title: 'Сайт для салона красоты',
+    text: 'Услуги, цены, фото работ, отзывы и быстрые кнопки записи.',
+  },
+  {
+    title: 'Сайт для фотостудии',
+    text: 'Портфолио, пакеты съёмок, условия бронирования и контакты.',
+  },
+  {
+    title: 'Сайт с админкой для услуг',
+    text: 'Самостоятельное обновление цен, акций, отзывов и фото.',
+  },
+  {
+    title: 'Настройка техники и перенос данных',
+    text: 'Подготовка телефона, ноутбука или ПК к спокойной работе.',
   },
 ];
 
@@ -48,6 +90,7 @@ export function HomePage() {
   return (
     <PageTransition>
       <section className="relative overflow-hidden py-14 sm:py-20 lg:py-24">
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[linear-gradient(180deg,rgba(248,250,252,0.8),rgba(255,255,255,0))]" />
         <Container>
           <div className="grid items-center gap-12 lg:grid-cols-[1.03fr_0.97fr]">
             <Reveal>
@@ -107,6 +150,14 @@ export function HomePage() {
 
       <section className="py-12 sm:py-16">
         <Container>
+          <Reveal>
+            <SiteAdminPromoCard />
+          </Reveal>
+        </Container>
+      </section>
+
+      <section className="py-12 sm:py-16">
+        <Container>
           <Reveal className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Основные направления</p>
@@ -122,16 +173,90 @@ export function HomePage() {
 
               return (
                 <Reveal delay={index * 0.04} key={direction.title}>
-                  <article className="h-full rounded-premium border border-line bg-white/82 p-6 shadow-glass transition duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-soft">
+                  <motion.div
+                    whileHover={{ y: -6, scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+                  >
+                    <Link
+                      className="group block h-full rounded-premium border border-line bg-white/82 p-6 shadow-glass transition duration-300 hover:border-slate-300 hover:shadow-soft"
+                      to={direction.href}
+                    >
                     <span className="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 text-ink">
                       <Icon className="h-5 w-5" />
                     </span>
                     <h3 className="mt-7 text-2xl font-extrabold leading-tight">{direction.title}</h3>
                     <p className="mt-4 text-base leading-7 text-muted">{direction.text}</p>
-                  </article>
+                    <div className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-accent transition group-hover:text-ink">
+                      Подробнее
+                      <ArrowDownRight className="h-4 w-4" />
+                    </div>
+                    </Link>
+                  </motion.div>
                 </Reveal>
               );
             })}
+          </div>
+        </Container>
+      </section>
+
+      <section className="py-12 sm:py-16">
+        <Container>
+          <Reveal>
+            <div className="soft-section-bg rounded-premium border border-line p-7 shadow-glass sm:p-10">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">До / После</p>
+              <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">
+                Что меняется после нормального сайта
+              </h2>
+              <div className="mt-8 grid gap-5 lg:grid-cols-2">
+                {[
+                  ['До', beforeItems, 'bg-white/82'],
+                  ['После', afterItems, 'bg-ink text-white'],
+                ].map(([title, items, className]) => (
+                  <div className={`rounded-[28px] border border-line p-6 shadow-glass ${className}`} key={title as string}>
+                    <h3 className="text-2xl font-extrabold">{title as string}</h3>
+                    <div className="mt-5 grid gap-3">
+                      {(items as string[]).map((item) => (
+                        <div className="flex items-start gap-3 text-sm font-semibold leading-6" key={item}>
+                          <span className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-blue-50 text-accent">
+                            <Check className="h-3 w-3" />
+                          </span>
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </Container>
+      </section>
+
+      <section className="py-12 sm:py-16">
+        <Container>
+          <Reveal>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Примеры задач</p>
+            <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">
+              С чем можно прийти
+            </h2>
+          </Reveal>
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {taskExamples.map((example, index) => (
+              <Reveal delay={index * 0.04} key={example.title}>
+                <motion.article
+                  className="h-full rounded-premium border border-line bg-white/82 p-6 shadow-glass"
+                  whileHover={{ y: -5 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+                >
+                  <div className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-extrabold text-graphite">
+                    Демонстрационный пример
+                  </div>
+                  <h3 className="mt-5 text-2xl font-extrabold leading-tight">{example.title}</h3>
+                  <p className="mt-4 text-sm leading-6 text-muted">{example.text}</p>
+                </motion.article>
+              </Reveal>
+            ))}
           </div>
         </Container>
       </section>

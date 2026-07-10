@@ -5,6 +5,7 @@ import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { AdminWebsiteSection, AgreementSection, LegalPreparationSection } from '../components/SalesSections';
 import { ServiceCard } from '../components/ServiceCard';
+import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
 import { pageMeta } from '../data/pageMeta';
 import { useSiteData } from '../hooks/useSiteData';
 
@@ -47,6 +48,13 @@ export function ServicesPage() {
                       <span className="text-sm font-bold text-muted">{group.items.length} услуг</span>
                     </div>
                   </Reveal>
+                  {group.category === 'Сайты и админки' ? (
+                    <Reveal>
+                      <div className="mb-5">
+                        <SiteAdminPromoCard compact />
+                      </div>
+                    </Reveal>
+                  ) : null}
                   <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {group.items.map((service, index) => (
                       <Reveal delay={index * 0.04} key={`${group.category}-${service.slug}`}>

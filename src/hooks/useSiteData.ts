@@ -189,6 +189,8 @@ function normalizeServices(items: ServiceItem[] | undefined, hasApiData: boolean
         item.badge,
       ].filter(Boolean) as string[];
 
+      const isAdminWebsite = slug === 'website-with-admin' || item.title === 'Сайт с админкой';
+
       return {
         title: item.title,
         shortTitle: item.shortTitle || item.category || fallback?.shortTitle || item.title,
@@ -204,7 +206,7 @@ function normalizeServices(items: ServiceItem[] | undefined, hasApiData: boolean
         format: item.format || fallback?.format,
         badge: item.badge || fallback?.badge,
         buttonText: item.buttonText || fallback?.buttonText,
-        priceText: item.priceText || fallback?.priceText,
+        priceText: isAdminWebsite ? '35 000 ₽' : item.priceText || fallback?.priceText,
         isPopular: isActiveValue(item.isPopular) || fallback?.isPopular,
         showOnHome: isActiveValue(item.showOnHome) || fallback?.showOnHome,
         icon: getIcon(item.icon || item.category, slug, fallback?.icon),
@@ -279,7 +281,59 @@ function normalizePriceGroups(items: PackageItem[] | undefined, hasApiData: bool
       items: group.items,
     }));
 
-  return normalizedGroups.length ? normalizedGroups : localPriceGroups;
+  return normalizedGroups.length ? applyWebsitePriceOverrides(normalizedGroups) : localPriceGroups;
+}
+
+function applyWebsitePriceOverrides(groups: PriceGroup[]): PriceGroup[] {
+  return groups.map((group) => {
+    if (group.title !== 'Сайты') return group;
+
+    const overrides: Record<string, PriceGroup['items'][number]> = {
+      Старт: {
+        name: 'Старт',
+        price: 'от 20 000 ₽',
+        description: 'Сайт для специалиста, услуги или небольшого бизнеса: основные блоки, адаптация под телефон, контакты и кнопки связи.',
+      },
+      Лендинг: {
+        name: 'Лендинг',
+        price: 'от 25 000 ₽',
+        description: 'Одностраничный сайт под услугу, акцию, рекламу или конкретное предложение.',
+      },
+      'Сайт с админкой': {
+        name: 'Сайт с админкой',
+        price: '35 000 ₽',
+        description: 'Сайт с простой админкой, где клиент может сам менять услуги, цены, отзывы, акции и фото работ без программиста.',
+      },
+      Бизнес: {
+        name: 'Бизнес-сайт',
+        price: '45 000–65 000 ₽',
+        description: 'Расширенный сайт для бизнеса: больше страниц, структура, кейсы, отзывы, FAQ, акции, базовые legal-страницы и админка.',
+      },
+      'Бизнес-сайт': {
+        name: 'Бизнес-сайт',
+        price: '45 000–65 000 ₽',
+        description: 'Расширенный сайт для бизнеса: больше страниц, структура, кейсы, отзывы, FAQ, акции, базовые legal-страницы и админка.',
+      },
+    };
+
+    const seen = new Set<string>();
+    const items = group.items.map((item) => {
+      const override = overrides[item.name];
+      if (!override) return item;
+      seen.add(override.name);
+      return { ...item, ...override, includes: item.includes };
+    });
+
+    if (!seen.has('Лендинг')) {
+      items.splice(1, 0, {
+        name: 'Лендинг',
+        price: 'от 25 000 ₽',
+        description: 'Одностраничный сайт под услугу, акцию, рекламу или конкретное предложение.',
+      });
+    }
+
+    return { ...group, items };
+  });
 }
 
 function normalizeCases(items: CmsCaseItem[] | undefined, hasApiData: boolean): CaseItem[] {
@@ -297,10 +351,12 @@ function normalizeCases(items: CmsCaseItem[] | undefined, hasApiData: boolean): 
     .map((item, index) => ({
       title: item.title,
       category: item.category,
+      status: item.status,
       description: item.description || '',
       problem: item.problem,
       solution: item.solution,
       result: item.result,
+      nextSteps: item.nextSteps,
       date: item.date,
       tags: splitList(item.tags),
       icon: getIcon(item.icon, undefined, localCases[index]?.icon || FileText),

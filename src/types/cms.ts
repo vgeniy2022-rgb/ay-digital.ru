@@ -47,10 +47,12 @@ export type PackageItem = CmsRecord & {
 export type CaseItem = CmsRecord & {
   title: string;
   category?: string;
+  status?: string;
   description?: string;
   problem?: string;
   solution?: string;
   result?: string;
+  nextSteps?: string;
   date?: string;
   tags?: string[] | string;
   icon?: string;

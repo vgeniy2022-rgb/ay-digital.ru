@@ -18,7 +18,7 @@ export function CookieBanner() {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:px-6 sm:pb-6">
+    <div className="fixed inset-x-0 bottom-20 z-50 px-4 pb-4 sm:bottom-0 sm:px-6 sm:pb-6">
       <div className="mx-auto flex max-w-5xl flex-col gap-4 rounded-[24px] border border-line bg-white/92 p-4 shadow-soft backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between sm:p-5">
         <p className="max-w-3xl text-sm leading-6 text-muted">
           Мы используем cookie для работы сайта и анализа посещаемости. Продолжая пользоваться сайтом, вы соглашаетесь с

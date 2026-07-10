@@ -6,6 +6,7 @@ import { CasesPage } from './pages/CasesPage';
 import { ContactsPage } from './pages/ContactsPage';
 import { HomePage } from './pages/HomePage';
 import { LegalPage } from './pages/LegalPage';
+import { PriceDirectionPage } from './pages/PriceDirectionPage';
 import { PricesPage } from './pages/PricesPage';
 import { ProcessPage } from './pages/ProcessPage';
 import { ServicesPage } from './pages/ServicesPage';
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/useful" element={<UsefulIndexPage />} />
           <Route path="/useful/:slug" element={<UsefulArticlePage />} />
           <Route path="/prices" element={<PricesPage />} />
+          <Route path="/prices/:slug" element={<PriceDirectionPage />} />
           <Route path="/process" element={<ProcessPage />} />
           <Route path="/cases" element={<CasesPage />} />
           <Route path="/about" element={<AboutPage />} />

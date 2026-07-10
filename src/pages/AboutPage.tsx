@@ -7,7 +7,7 @@ import { PageHero } from '../components/PageHero';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { pageMeta } from '../data/pageMeta';
-import { aboutText } from '../data/site';
+import { aboutCapabilities, aboutSystemText, aboutText } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
 
 export function AboutPage() {
@@ -52,6 +52,29 @@ export function AboutPage() {
               </div>
             </Reveal>
           </div>
+          <Reveal className="mt-8">
+            <div className="rounded-premium border border-line bg-white p-7 shadow-glass sm:p-8">
+              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Навыки</p>
+                  <h2 className="mt-3 text-2xl font-extrabold">Что я умею собирать</h2>
+                </div>
+              </div>
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                {aboutCapabilities.map((item) => (
+                  <div className="rounded-3xl border border-line bg-slate-50 p-4 text-sm font-bold text-graphite" key={item}>
+                    {item}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+          <Reveal className="mt-8">
+            <div className="soft-section-bg rounded-premium border border-line p-7 shadow-glass sm:p-8">
+              <h2 className="text-2xl font-extrabold">Цифровая система под задачу</h2>
+              <p className="mt-4 max-w-4xl text-lg leading-8 text-muted">{aboutSystemText}</p>
+            </div>
+          </Reveal>
           <Reveal className="mt-8">
             <div className="rounded-premium border border-line bg-slate-50 p-7 shadow-glass sm:p-8">
                 <h2 className="text-2xl font-extrabold">Принципы работы</h2>

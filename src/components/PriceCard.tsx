@@ -20,9 +20,9 @@ export function PriceCard({ group, accent = false }: PriceCardProps) {
         <div className={`${accent ? 'mt-0' : 'mt-5'} divide-y divide-line`}>
         {group.items.map((item) => (
           <div className="py-4" key={item.name}>
-            <div className="flex items-start justify-between gap-5">
-              <span className="text-sm font-extrabold leading-6 text-ink">{item.name}</span>
-              <span className="shrink-0 text-right text-sm font-bold text-accent">{item.price}</span>
+            <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:justify-between">
+              <span className="min-w-0 text-sm font-extrabold leading-6 text-ink">{item.name}</span>
+              <span className="max-w-full overflow-wrap-anywhere whitespace-normal text-left text-sm font-bold leading-6 text-accent sm:max-w-[48%] sm:text-right">{item.price}</span>
             </div>
             {item.description ? (
               <p className="mt-2 text-sm leading-6 text-muted">{item.description}</p>
