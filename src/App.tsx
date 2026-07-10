@@ -9,6 +9,8 @@ import { LegalPage } from './pages/LegalPage';
 import { PricesPage } from './pages/PricesPage';
 import { ServiceDetailPage } from './pages/ServiceDetailPage';
 import { ServicesPage } from './pages/ServicesPage';
+import { UsefulArticlePage } from './pages/UsefulArticlePage';
+import { UsefulIndexPage } from './pages/UsefulIndexPage';
 import { privacyContent, termsContent } from './data/legal';
 
 export default function App() {
@@ -21,6 +23,8 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
+          <Route path="/useful" element={<UsefulIndexPage />} />
+          <Route path="/useful/:slug" element={<UsefulArticlePage />} />
           <Route path="/prices" element={<PricesPage />} />
           <Route path="/cases" element={<CasesPage />} />
           <Route path="/about" element={<AboutPage />} />

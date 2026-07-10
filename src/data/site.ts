@@ -80,6 +80,7 @@ export const homeHero = {
 
 export const navItems: NavItem[] = [
   { label: 'Услуги', href: '/services' },
+  { label: 'Полезное', href: '/useful' },
   { label: 'Цены', href: '/prices' },
   { label: 'Кейсы', href: '/cases' },
   { label: 'Обо мне', href: '/about' },

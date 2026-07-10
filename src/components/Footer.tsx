@@ -3,6 +3,14 @@ import { navItems } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
 import { Container } from './Container';
 
+const usefulLinks = [
+  { label: 'Полезное', href: '/useful' },
+  { label: 'Цифровая гигиена', href: '/useful/digital-hygiene' },
+  { label: 'Перенос данных', href: '/useful/data-transfer' },
+  { label: 'Защита от мошенников', href: '/useful/scams' },
+  { label: 'Приложения и чек-листы', href: '/useful/apps-checklists' },
+];
+
 export function Footer() {
   const { data } = useSiteData();
   const { contacts, site } = data;
@@ -10,7 +18,7 @@ export function Footer() {
   return (
     <footer className="border-t border-line bg-slate-50/80 py-12">
       <Container>
-        <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr_1fr]">
+        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.8fr_1fr_1fr]">
           <div>
             <div className="text-2xl font-extrabold">{site.name}</div>
             <p className="mt-3 max-w-md text-sm leading-6 text-muted">{site.tagline}. {site.location}.</p>
@@ -20,6 +28,16 @@ export function Footer() {
             <div className="font-bold">Навигация</div>
             <div className="mt-4 grid gap-3 text-sm text-muted">
               {navItems.map((item) => (
+                <Link className="transition hover:text-ink" key={item.href} to={item.href}>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="font-bold">Полезное</div>
+            <div className="mt-4 grid gap-3 text-sm text-muted">
+              {usefulLinks.map((item) => (
                 <Link className="transition hover:text-ink" key={item.href} to={item.href}>
                   {item.label}
                 </Link>
