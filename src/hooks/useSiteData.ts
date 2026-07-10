@@ -243,7 +243,13 @@ function normalizePriceGroups(items: PackageItem[] | undefined, hasApiData: bool
     const existing = groups.get(title);
 
     if (existing) {
-      existing.items.push({ name, price: item.price });
+      existing.items.push({
+        name,
+        price: item.price,
+        description: item.description,
+        includes: splitList(item.includes),
+        disclaimer: item.disclaimer,
+      });
       existing.order = Math.min(existing.order, item.groupOrder ?? item.order ?? existing.order);
       existing.note ||= item.groupNote || item.note;
       return;
@@ -253,7 +259,15 @@ function normalizePriceGroups(items: PackageItem[] | undefined, hasApiData: bool
       title,
       note: item.groupNote || item.note,
       order: item.groupOrder ?? item.order ?? 9999,
-      items: [{ name, price: item.price }],
+      items: [
+        {
+          name,
+          price: item.price,
+          description: item.description,
+          includes: splitList(item.includes),
+          disclaimer: item.disclaimer,
+        },
+      ],
     });
   });
 

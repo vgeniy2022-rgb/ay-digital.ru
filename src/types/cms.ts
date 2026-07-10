@@ -38,6 +38,9 @@ export type PackageItem = CmsRecord & {
   title?: string;
   name?: string;
   price?: string;
+  description?: string;
+  includes?: string[] | string;
+  disclaimer?: string;
   isAccent?: boolean;
 };
 

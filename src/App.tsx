@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppLayout } from './layouts/AppLayout';
 import { AboutPage } from './pages/AboutPage';
 import { CasesPage } from './pages/CasesPage';
@@ -7,7 +7,7 @@ import { ContactsPage } from './pages/ContactsPage';
 import { HomePage } from './pages/HomePage';
 import { LegalPage } from './pages/LegalPage';
 import { PricesPage } from './pages/PricesPage';
-import { ServiceDetailPage } from './pages/ServiceDetailPage';
+import { ProcessPage } from './pages/ProcessPage';
 import { ServicesPage } from './pages/ServicesPage';
 import { UsefulArticlePage } from './pages/UsefulArticlePage';
 import { UsefulIndexPage } from './pages/UsefulIndexPage';
@@ -22,10 +22,11 @@ export default function App() {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<HomePage />} />
           <Route path="/services" element={<ServicesPage />} />
-          <Route path="/services/:slug" element={<ServiceDetailPage />} />
+          <Route path="/services/:slug" element={<Navigate to="/services" replace />} />
           <Route path="/useful" element={<UsefulIndexPage />} />
           <Route path="/useful/:slug" element={<UsefulArticlePage />} />
           <Route path="/prices" element={<PricesPage />} />
+          <Route path="/process" element={<ProcessPage />} />
           <Route path="/cases" element={<CasesPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contacts" element={<ContactsPage />} />

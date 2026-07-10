@@ -161,7 +161,9 @@ export function UsefulArticlePage() {
               <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">{article.cta.title}</h2>
               <p className="mt-5 max-w-3xl text-base leading-7 text-blue-50">{article.cta.description}</p>
               <div className="mt-7">
-                <ButtonLink href={data.site.telegramUrl} variant="secondary" showArrow={false}>Написать в Telegram</ButtonLink>
+                <ButtonLink href={data.site.telegramUrl} variant="secondary" showArrow={false}>
+                  {article.cta.buttonLabel || 'Написать в Telegram'}
+                </ButtonLink>
               </div>
             </div>
           </Reveal>

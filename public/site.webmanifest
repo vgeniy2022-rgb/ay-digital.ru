@@ -1,0 +1,21 @@
+{
+  "name": "Александр | ay-digital.ru",
+  "short_name": "AY Digital",
+  "description": "Сайты, приложения, техника и IT-помощь во Владивостоке и удалённо.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#101114",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml"
+    }
+  ]
+}

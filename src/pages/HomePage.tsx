@@ -1,18 +1,49 @@
-import { ArrowDownRight, Check, MessageCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { AppWindow, ArrowDownRight, Check, Code2, Computer, Laptop, MessageCircle, Presentation, Smartphone } from 'lucide-react';
 import { ButtonLink } from '../components/ButtonLink';
 import { CallToAction } from '../components/CallToAction';
 import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
-import { ServiceCard } from '../components/ServiceCard';
 import { SpecialistStatus } from '../components/SpecialistStatus';
 import { TechVisual } from '../components/TechVisual';
 import { useSiteData } from '../hooks/useSiteData';
 
+const mainDirections = [
+  {
+    title: 'Сайты и админки',
+    text: 'Сайты для специалистов и небольшого бизнеса: услуги, цены, отзывы, контакты и возможность управлять контентом через админку.',
+    icon: Code2,
+  },
+  {
+    title: 'Приложения и прототипы',
+    text: 'Прототипы и простые приложения под задачу: идея, структура, интерфейс и рабочая первая версия.',
+    icon: AppWindow,
+  },
+  {
+    title: 'Настройка ноутбуков и ПК',
+    text: 'Windows, MacBook, программы, браузеры, базовая настройка системы и подготовка устройства к работе.',
+    icon: Laptop,
+  },
+  {
+    title: 'Телефоны и перенос данных',
+    text: 'Перенос данных, настройка нового телефона, подготовка устройства к продаже и базовая цифровая безопасность.',
+    icon: Smartphone,
+  },
+  {
+    title: 'Сборка ПК под ключ',
+    text: 'Подбор комплектующих, покупка, сборка, тестирование, установка Windows и программ.',
+    icon: Computer,
+  },
+  {
+    title: 'Презентации и цифровые задачи',
+    text: 'Презентации, оформление материалов, консультации по технике и помощь с цифровыми задачами.',
+    icon: Presentation,
+  },
+];
+
 export function HomePage() {
-  const { data, isLoading } = useSiteData();
-  const { commonRequests, faq, homeHero, quickStats, reviews, services, site, workSteps } = data;
+  const { data } = useSiteData();
+  const { commonRequests, faq, homeHero, quickStats, reviews, site, workSteps } = data;
 
   return (
     <PageTransition>
@@ -78,24 +109,30 @@ export function HomePage() {
         <Container>
           <Reveal className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Услуги</p>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Основные направления</p>
               <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">
-                Помощь для людей и небольших проектов
+                Спокойная помощь без лишней сложности
               </h2>
             </div>
-            <Link className="font-bold text-accent transition hover:text-ink" to="/services">
-              Все услуги
-            </Link>
+            <ButtonLink to="/services" variant="secondary">Смотреть услуги</ButtonLink>
           </Reveal>
-          {services.length ? (
-            <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3" aria-busy={isLoading}>
-              {services.map((service, index) => (
-                <Reveal delay={index * 0.04} key={service.path}>
-                  <ServiceCard service={service} />
+          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {mainDirections.map((direction, index) => {
+              const Icon = direction.icon;
+
+              return (
+                <Reveal delay={index * 0.04} key={direction.title}>
+                  <article className="h-full rounded-premium border border-line bg-white/82 p-6 shadow-glass transition duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-soft">
+                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 text-ink">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <h3 className="mt-7 text-2xl font-extrabold leading-tight">{direction.title}</h3>
+                    <p className="mt-4 text-base leading-7 text-muted">{direction.text}</p>
+                  </article>
                 </Reveal>
-              ))}
-            </div>
-          ) : null}
+              );
+            })}
+          </div>
         </Container>
       </section>
 

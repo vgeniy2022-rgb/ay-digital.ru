@@ -5,6 +5,7 @@ import { Container } from './Container';
 
 const usefulLinks = [
   { label: 'Полезное', href: '/useful' },
+  { label: 'Обо мне', href: '/about' },
   { label: 'Цифровая гигиена', href: '/useful/digital-hygiene' },
   { label: 'Перенос данных', href: '/useful/data-transfer' },
   { label: 'Защита от мошенников', href: '/useful/scams' },
@@ -58,13 +59,16 @@ export function Footer() {
         <div className="mt-10 border-t border-line pt-6">
           <div className="flex flex-col gap-4 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap gap-x-5 gap-y-2">
-              <Link className="transition hover:text-ink" to="/privacy">Политика обработки данных</Link>
-              <Link className="transition hover:text-ink" to="/terms">Условия обращения</Link>
+              <Link className="transition hover:text-ink" to="/privacy">Политика обработки персональных данных</Link>
+              <Link className="transition hover:text-ink" to="/terms">Условия оказания услуг</Link>
             </div>
             <span>{site.domain}</span>
           </div>
           <p className="mt-5 max-w-5xl text-xs leading-5 text-muted">
-            Информация на сайте носит справочный характер. Цены ориентировочные и зависят от задачи. Аудит сайта является предварительной проверкой и не является юридическим заключением.
+            Информация на сайте носит справочный характер. Цены ориентировочные и не являются публичной офертой. Точная стоимость и сроки согласуются индивидуально перед началом работы.
+          </p>
+          <p className="mt-2 max-w-5xl text-xs leading-5 text-muted">
+            Аудит сайта является предварительной проверкой заметных рисков и не является юридическим заключением.
           </p>
         </div>
       </Container>

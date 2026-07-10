@@ -3,47 +3,58 @@ import { Container } from '../components/Container';
 import { PageHero } from '../components/PageHero';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
+import { AdminWebsiteSection, AgreementSection, LegalPreparationSection } from '../components/SalesSections';
 import { ServiceCard } from '../components/ServiceCard';
 import { pageMeta } from '../data/pageMeta';
 import { useSiteData } from '../hooks/useSiteData';
 
+const categoryOrder = [
+  'Сайты и админки',
+  'Приложения и прототипы',
+  'Презентации',
+  'Компьютеры и ноутбуки',
+  'Телефоны и перенос данных',
+  'ПК и техника',
+  'Базовая подготовка сайта к заявкам',
+];
+
 export function ServicesPage() {
-  const { data, debug, error, isLoading } = useSiteData();
+  const { data, isLoading } = useSiteData();
   const { services } = data;
-  const cmsApiUrl = import.meta.env.VITE_CMS_API_URL?.trim() || 'не задан';
-  const errorText = error instanceof Error ? error.message : error ? String(error) : 'нет';
-  const showCmsDebug = import.meta.env.DEV && import.meta.env.VITE_SHOW_CMS_DEBUG === 'true';
+  const groupedServices = categoryOrder
+    .map((category) => ({
+      category,
+      items: services.filter((service) => service.category === category),
+    }))
+    .filter((group) => group.items.length);
+  const uncategorizedServices = services.filter((service) => !service.category || !categoryOrder.includes(service.category));
 
   return (
     <PageTransition>
       <PageHero {...pageMeta.services} />
       <section className="pb-16">
         <Container>
-          {showCmsDebug ? (
-            <div className="mb-6 rounded-[20px] border border-blue-100 bg-blue-50/70 p-5 text-xs leading-6 text-slate-700 shadow-glass">
-              <div className="mb-3 text-sm font-extrabold text-ink">CMS debug</div>
-              <div className="grid gap-1">
-                <div><span className="font-bold">VITE_CMS_API_URL:</span> {cmsApiUrl}</div>
-                <div><span className="font-bold">CMS loading:</span> {String(isLoading)}</div>
-                <div><span className="font-bold">CMS error:</span> {errorText}</div>
-                <div><span className="font-bold">Services до фильтрации:</span> {debug.apiServicesCount}</div>
-                <div><span className="font-bold">Services после фильтрации isActive === true:</span> {debug.activeServicesCount}</div>
-                <div><span className="font-bold">Названия после фильтрации:</span> {debug.activeServiceTitles.join(', ') || 'нет'}</div>
-                <div>
-                  <span className="font-bold">Первый service JSON:</span>
-                  <pre className="mt-2 max-h-48 overflow-auto rounded-2xl bg-white/80 p-3 text-[11px] leading-5 text-slate-600">
-                    {debug.firstService ? JSON.stringify(debug.firstService, null, 2) : 'нет'}
-                  </pre>
-                </div>
-              </div>
-            </div>
-          ) : null}
           {services.length ? (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3" aria-busy={isLoading}>
-              {services.map((service, index) => (
-                <Reveal delay={index * 0.04} key={service.path}>
-                  <ServiceCard service={service} />
-                </Reveal>
+            <div className="grid gap-10" aria-busy={isLoading}>
+              {[...groupedServices, ...(uncategorizedServices.length ? [{ category: 'Другие услуги', items: uncategorizedServices }] : [])].map((group) => (
+                <section key={group.category}>
+                  <Reveal>
+                    <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                      <div>
+                        <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Категория</p>
+                        <h2 className="mt-2 text-3xl font-extrabold leading-tight sm:text-4xl">{group.category}</h2>
+                      </div>
+                      <span className="text-sm font-bold text-muted">{group.items.length} услуг</span>
+                    </div>
+                  </Reveal>
+                  <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                    {group.items.map((service, index) => (
+                      <Reveal delay={index * 0.04} key={`${group.category}-${service.slug}`}>
+                        <ServiceCard service={service} />
+                      </Reveal>
+                    ))}
+                  </div>
+                </section>
               ))}
             </div>
           ) : (
@@ -53,6 +64,9 @@ export function ServicesPage() {
           )}
         </Container>
       </section>
+      <AdminWebsiteSection />
+      <LegalPreparationSection />
+      <AgreementSection />
       <CallToAction />
     </PageTransition>
   );

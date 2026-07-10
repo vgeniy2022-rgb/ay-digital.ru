@@ -161,10 +161,14 @@ export function ContactForm() {
               onChange={(event) => setHasConsent(event.target.checked)}
             />
             <span>
-              Я соглашаюсь с{' '}
-              <Link className="font-semibold text-accent hover:text-ink" to="/privacy">обработкой персональных данных</Link>
-              {' '}и принимаю{' '}
-              <Link className="font-semibold text-accent hover:text-ink" to="/terms">условия обращения</Link>.
+              Я соглашаюсь с обработкой персональных данных и принимаю{' '}
+              <Link className="font-semibold text-accent hover:text-ink" to="/privacy">
+                Политику обработки персональных данных
+              </Link>
+              {' '}и{' '}
+              <Link className="font-semibold text-accent hover:text-ink" to="/terms">
+                Условия оказания услуг
+              </Link>.
             </span>
           </label>
           <button
