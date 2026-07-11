@@ -2,10 +2,13 @@ import { AnimatePresence } from 'framer-motion';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppLayout } from './layouts/AppLayout';
 import { AboutPage } from './pages/AboutPage';
+import { CartPage } from './pages/CartPage';
 import { CasesPage } from './pages/CasesPage';
+import { CheckoutPage } from './pages/CheckoutPage';
 import { ContactsPage } from './pages/ContactsPage';
 import { HomePage } from './pages/HomePage';
 import { LegalPage } from './pages/LegalPage';
+import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { PriceDirectionPage } from './pages/PriceDirectionPage';
 import { PricesPage } from './pages/PricesPage';
 import { ProcessPage } from './pages/ProcessPage';
@@ -28,6 +31,9 @@ export default function App() {
           <Route path="/useful/:slug" element={<UsefulArticlePage />} />
           <Route path="/prices" element={<PricesPage />} />
           <Route path="/prices/:slug" element={<PriceDirectionPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/order-success" element={<OrderSuccessPage />} />
           <Route path="/process" element={<ProcessPage />} />
           <Route path="/cases" element={<CasesPage />} />
           <Route path="/about" element={<AboutPage />} />

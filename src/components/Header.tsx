@@ -1,14 +1,16 @@
-import { Menu, X } from 'lucide-react';
+import { Menu, ShoppingCart, X } from 'lucide-react';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { navItems } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
+import { useCart } from '../hooks/useCart';
 import { ButtonLink } from './ButtonLink';
 import { Container } from './Container';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useSiteData();
+  const { totalQuantity } = useCart();
   const { site } = data;
 
   const close = () => setIsOpen(false);
@@ -42,19 +44,46 @@ export function Header() {
           </nav>
 
           <div className="hidden items-center gap-3 lg:flex">
+            <NavLink
+              className="relative grid h-11 w-11 place-items-center rounded-full border border-line bg-white transition hover:border-slate-300"
+              to="/cart"
+              aria-label={`Открыть корзину, товаров: ${totalQuantity}`}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {totalQuantity > 0 ? (
+                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[11px] font-extrabold text-white">
+                  {totalQuantity}
+                </span>
+              ) : null}
+            </NavLink>
             <ButtonLink href={site.telegramUrl} variant="secondary" showArrow={false}>
               Telegram
             </ButtonLink>
           </div>
 
-          <button
-            className="grid h-11 w-11 place-items-center rounded-full border border-line bg-white lg:hidden"
-            type="button"
-            aria-label={isOpen ? 'Закрыть меню' : 'Открыть меню'}
-            onClick={() => setIsOpen((value) => !value)}
-          >
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          <div className="flex items-center gap-2 lg:hidden">
+            <NavLink
+              className="relative grid h-11 w-11 place-items-center rounded-full border border-line bg-white"
+              to="/cart"
+              onClick={close}
+              aria-label={`Открыть корзину, товаров: ${totalQuantity}`}
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {totalQuantity > 0 ? (
+                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[11px] font-extrabold text-white">
+                  {totalQuantity}
+                </span>
+              ) : null}
+            </NavLink>
+            <button
+              className="grid h-11 w-11 place-items-center rounded-full border border-line bg-white"
+              type="button"
+              aria-label={isOpen ? 'Закрыть меню' : 'Открыть меню'}
+              onClick={() => setIsOpen((value) => !value)}
+            >
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
 
         {isOpen && (

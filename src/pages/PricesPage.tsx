@@ -2,6 +2,7 @@ import { ArrowUpRight, MessageCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CallToAction } from '../components/CallToAction';
+import { AddToCartButton } from '../components/AddToCartButton';
 import { Container } from '../components/Container';
 import { PageHero } from '../components/PageHero';
 import { PageTransition } from '../components/PageTransition';
@@ -11,6 +12,7 @@ import { pageMeta } from '../data/pageMeta';
 import { priceDirections } from '../data/priceDirections';
 import { PriceGroup } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
+import { createCartKey, parseExactPrice } from '../utils/cart';
 
 const tabs = [
   { label: 'Все', key: 'all' },
@@ -115,11 +117,26 @@ export function PricesPage() {
                       {group.items.map((item, index) => (
                         <Reveal delay={index * 0.035} key={`${group.title}-${item.name}`}>
                           <article className="flex h-full flex-col rounded-premium border border-line bg-white/84 p-6 shadow-glass transition duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-soft">
-                            <div className="min-w-0">
-                              <h3 className="min-w-0 text-2xl font-extrabold leading-tight">{item.name}</h3>
-                              <p className="mt-3 max-w-full overflow-wrap-anywhere whitespace-normal text-lg font-extrabold leading-7 text-accent">
-                                {item.price}
-                              </p>
+                            <div className="flex min-w-0 items-start justify-between gap-4">
+                              <div className="min-w-0">
+                                <h3 className="min-w-0 text-2xl font-extrabold leading-tight">{item.name}</h3>
+                                <p className="mt-3 max-w-full overflow-wrap-anywhere whitespace-normal text-lg font-extrabold leading-7 text-accent">
+                                  {item.price}
+                                </p>
+                              </div>
+                              <AddToCartButton
+                                item={{
+                                  key: createCartKey('package', `${group.title}-${item.name}`),
+                                  id: `${group.title}-${item.name}`,
+                                  type: 'package',
+                                  title: item.name,
+                                  category: group.title,
+                                  priceText: item.price,
+                                  unitPrice: parseExactPrice(item.price),
+                                  quantity: 1,
+                                  description: item.description,
+                                }}
+                              />
                             </div>
                             {item.description ? (
                               <p className="mt-4 line-clamp-2 text-sm leading-6 text-muted">{item.description}</p>
@@ -134,10 +151,10 @@ export function PricesPage() {
                                 </div>
                               ))}
                             </div>
-                            <div className="mt-auto flex flex-col gap-3 pt-6 sm:flex-row">
+                            <div className="mt-auto grid grid-cols-2 gap-2 pt-6">
                               {detailPath ? (
                                 <Link
-                                  className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-line bg-white px-4 text-sm font-bold text-ink shadow-glass transition hover:-translate-y-0.5 hover:border-slate-300"
+                                  className="inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-line bg-white px-3 text-sm font-bold text-ink shadow-glass transition hover:-translate-y-0.5 hover:border-slate-300"
                                   to={detailPath}
                                 >
                                   Подробнее
@@ -145,7 +162,7 @@ export function PricesPage() {
                                 </Link>
                               ) : null}
                               <a
-                                className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-ink px-4 text-sm font-bold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-graphite"
+                                className="inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-ink px-3 text-sm font-bold text-white shadow-soft transition hover:-translate-y-0.5 hover:bg-graphite"
                                 href={data.site.telegramUrl}
                                 target="_blank"
                                 rel="noreferrer"

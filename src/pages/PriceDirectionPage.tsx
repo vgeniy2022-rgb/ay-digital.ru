@@ -2,12 +2,14 @@ import { ArrowLeft, Check, MessageCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { ButtonLink } from '../components/ButtonLink';
+import { AddToCartButton } from '../components/AddToCartButton';
 import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { PriceVisual } from '../components/PriceVisuals';
 import { Reveal } from '../components/Reveal';
 import { getPriceDirection } from '../data/priceDirections';
 import { useSiteData } from '../hooks/useSiteData';
+import { createCartKey, parseExactPrice } from '../utils/cart';
 
 export function PriceDirectionPage() {
   const { slug } = useParams();
@@ -63,11 +65,26 @@ export function PriceDirectionPage() {
             {direction.packages.map((item, index) => (
               <Reveal delay={index * 0.04} key={item.name}>
                 <article className="h-full rounded-premium border border-line bg-white/84 p-6 shadow-glass">
-                  <div className="min-w-0">
-                    <h3 className="min-w-0 text-2xl font-extrabold leading-tight">{item.name}</h3>
-                    <p className="mt-3 max-w-full overflow-wrap-anywhere whitespace-normal text-lg font-extrabold leading-7 text-accent">
-                      {item.price}
-                    </p>
+                  <div className="flex min-w-0 items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h3 className="min-w-0 text-2xl font-extrabold leading-tight">{item.name}</h3>
+                      <p className="mt-3 max-w-full overflow-wrap-anywhere whitespace-normal text-lg font-extrabold leading-7 text-accent">
+                        {item.price}
+                      </p>
+                    </div>
+                    <AddToCartButton
+                      item={{
+                        key: createCartKey('package', `${direction.groupTitle}-${item.name}`),
+                        id: `${direction.groupTitle}-${item.name}`,
+                        type: 'package',
+                        title: item.name,
+                        category: direction.groupTitle,
+                        priceText: item.price,
+                        unitPrice: parseExactPrice(item.price),
+                        quantity: 1,
+                        description: item.fit,
+                      }}
+                    />
                   </div>
                   <p className="mt-4 text-sm leading-6 text-muted">{item.fit}</p>
                   <div className="mt-5 grid gap-3">
