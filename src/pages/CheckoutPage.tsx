@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
+import { Check, Mail, MessageCircle, Phone, Send } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createOrder } from '../api/ordersApi';
 import { ButtonLink } from '../components/ButtonLink';
@@ -15,12 +16,18 @@ type WorkFormat = 'Удалённо' | 'Выезд';
 
 const today = new Date().toISOString().slice(0, 10);
 const agreedLaterPaymentMethod = 'Согласуется после оформления';
+const contactMethods: { value: ContactMethod; label: string; hint: string; icon: typeof Phone }[] = [
+  { value: 'Позвонить', label: 'Позвонить', hint: 'по номеру телефона', icon: Phone },
+  { value: 'Telegram', label: 'Telegram', hint: 'по этому же номеру', icon: Send },
+  { value: 'WhatsApp', label: 'WhatsApp', hint: 'по этому же номеру', icon: MessageCircle },
+  { value: 'Email', label: 'Email', hint: 'адрес уточню позже', icon: Mail },
+];
 
 export function CheckoutPage() {
   const navigate = useNavigate();
   const { items, knownTotal, hasUnknownPrices, clearCart } = useCart();
   const { data } = useSiteData();
-  const [contactMethod, setContactMethod] = useState<ContactMethod>('Позвонить');
+  const [preferredContactMethods, setPreferredContactMethods] = useState<ContactMethod[]>(['Позвонить']);
   const [workFormat, setWorkFormat] = useState<WorkFormat>('Удалённо');
   const [hasConsent, setHasConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,6 +35,12 @@ export function CheckoutPage() {
   const [timeMode, setTimeMode] = useState('Неважно');
 
   const hasItems = items.length > 0;
+
+  const toggleContactMethod = (method: ContactMethod) => {
+    setPreferredContactMethods((current) =>
+      current.includes(method) ? current.filter((item) => item !== method) : [...current, method],
+    );
+  };
 
   useEffect(() => {
     document.title = 'Оформление заказа — AY Digital';
@@ -37,17 +50,11 @@ export function CheckoutPage() {
   const validate = (formData: FormData) => {
     const clientName = String(formData.get('clientName') || '').trim();
     const phone = String(formData.get('phone') || '').trim();
-    const telegram = String(formData.get('telegram') || '').trim();
-    const whatsapp = String(formData.get('whatsapp') || '').trim();
-    const email = String(formData.get('email') || '').trim();
     const address = String(formData.get('address') || '').trim();
 
     if (!clientName) return 'Укажите имя.';
-    if (!phone && !telegram && !whatsapp && !email) return 'Укажите хотя бы один удобный способ связи.';
-    if (contactMethod === 'Позвонить' && !phone) return 'Для звонка укажите телефон.';
-    if (contactMethod === 'Telegram' && !telegram) return 'Для связи в Telegram укажите username или номер.';
-    if (contactMethod === 'WhatsApp' && !whatsapp) return 'Для связи в WhatsApp укажите номер.';
-    if (contactMethod === 'Email' && !email) return 'Для связи по Email укажите почту.';
+    if (!phone) return 'Укажите номер телефона.';
+    if (!preferredContactMethods.length) return 'Выберите хотя бы один способ связи.';
     if (workFormat === 'Выезд' && !address) return 'Для выезда укажите адрес.';
     if (!hasConsent) return 'Нужно согласие на обработку персональных данных.';
     return '';
@@ -67,13 +74,13 @@ export function CheckoutPage() {
     setIsSubmitting(true);
     setError('');
 
+    const clientName = String(formData.get('clientName') || '').trim();
+
     const payload: CheckoutPayload = {
-      clientName: String(formData.get('clientName') || '').trim(),
+      name: clientName,
+      clientName,
       phone: String(formData.get('phone') || '').trim(),
-      telegram: String(formData.get('telegram') || '').trim(),
-      whatsapp: String(formData.get('whatsapp') || '').trim(),
-      email: String(formData.get('email') || '').trim(),
-      contactMethod,
+      preferredContactMethods,
       workFormat,
       address: workFormat === 'Выезд' ? String(formData.get('address') || '').trim() : '',
       preferredDate: String(formData.get('preferredDate') || ''),
@@ -140,19 +147,42 @@ export function CheckoutPage() {
                 <div className="mt-5 grid gap-4 sm:grid-cols-2">
                   <label className="grid gap-2 text-sm font-bold">Имя<input className="min-h-12 rounded-2xl border border-line bg-slate-50 px-4 text-base outline-none focus:border-accent" name="clientName" autoComplete="name" /></label>
                   <label className="grid gap-2 text-sm font-bold">Телефон<input className="min-h-12 rounded-2xl border border-line bg-slate-50 px-4 text-base outline-none focus:border-accent" name="phone" autoComplete="tel" /></label>
-                  <label className="grid gap-2 text-sm font-bold">Telegram<input className="min-h-12 rounded-2xl border border-line bg-slate-50 px-4 text-base outline-none focus:border-accent" name="telegram" /></label>
-                  <label className="grid gap-2 text-sm font-bold">WhatsApp<input className="min-h-12 rounded-2xl border border-line bg-slate-50 px-4 text-base outline-none focus:border-accent" name="whatsapp" autoComplete="tel" /></label>
-                  <label className="grid gap-2 text-sm font-bold sm:col-span-2">Email<input className="min-h-12 rounded-2xl border border-line bg-slate-50 px-4 text-base outline-none focus:border-accent" name="email" autoComplete="email" /></label>
                 </div>
-                <p className="mt-3 text-sm leading-6 text-muted">Укажите хотя бы один удобный способ связи.</p>
+                <p className="mt-3 text-sm leading-6 text-muted">Номер используется для звонка, Telegram или WhatsApp, если вы выберете эти способы ниже.</p>
               </section>
 
               <section className="rounded-premium border border-line bg-white/84 p-6 shadow-glass">
-                <h2 className="text-2xl font-extrabold">Как с вами связаться</h2>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {(['Позвонить', 'Telegram', 'WhatsApp', 'Email'] as ContactMethod[]).map((method) => (
-                    <button className={`rounded-full border px-4 py-2 text-sm font-bold ${contactMethod === method ? 'border-ink bg-ink text-white' : 'border-line bg-white'}`} type="button" onClick={() => setContactMethod(method)} key={method}>{method}</button>
-                  ))}
+                <h2 className="text-2xl font-extrabold">Как с вами связаться?</h2>
+                <p className="mt-3 text-sm leading-6 text-muted">Можно выбрать несколько вариантов. Если выберете Email, адрес уточню отдельно.</p>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {contactMethods.map(({ value, label, hint, icon: Icon }) => {
+                    const isActive = preferredContactMethods.includes(value);
+
+                    return (
+                      <button
+                        className={`group flex min-h-20 items-center gap-4 rounded-3xl border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-soft ${
+                          isActive ? 'border-blue-200 bg-blue-50/80 shadow-glass' : 'border-line bg-slate-50 hover:bg-white'
+                        }`}
+                        type="button"
+                        aria-pressed={isActive}
+                        onClick={() => toggleContactMethod(value)}
+                        key={value}
+                      >
+                        <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl transition ${isActive ? 'bg-ink text-white' : 'bg-white text-accent shadow-sm'}`}>
+                          <Icon className="h-5 w-5" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-sm font-extrabold text-ink">{label}</span>
+                          <span className="mt-1 block text-xs leading-5 text-muted">{hint}</span>
+                        </span>
+                        <span className={`grid h-6 w-6 shrink-0 place-items-center rounded-full border transition ${
+                          isActive ? 'border-ink bg-ink text-white' : 'border-line bg-white text-transparent group-hover:border-accent'
+                        }`}>
+                          <Check className="h-3.5 w-3.5" />
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </section>
 

@@ -13,12 +13,10 @@ export type CartItem = {
 };
 
 export type CheckoutPayload = {
+  name: string;
   clientName: string;
-  phone?: string;
-  telegram?: string;
-  whatsapp?: string;
-  email?: string;
-  contactMethod: string;
+  phone: string;
+  preferredContactMethods: string[];
   workFormat: 'Удалённо' | 'Выезд';
   address?: string;
   preferredDate?: string;
