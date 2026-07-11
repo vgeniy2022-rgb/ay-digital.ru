@@ -17,12 +17,17 @@ export type CheckoutPayload = {
   clientName: string;
   phone: string;
   preferredContactMethods: string[];
+  contactMethod?: string;
+  telegram?: string;
+  whatsapp?: string;
+  email?: string;
   workFormat: 'Удалённо' | 'Выезд';
   address?: string;
   preferredDate?: string;
   preferredTime?: string;
   comment?: string;
   paymentMethod: string;
+  paymentStatus?: 'not_required' | 'pending_manual_payment';
   total: number;
   items: CartItem[];
 };

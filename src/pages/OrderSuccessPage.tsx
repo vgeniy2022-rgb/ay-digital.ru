@@ -34,9 +34,9 @@ export function OrderSuccessPage() {
               {order ? (
                 <>
                   <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Готово</p>
-                  <h1 className="mt-5 text-4xl font-extrabold leading-tight sm:text-6xl">Заказ оформлен</h1>
+                  <h1 className="mt-5 text-4xl font-extrabold leading-tight sm:text-6xl">Заявка отправлена</h1>
                   <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-muted">
-                    Спасибо! Я получил ваш заказ и свяжусь с вами, чтобы уточнить детали, подтвердить стоимость и договориться о времени.
+                    Заявка отправлена. Я свяжусь с вами для уточнения деталей и оплаты.
                   </p>
                   <div className="mt-8 grid gap-3 rounded-premium bg-slate-50 p-6 text-left">
                     <div className="flex justify-between gap-4 text-sm"><span className="font-bold text-muted">Номер заказа</span><span className="font-extrabold">{order.orderNumber}</span></div>

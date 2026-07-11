@@ -35,16 +35,23 @@ export async function createOrder(payload: CheckoutPayload) {
       signal: controller.signal,
     });
 
+    const text = await response.text();
+
     if (!response.ok) {
-      throw new Error(`Order request failed: ${response.status}`);
+      throw new Error(`Order request failed: ${response.status}. ${text}`);
     }
 
-    const text = await response.text();
     if (!text) {
       throw new Error('Order API returned empty response');
     }
 
-    const result = JSON.parse(text) as CreateOrderResponse;
+    let result: CreateOrderResponse;
+    try {
+      result = JSON.parse(text) as CreateOrderResponse;
+    } catch {
+      throw new Error(`Order API returned invalid JSON: ${text}`);
+    }
+
     if (result.ok === false) {
       throw new Error(result.error || result.message || 'Order API returned ok: false');
     }

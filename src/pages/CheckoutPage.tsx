@@ -6,6 +6,7 @@ import { ButtonLink } from '../components/ButtonLink';
 import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
+import { paymentsConfig } from '../config/payments';
 import { useCart } from '../hooks/useCart';
 import { CheckoutPayload, OrderSuccessData } from '../types/cart';
 import { formatRub, orderSuccessStorageKey } from '../utils/cart';
@@ -75,18 +76,24 @@ export function CheckoutPage() {
     setError('');
 
     const clientName = String(formData.get('clientName') || '').trim();
+    const phone = String(formData.get('phone') || '').trim();
 
     const payload: CheckoutPayload = {
       name: clientName,
       clientName,
-      phone: String(formData.get('phone') || '').trim(),
+      phone,
       preferredContactMethods,
+      contactMethod: preferredContactMethods.join(', '),
+      telegram: preferredContactMethods.includes('Telegram') ? phone : '',
+      whatsapp: preferredContactMethods.includes('WhatsApp') ? phone : '',
+      email: '',
       workFormat,
       address: workFormat === 'Выезд' ? String(formData.get('address') || '').trim() : '',
       preferredDate: String(formData.get('preferredDate') || ''),
       preferredTime: timeMode === 'Точное время' ? String(formData.get('preferredTime') || '') : timeMode,
       comment: String(formData.get('comment') || '').trim(),
       paymentMethod: agreedLaterPaymentMethod,
+      paymentStatus: paymentsConfig.enabled ? 'pending_manual_payment' : 'not_required',
       total: knownTotal,
       items,
     };
@@ -103,7 +110,8 @@ export function CheckoutPage() {
       window.sessionStorage.setItem(orderSuccessStorageKey, JSON.stringify(successData));
       clearCart();
       navigate('/order-success');
-    } catch {
+    } catch (orderError) {
+      console.error('[Checkout] Order request failed:', orderError);
       setError('Не удалось оформить заказ. Попробуйте ещё раз или напишите в Telegram.');
     } finally {
       setIsSubmitting(false);
