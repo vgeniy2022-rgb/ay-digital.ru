@@ -1,9 +1,9 @@
 import { Navigate, useParams } from 'react-router-dom';
-import { useEffect } from 'react';
 import { ButtonLink } from '../components/ButtonLink';
 import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
+import { SeoHead } from '../components/SeoHead';
 import { UsefulHero, UsefulSection, WarningCard } from '../components/UsefulBlocks';
 import {
   AppleIdProtectionIllustration,
@@ -127,18 +127,18 @@ export function UsefulArticlePage() {
   const { data } = useSiteData();
   const article = usefulArticles.find((item) => item.slug === slug);
 
-  useEffect(() => {
-    if (!article) return;
-    document.title = `${article.seoTitle} | ${data.site.domain}`;
-    document.querySelector('meta[name="description"]')?.setAttribute('content', article.seoDescription);
-  }, [article, data.site.domain]);
-
   if (!article) {
     return <Navigate to="/useful" replace />;
   }
 
   return (
     <PageTransition>
+      <SeoHead
+        title={article.seoTitle}
+        description={article.seoDescription}
+        canonicalPath={`/useful/${article.slug}`}
+        type="article"
+      />
       <UsefulHero title={article.title} description={article.description} variant={article.variant} />
       {article.warning && (
         <section className="pb-8">

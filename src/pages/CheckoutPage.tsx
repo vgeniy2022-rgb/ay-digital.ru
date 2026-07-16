@@ -10,6 +10,7 @@ import { paymentsConfig } from '../config/payments';
 import { useCart } from '../hooks/useCart';
 import { CheckoutPayload, OrderSuccessData } from '../types/cart';
 import { formatRub, orderSuccessStorageKey } from '../utils/cart';
+import { formatRussianPhone, hasPhoneLetters, validateRussianMobilePhone } from '../utils/phone';
 import { useSiteData } from '../hooks/useSiteData';
 
 type ContactMethod = 'Позвонить' | 'Telegram' | 'WhatsApp' | 'Email';
@@ -33,9 +34,12 @@ export function CheckoutPage() {
   const [hasConsent, setHasConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [phone, setPhone] = useState('');
   const [timeMode, setTimeMode] = useState('Неважно');
 
   const hasItems = items.length > 0;
+  const phoneValidation = validateRussianMobilePhone(phone);
+  const canSubmit = hasConsent && phoneValidation.isValid && !isSubmitting;
 
   const toggleContactMethod = (method: ContactMethod) => {
     setPreferredContactMethods((current) =>
@@ -50,11 +54,10 @@ export function CheckoutPage() {
 
   const validate = (formData: FormData) => {
     const clientName = String(formData.get('clientName') || '').trim();
-    const phone = String(formData.get('phone') || '').trim();
     const address = String(formData.get('address') || '').trim();
 
     if (!clientName) return 'Укажите имя.';
-    if (!phone) return 'Укажите номер телефона.';
+    if (!phoneValidation.isValid) return phoneValidation.error;
     if (!preferredContactMethods.length) return 'Выберите хотя бы один способ связи.';
     if (workFormat === 'Выезд' && !address) return 'Для выезда укажите адрес.';
     if (!hasConsent) return 'Нужно согласие на обработку персональных данных.';
@@ -76,16 +79,16 @@ export function CheckoutPage() {
     setError('');
 
     const clientName = String(formData.get('clientName') || '').trim();
-    const phone = String(formData.get('phone') || '').trim();
+    const normalizedPhone = phoneValidation.normalized;
 
     const payload: CheckoutPayload = {
       name: clientName,
       clientName,
-      phone,
+      phone: normalizedPhone,
       preferredContactMethods,
       contactMethod: preferredContactMethods.join(', '),
-      telegram: preferredContactMethods.includes('Telegram') ? phone : '',
-      whatsapp: preferredContactMethods.includes('WhatsApp') ? phone : '',
+      telegram: preferredContactMethods.includes('Telegram') ? normalizedPhone : '',
+      whatsapp: preferredContactMethods.includes('WhatsApp') ? normalizedPhone : '',
       email: '',
       workFormat,
       address: workFormat === 'Выезд' ? String(formData.get('address') || '').trim() : '',
@@ -154,7 +157,26 @@ export function CheckoutPage() {
                 <h2 className="text-2xl font-extrabold">Ваши данные</h2>
                 <div className="mt-5 grid gap-4 sm:grid-cols-2">
                   <label className="grid gap-2 text-sm font-bold">Имя<input className="min-h-12 rounded-2xl border border-line bg-slate-50 px-4 text-base outline-none focus:border-accent" name="clientName" autoComplete="name" /></label>
-                  <label className="grid gap-2 text-sm font-bold">Телефон<input className="min-h-12 rounded-2xl border border-line bg-slate-50 px-4 text-base outline-none focus:border-accent" name="phone" autoComplete="tel" /></label>
+                  <label className="grid gap-2 text-sm font-bold">
+                    Телефон
+                    <input
+                      className={`min-h-12 rounded-2xl border bg-slate-50 px-4 text-base outline-none transition focus:bg-white ${
+                        phone && !phoneValidation.isValid ? 'border-rose-300 focus:border-rose-500' : 'border-line focus:border-accent'
+                      }`}
+                      name="phone"
+                      type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
+                      placeholder="+7 (999) 123-45-67"
+                      value={phone}
+                      onChange={(event) => {
+                        const nextValue = event.target.value;
+                        setPhone(hasPhoneLetters(nextValue) ? nextValue : formatRussianPhone(nextValue));
+                        if (error === phoneValidation.error) setError('');
+                      }}
+                    />
+                    {phone && !phoneValidation.isValid ? <span className="text-sm font-semibold text-rose-700">{phoneValidation.error}</span> : null}
+                  </label>
                 </div>
                 <p className="mt-3 text-sm leading-6 text-muted">Номер используется для звонка, Telegram или WhatsApp, если вы выберете эти способы ниже.</p>
               </section>
@@ -251,7 +273,7 @@ export function CheckoutPage() {
                 </span>
               </label>
               {error ? <p className="mt-4 rounded-2xl bg-rose-50 p-4 text-sm font-semibold leading-6 text-rose-700">{error}</p> : null}
-              <button className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-bold text-white shadow-soft transition enabled:hover:-translate-y-0.5 enabled:hover:bg-graphite disabled:cursor-not-allowed disabled:bg-slate-300" type="submit" disabled={!hasConsent || isSubmitting}>
+              <button className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-bold text-white shadow-soft transition enabled:hover:-translate-y-0.5 enabled:hover:bg-graphite disabled:cursor-not-allowed disabled:bg-slate-300" type="submit" disabled={!canSubmit}>
                 {isSubmitting ? 'Оформляем заказ…' : 'Оформить заказ'}
               </button>
               {error ? <ButtonLink href={data.site.telegramUrl} className="mt-3 w-full" variant="secondary" showArrow={false}>Написать в Telegram</ButtonLink> : null}

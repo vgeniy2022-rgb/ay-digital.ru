@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /checkout
+Disallow: /order-success
+Disallow: /admin
+
+Sitemap: https://ay-digital-ru.vercel.app/sitemap.xml

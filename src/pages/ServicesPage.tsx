@@ -7,7 +7,9 @@ import { AdminWebsiteSection, AgreementSection, LegalPreparationSection } from '
 import { ServiceCard } from '../components/ServiceCard';
 import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
 import { pageMeta } from '../data/pageMeta';
+import { localSeoLinks } from '../data/localSeoLinks';
 import { useSiteData } from '../hooks/useSiteData';
+import { Link } from 'react-router-dom';
 
 const categoryOrder = [
   'Сайты и админки',
@@ -33,6 +35,23 @@ export function ServicesPage() {
   return (
     <PageTransition>
       <PageHero {...pageMeta.services} />
+      <section className="pb-12">
+        <Container>
+          <Reveal>
+            <div className="rounded-premium border border-line bg-slate-50 p-6 shadow-glass">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Локальные услуги</p>
+              <h2 className="mt-3 text-3xl font-extrabold leading-tight">Популярные задачи во Владивостоке</h2>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {localSeoLinks.map((item) => (
+                  <Link className="rounded-full border border-line bg-white px-4 py-2 text-sm font-bold text-ink transition hover:-translate-y-0.5 hover:border-slate-300" to={item.href} key={item.href}>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        </Container>
+      </section>
       <section className="pb-16">
         <Container>
           {services.length ? (

@@ -2,9 +2,11 @@ import { MessageCircle, Phone, Send } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSiteData } from '../hooks/useSiteData';
+import { formatRussianPhone, hasPhoneLetters, validateRussianMobilePhone } from '../utils/phone';
 
 type PreparedRequest = {
   name: string;
+  phone: string;
   service: string;
   description: string;
   text: string;
@@ -13,14 +15,17 @@ type PreparedRequest = {
 export function ContactForm() {
   const [preparedRequest, setPreparedRequest] = useState<PreparedRequest | null>(null);
   const [hasConsent, setHasConsent] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [error, setError] = useState('');
   const { data } = useSiteData();
   const { serviceOptions, site } = data;
+  const phoneValidation = validateRussianMobilePhone(phone);
 
-  const createRequestText = (name: string, service: string, description: string) => {
+  const createRequestText = (name: string, normalizedPhone: string, service: string, description: string) => {
     const cleanName = name.trim() || 'не указано';
     const cleanDescription = description.trim() || 'не указано';
 
-    return `Здравствуйте, ${site.name}! Меня зовут ${cleanName}. Интересует услуга: ${service}. Задача: ${cleanDescription}.`;
+    return `Здравствуйте, ${site.name}! Меня зовут ${cleanName}. Телефон: ${normalizedPhone}. Интересует услуга: ${service}. Задача: ${cleanDescription}.`;
   };
 
   const createContactHref = (channel: 'telegram' | 'whatsappPrimary' | 'whatsappSecondary' | 'sms', text: string) => {
@@ -42,17 +47,23 @@ export function ContactForm() {
     event.preventDefault();
 
     if (!hasConsent) return;
+    if (!phoneValidation.isValid) {
+      setError(phoneValidation.error);
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
     const name = String(formData.get('name') || '');
     const service = String(formData.get('service') || serviceOptions[0] || 'Услуга не выбрана');
     const description = String(formData.get('description') || '');
+    const normalizedPhone = phoneValidation.normalized;
 
     setPreparedRequest({
       name,
+      phone: normalizedPhone,
       service,
       description,
-      text: createRequestText(name, service, description),
+      text: createRequestText(name, normalizedPhone, service, description),
     });
   };
 
@@ -131,12 +142,24 @@ export function ContactForm() {
             <input className="min-h-12 rounded-2xl border border-line bg-slate-50 px-4 outline-none transition focus:border-accent focus:bg-white" name="name" />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-ink">
-            Телефон или мессенджер
+            Телефон
             <input
-              className="min-h-12 rounded-2xl border border-line bg-slate-50 px-4 outline-none transition focus:border-accent focus:bg-white"
-              name="contact"
-              placeholder={site.phones[0]}
+              className={`min-h-12 rounded-2xl border bg-slate-50 px-4 outline-none transition focus:bg-white ${
+                phone && !phoneValidation.isValid ? 'border-rose-300 focus:border-rose-500' : 'border-line focus:border-accent'
+              }`}
+              name="phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="+7 (999) 123-45-67"
+              value={phone}
+              onChange={(event) => {
+                const nextValue = event.target.value;
+                setPhone(hasPhoneLetters(nextValue) ? nextValue : formatRussianPhone(nextValue));
+                setError('');
+              }}
             />
+            {phone && !phoneValidation.isValid ? <span className="text-sm font-semibold text-rose-700">{phoneValidation.error}</span> : null}
           </label>
           <label className="grid gap-2 text-sm font-semibold text-ink">
             Выбор услуги
@@ -171,10 +194,11 @@ export function ContactForm() {
               </Link>.
             </span>
           </label>
+          {error ? <p className="rounded-2xl bg-rose-50 p-4 text-sm font-semibold leading-6 text-rose-700">{error}</p> : null}
           <button
             className="mt-2 inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-ink px-6 py-4 text-sm font-bold text-white shadow-soft transition enabled:hover:-translate-y-0.5 enabled:hover:bg-graphite disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
             type="submit"
-            disabled={!hasConsent}
+            disabled={!hasConsent || !phoneValidation.isValid}
           >
             Отправить заявку
             <Send className="h-4 w-4" />

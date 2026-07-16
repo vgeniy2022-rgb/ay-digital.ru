@@ -1,5 +1,4 @@
 import { ArrowLeft, Check, MessageCircle } from 'lucide-react';
-import { useEffect } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { ButtonLink } from '../components/ButtonLink';
 import { AddToCartButton } from '../components/AddToCartButton';
@@ -7,6 +6,7 @@ import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { PriceVisual } from '../components/PriceVisuals';
 import { Reveal } from '../components/Reveal';
+import { SeoHead } from '../components/SeoHead';
 import { getPriceDirection } from '../data/priceDirections';
 import { useSiteData } from '../hooks/useSiteData';
 import { createCartKey, parseExactPrice } from '../utils/cart';
@@ -16,18 +16,17 @@ export function PriceDirectionPage() {
   const direction = getPriceDirection(slug);
   const { data } = useSiteData();
 
-  useEffect(() => {
-    if (!direction) return;
-    document.title = `${direction.seoTitle} | ${data.site.domain}`;
-    document.querySelector('meta[name="description"]')?.setAttribute('content', direction.seoDescription);
-  }, [data.site.domain, direction]);
-
   if (!direction) {
     return <Navigate to="/prices" replace />;
   }
 
   return (
     <PageTransition>
+      <SeoHead
+        title={direction.seoTitle}
+        description={direction.seoDescription}
+        canonicalPath={direction.path}
+      />
       <section className="py-14 sm:py-20">
         <Container>
           <Link className="inline-flex items-center gap-2 text-sm font-extrabold text-accent transition hover:text-ink" to="/prices">

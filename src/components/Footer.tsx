@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { localSeoLinks } from '../data/localSeoLinks';
 import { navItems } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
 import { Container } from './Container';
@@ -45,6 +46,16 @@ export function Footer() {
               ))}
             </div>
           </div>
+          <div className="lg:col-span-2">
+            <div className="font-bold">Услуги во Владивостоке</div>
+            <div className="mt-4 flex flex-wrap gap-2 text-sm text-muted">
+              {localSeoLinks.slice(0, 5).map((item) => (
+                <Link className="rounded-full border border-line bg-white px-3 py-1.5 transition hover:text-ink" key={item.href} to={item.href}>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
           <div>
             <div className="font-bold">Контакты</div>
             <div className="mt-4 grid gap-3 text-sm text-muted">
@@ -64,6 +75,7 @@ export function Footer() {
             </div>
             <span>{site.domain}</span>
           </div>
+          <p className="mt-4 text-sm font-semibold text-muted">Владивосток · выезд по городу · удалённо</p>
           <p className="mt-5 max-w-5xl text-xs leading-5 text-muted">
             Информация на сайте носит справочный характер. Цены ориентировочные и не являются публичной офертой. Точная стоимость и сроки согласуются индивидуально перед началом работы.
           </p>

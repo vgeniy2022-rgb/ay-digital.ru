@@ -1,10 +1,10 @@
 import { Check } from 'lucide-react';
-import { useEffect } from 'react';
 import { ButtonLink } from '../components/ButtonLink';
 import { CallToAction } from '../components/CallToAction';
 import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
+import { SeoHead } from '../components/SeoHead';
 import { UsefulCard, UsefulHero } from '../components/UsefulBlocks';
 import { usefulAudience, usefulCards, usefulIndexMeta } from '../data/useful';
 import { useSiteData } from '../hooks/useSiteData';
@@ -12,13 +12,9 @@ import { useSiteData } from '../hooks/useSiteData';
 export function UsefulIndexPage() {
   const { data } = useSiteData();
 
-  useEffect(() => {
-    document.title = `${usefulIndexMeta.title} | ${data.site.domain}`;
-    document.querySelector('meta[name="description"]')?.setAttribute('content', usefulIndexMeta.description);
-  }, [data.site.domain]);
-
   return (
     <PageTransition>
+      <SeoHead title={usefulIndexMeta.title} description={usefulIndexMeta.description} canonicalPath="/useful" />
       <UsefulHero
         title={usefulIndexMeta.title}
         description="Простые инструкции без сложных слов: как перенести данные, защитить аккаунты, проверить устройство и не попасться на мошенников."

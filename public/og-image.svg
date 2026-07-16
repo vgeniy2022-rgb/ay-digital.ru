@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="AY Digital — IT-помощь во Владивостоке">
+  <rect width="1200" height="630" fill="#f8fafc"/>
+  <circle cx="230" cy="130" r="190" fill="#dbeafe"/>
+  <circle cx="980" cy="120" r="170" fill="#dcfce7"/>
+  <rect x="120" y="110" width="960" height="410" rx="42" fill="rgba(255,255,255,0.86)" stroke="#e2e8f0"/>
+  <text x="170" y="235" font-family="Arial, sans-serif" font-size="68" font-weight="800" fill="#101114">AY Digital</text>
+  <text x="170" y="310" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#2563eb">Александр — частный IT-специалист</text>
+  <text x="170" y="372" font-family="Arial, sans-serif" font-size="30" fill="#475569">Сайты, настройка техники, перенос данных</text>
+  <text x="170" y="424" font-family="Arial, sans-serif" font-size="30" fill="#475569">и компьютерная помощь во Владивостоке</text>
+  <rect x="810" y="210" width="150" height="230" rx="28" fill="#101114"/>
+  <rect x="830" y="238" width="110" height="174" rx="18" fill="#eff6ff"/>
+  <rect x="660" y="265" width="210" height="130" rx="20" fill="#ffffff" stroke="#cbd5e1"/>
+  <rect x="690" y="295" width="120" height="14" rx="7" fill="#2563eb"/>
+  <rect x="690" y="326" width="150" height="12" rx="6" fill="#cbd5e1"/>
+  <rect x="690" y="354" width="100" height="12" rx="6" fill="#cbd5e1"/>
+</svg>

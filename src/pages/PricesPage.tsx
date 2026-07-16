@@ -9,6 +9,7 @@ import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
 import { pageMeta } from '../data/pageMeta';
+import { localSeoLinks } from '../data/localSeoLinks';
 import { priceDirections } from '../data/priceDirections';
 import { PriceGroup } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
@@ -60,6 +61,16 @@ export function PricesPage() {
                 началом работы.
               </p>
               <p className="mt-2">Предварительная проверка сайта не является юридическим заключением.</p>
+            </div>
+          </Reveal>
+
+          <Reveal>
+            <div className="mb-8 flex flex-wrap gap-2">
+              {localSeoLinks.slice(0, 7).map((item) => (
+                <Link className="rounded-full border border-line bg-white px-4 py-2 text-sm font-bold text-ink transition hover:-translate-y-0.5 hover:border-slate-300" to={item.href} key={item.href}>
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </Reveal>
 

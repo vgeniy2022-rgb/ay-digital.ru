@@ -16,7 +16,7 @@ const mainDirections = [
     title: 'Сайты и админки',
     text: 'Сайты для специалистов и небольшого бизнеса: услуги, цены, отзывы, контакты и возможность управлять контентом через админку.',
     icon: Code2,
-    href: '/services',
+    href: '/website-development-vladivostok',
   },
   {
     title: 'Приложения и прототипы',
@@ -28,19 +28,19 @@ const mainDirections = [
     title: 'Настройка ноутбуков и ПК',
     text: 'Windows, MacBook, программы, браузеры, базовая настройка системы и подготовка устройства к работе.',
     icon: Laptop,
-    href: '/services',
+    href: '/computer-help-vladivostok',
   },
   {
     title: 'Телефоны и перенос данных',
     text: 'Перенос данных, настройка нового телефона, подготовка устройства к продаже и базовая цифровая безопасность.',
     icon: Smartphone,
-    href: '/services',
+    href: '/data-transfer-vladivostok',
   },
   {
     title: 'Сборка ПК под ключ',
     text: 'Подбор комплектующих, покупка, сборка, тестирование, установка Windows и программ.',
     icon: Computer,
-    href: '/prices',
+    href: '/pc-build-vladivostok',
   },
   {
     title: 'Презентации и цифровые задачи',
