@@ -25,8 +25,8 @@ export function AddToCartButton({ item, className = '' }: AddToCartButtonProps) 
     <button
       className={`relative grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line bg-white text-ink shadow-glass transition hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50 active:scale-95 ${className}`}
       type="button"
-      aria-label="Добавить в корзину"
-      title="Добавить в корзину"
+      aria-label="Добавить в список"
+      title="Добавить в список"
       onClick={handleClick}
     >
       {isAdded ? <Check className="h-5 w-5 text-emerald-600" /> : <ShoppingCart className="h-5 w-5" />}

@@ -91,7 +91,7 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
               <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">{page.description}</p>
               <p className="mt-5 max-w-2xl text-base leading-7 text-graphite">{page.intro}</p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <ButtonLink to="/checkout">Оформить заявку</ButtonLink>
+                <ButtonLink to="/services">Выбрать услугу</ButtonLink>
                 <ButtonLink href={data.site.telegramUrl} variant="secondary" showArrow={false}>
                   <MessageCircle className="h-4 w-4 text-accent" />
                   Обсудить задачу

@@ -23,7 +23,7 @@ export function CartPage() {
           <Reveal>
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Заказ</p>
             <h1 className="mt-5 text-4xl font-extrabold leading-tight sm:text-6xl">Корзина</h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">Проверьте выбранные услуги перед оформлением.</p>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">Проверьте выбранные услуги перед обсуждением стоимости и сроков.</p>
           </Reveal>
 
           {items.length ? (
@@ -78,16 +78,16 @@ export function CartPage() {
                 ) : null}
                 <p className="mt-4 text-sm leading-6 text-muted">Предварительная сумма рассчитана по выбранным услугам. Итоговая стоимость зависит от объёма задачи и подтверждается после обсуждения.</p>
                 <div className="mt-6 grid gap-3">
-                  <ButtonLink to="/checkout" showArrow={false}>Оформить заказ</ButtonLink>
+                  <ButtonLink to="/checkout" showArrow={false}>Перейти к выбранным услугам</ButtonLink>
                   <ButtonLink to="/services" variant="secondary" showArrow={false}>Продолжить выбор</ButtonLink>
                   <button
                     className="min-h-11 rounded-full text-sm font-bold text-muted transition hover:bg-white hover:text-ink"
                     type="button"
                     onClick={() => {
-                      if (window.confirm('Очистить корзину?')) clearCart();
+                      if (window.confirm('Очистить список выбранных услуг?')) clearCart();
                     }}
                   >
-                    Очистить корзину
+                    Очистить список
                   </button>
                 </div>
               </aside>
@@ -95,8 +95,8 @@ export function CartPage() {
           ) : (
             <Reveal>
               <div className="mt-10 rounded-premium border border-line bg-white/84 p-8 text-center shadow-glass">
-                <h2 className="text-3xl font-extrabold">Корзина пока пуста</h2>
-                <p className="mx-auto mt-4 max-w-md text-base leading-7 text-muted">Добавьте услуги или готовые пакеты, чтобы оформить заказ.</p>
+                <h2 className="text-3xl font-extrabold">Список пока пуст</h2>
+                <p className="mx-auto mt-4 max-w-md text-base leading-7 text-muted">Добавьте услуги или готовые пакеты, чтобы затем обсудить детали в мессенджере.</p>
                 <div className="mt-7">
                   <ButtonLink to="/services">Перейти к услугам</ButtonLink>
                 </div>

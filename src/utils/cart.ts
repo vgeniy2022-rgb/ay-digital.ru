@@ -1,7 +1,6 @@
 import { CartItem, CartItemType } from '../types/cart';
 
 export const cartStorageKey = 'ay-digital-cart-v1';
-export const orderSuccessStorageKey = 'ay-digital-last-order-v1';
 
 export function clampQuantity(value: number) {
   if (!Number.isFinite(value)) return 1;

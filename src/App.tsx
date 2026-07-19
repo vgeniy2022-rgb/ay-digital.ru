@@ -13,7 +13,6 @@ const PricesPage = lazy(() => import('./pages/PricesPage').then((module) => ({ d
 const PriceDirectionPage = lazy(() => import('./pages/PriceDirectionPage').then((module) => ({ default: module.PriceDirectionPage })));
 const CartPage = lazy(() => import('./pages/CartPage').then((module) => ({ default: module.CartPage })));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage').then((module) => ({ default: module.CheckoutPage })));
-const OrderSuccessPage = lazy(() => import('./pages/OrderSuccessPage').then((module) => ({ default: module.OrderSuccessPage })));
 const ProcessPage = lazy(() => import('./pages/ProcessPage').then((module) => ({ default: module.ProcessPage })));
 const CasesPage = lazy(() => import('./pages/CasesPage').then((module) => ({ default: module.CasesPage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then((module) => ({ default: module.AboutPage })));
@@ -39,7 +38,7 @@ export default function App() {
             <Route path="/prices/:slug" element={<PriceDirectionPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/order-success" element={<OrderSuccessPage />} />
+            <Route path="/order-success" element={<Navigate to="/contacts" replace />} />
             <Route path="/process" element={<ProcessPage />} />
             <Route path="/cases" element={<CasesPage />} />
             <Route path="/about" element={<AboutPage />} />

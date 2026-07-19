@@ -88,7 +88,7 @@ export const routeSeo: Record<string, RouteSeo> = {
   },
   '/contacts': {
     title: 'Контакты IT-специалиста во Владивостоке — Александр',
-    description: 'Контакты Александра: телефон, Telegram и WhatsApp для заявок на компьютерную помощь, сайты, настройку техники и удалённую помощь.',
+    description: 'Контакты Александра: телефон, Telegram и WhatsApp для связи по компьютерной помощи, сайтам, настройке техники и удалённой помощи.',
     canonicalPath: '/contacts',
   },
   '/useful': {
@@ -118,15 +118,9 @@ export const routeSeo: Record<string, RouteSeo> = {
     noindex: true,
   },
   '/checkout': {
-    title: 'Оформление заказа — AY Digital',
-    description: 'Оформление заявки на услуги AY Digital.',
+    title: 'Обсудить выбранные услуги — AY Digital',
+    description: 'Список выбранных услуг AY Digital для обсуждения в Telegram или WhatsApp.',
     canonicalPath: '/checkout',
-    noindex: true,
-  },
-  '/order-success': {
-    title: 'Заявка отправлена — AY Digital',
-    description: 'Заявка на услуги AY Digital отправлена.',
-    canonicalPath: '/order-success',
     noindex: true,
   },
 };
