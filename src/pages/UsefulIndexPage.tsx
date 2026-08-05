@@ -5,16 +5,30 @@ import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SeoHead } from '../components/SeoHead';
+import { absoluteUrl, siteConfig } from '../config/site';
 import { UsefulCard, UsefulHero } from '../components/UsefulBlocks';
 import { usefulAudience, usefulCards, usefulIndexMeta } from '../data/useful';
 import { useSiteData } from '../hooks/useSiteData';
 
 export function UsefulIndexPage() {
   const { data } = useSiteData();
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: usefulIndexMeta.title,
+    description: usefulIndexMeta.description,
+    url: absoluteUrl('/useful'),
+    inLanguage: 'ru-RU',
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.siteName,
+      url: siteConfig.siteUrl,
+    },
+  };
 
   return (
     <PageTransition>
-      <SeoHead title={usefulIndexMeta.title} description={usefulIndexMeta.description} canonicalPath="/useful" />
+      <SeoHead title={usefulIndexMeta.title} description={usefulIndexMeta.description} canonicalPath="/useful" structuredData={collectionSchema} />
       <UsefulHero
         title={usefulIndexMeta.title}
         description="Простые инструкции без сложных слов: как перенести данные, защитить аккаунты, проверить устройство и не попасться на мошенников."

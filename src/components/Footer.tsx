@@ -47,7 +47,7 @@ export function Footer() {
             </div>
           </div>
           <div className="lg:col-span-2">
-            <div className="font-bold">Услуги во Владивостоке</div>
+            <div className="font-bold">География и услуги</div>
             <div className="mt-4 flex flex-wrap gap-2 text-sm text-muted">
               {localSeoLinks.slice(0, 5).map((item) => (
                 <Link className="rounded-full border border-line bg-white px-3 py-1.5 transition hover:text-ink" key={item.href} to={item.href}>

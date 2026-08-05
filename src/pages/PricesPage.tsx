@@ -8,6 +8,8 @@ import { PageHero } from '../components/PageHero';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
+import { SeoHead } from '../components/SeoHead';
+import { absoluteUrl, siteConfig } from '../config/site';
 import { pageMeta } from '../data/pageMeta';
 import { localSeoLinks } from '../data/localSeoLinks';
 import { priceDirections } from '../data/priceDirections';
@@ -41,6 +43,32 @@ function getCompactIncludes(item: PriceGroup['items'][number]) {
   return ['состав согласуем', 'цена до старта', 'понятный результат'];
 }
 
+function createOfferCatalogSchema(groups: PriceGroup[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'OfferCatalog',
+    name: 'Цены на IT-услуги AY Digital',
+    url: absoluteUrl('/prices'),
+    itemListElement: groups.map((group) => ({
+      '@type': 'OfferCatalog',
+      name: group.title,
+      itemListElement: group.items.map((item) => ({
+        '@type': 'Offer',
+        name: item.name,
+        description: item.description,
+        priceCurrency: 'RUB',
+        category: group.title,
+        availability: 'https://schema.org/InStock',
+        offeredBy: {
+          '@type': 'Person',
+          name: siteConfig.specialistName,
+          telephone: siteConfig.phone,
+        },
+      })),
+    })),
+  };
+}
+
 export function PricesPage() {
   const { data, isLoading } = useSiteData();
   const [activeTab, setActiveTab] = useState('all');
@@ -51,6 +79,7 @@ export function PricesPage() {
 
   return (
     <PageTransition>
+      <SeoHead structuredData={createOfferCatalogSchema(data.priceGroups)} />
       <PageHero {...pageMeta.prices} />
       <section className="pb-16">
         <Container>

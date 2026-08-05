@@ -7,9 +7,53 @@ import { PageTransition } from '../components/PageTransition';
 import { PriceVisual } from '../components/PriceVisuals';
 import { Reveal } from '../components/Reveal';
 import { SeoHead } from '../components/SeoHead';
+import { absoluteUrl, siteConfig } from '../config/site';
 import { getPriceDirection } from '../data/priceDirections';
 import { useSiteData } from '../hooks/useSiteData';
 import { createCartKey, parseExactPrice } from '../utils/cart';
+
+function createDirectionSchema(direction: NonNullable<ReturnType<typeof getPriceDirection>>) {
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: direction.title,
+      serviceType: direction.groupTitle,
+      description: direction.seoDescription,
+      url: absoluteUrl(direction.path),
+      provider: {
+        '@type': 'Person',
+        name: siteConfig.specialistName,
+        telephone: siteConfig.phone,
+        url: siteConfig.siteUrl,
+      },
+      areaServed: {
+        '@type': 'City',
+        name: siteConfig.city,
+      },
+      offers: direction.packages.map((item) => ({
+        '@type': 'Offer',
+        name: item.name,
+        description: item.fit,
+        priceCurrency: 'RUB',
+        availability: 'https://schema.org/InStock',
+      })),
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'OfferCatalog',
+      name: `${direction.title}: пакеты и цены`,
+      url: absoluteUrl(direction.path),
+      itemListElement: direction.packages.map((item) => ({
+        '@type': 'Offer',
+        name: item.name,
+        description: item.fit,
+        priceCurrency: 'RUB',
+        availability: 'https://schema.org/InStock',
+      })),
+    },
+  ];
+}
 
 export function PriceDirectionPage() {
   const { slug } = useParams();
@@ -26,6 +70,7 @@ export function PriceDirectionPage() {
         title={direction.seoTitle}
         description={direction.seoDescription}
         canonicalPath={direction.path}
+        structuredData={createDirectionSchema(direction)}
       />
       <section className="py-14 sm:py-20">
         <Container>

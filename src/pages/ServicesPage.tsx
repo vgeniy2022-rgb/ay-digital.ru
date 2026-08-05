@@ -5,7 +5,9 @@ import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { AdminWebsiteSection, AgreementSection, LegalPreparationSection } from '../components/SalesSections';
 import { ServiceCard } from '../components/ServiceCard';
+import { SeoHead } from '../components/SeoHead';
 import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
+import { absoluteUrl, siteConfig } from '../config/site';
 import { pageMeta } from '../data/pageMeta';
 import { localSeoLinks } from '../data/localSeoLinks';
 import { useSiteData } from '../hooks/useSiteData';
@@ -21,6 +23,35 @@ const categoryOrder = [
   'Базовая подготовка сайта к заявкам',
 ];
 
+function createServicesSchema(services: ReturnType<typeof useSiteData>['data']['services']) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Услуги AY Digital',
+    url: absoluteUrl('/services'),
+    itemListElement: services.map((service, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Service',
+        name: service.title,
+        serviceType: service.category,
+        description: service.description || service.lead,
+        url: absoluteUrl(service.path),
+        provider: {
+          '@type': 'Person',
+          name: siteConfig.specialistName,
+          telephone: siteConfig.phone,
+        },
+        areaServed: {
+          '@type': 'City',
+          name: siteConfig.city,
+        },
+      },
+    })),
+  };
+}
+
 export function ServicesPage() {
   const { data, isLoading } = useSiteData();
   const { services } = data;
@@ -34,6 +65,7 @@ export function ServicesPage() {
 
   return (
     <PageTransition>
+      <SeoHead structuredData={createServicesSchema(services)} />
       <PageHero {...pageMeta.services} />
       <section className="pb-12">
         <Container>

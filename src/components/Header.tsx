@@ -17,6 +17,12 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/70 bg-white/62 backdrop-blur-2xl">
+      <a
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-white"
+        href="#main-content"
+      >
+        Перейти к основному содержимому
+      </a>
       <Container className="py-3">
         <div className="glass flex min-h-16 items-center justify-between rounded-full px-4 shadow-glass sm:px-5">
           <NavLink to="/" onClick={close} className="flex items-center gap-3">

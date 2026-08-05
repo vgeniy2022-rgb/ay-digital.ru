@@ -1,4 +1,5 @@
 import { PropsWithChildren } from 'react';
+import { Breadcrumbs } from '../components/Breadcrumbs';
 import { CookieBanner } from '../components/CookieBanner';
 import { Footer } from '../components/Footer';
 import { Header } from '../components/Header';
@@ -10,7 +11,8 @@ export function AppLayout({ children }: PropsWithChildren) {
     <div className="min-h-screen overflow-x-hidden">
       <SeoHead />
       <Header />
-      <main className="pb-20 sm:pb-0">{children}</main>
+      <Breadcrumbs />
+      <main id="main-content" className="pb-20 sm:pb-0">{children}</main>
       <Footer />
       <MobileStickyCta />
       <CookieBanner />

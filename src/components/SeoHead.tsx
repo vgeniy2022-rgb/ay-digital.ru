@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { absoluteAssetUrl, absoluteUrl, siteConfig } from '../config/site';
 import { getRouteSeo } from '../data/routeSeo';
+import { createBaseStructuredData, createBreadcrumbStructuredData } from '../utils/seoStructuredData';
 
 export type SeoHeadProps = {
   title?: string;
@@ -81,6 +82,22 @@ export function SeoHead(props: SeoHeadProps) {
       return element;
     });
 
+    setMeta('link[rel="alternate"][hreflang="ru-RU"]', 'href', canonicalUrl, () => {
+      const element = document.createElement('link');
+      element.setAttribute('rel', 'alternate');
+      element.setAttribute('hreflang', 'ru-RU');
+      element.setAttribute('data-seo', 'true');
+      return element;
+    });
+
+    setMeta('link[rel="alternate"][hreflang="x-default"]', 'href', canonicalUrl, () => {
+      const element = document.createElement('link');
+      element.setAttribute('rel', 'alternate');
+      element.setAttribute('hreflang', 'x-default');
+      element.setAttribute('data-seo', 'true');
+      return element;
+    });
+
     setMeta('meta[property="og:locale"]', 'content', 'ru_RU', () => createPropertyMeta('og:locale'));
     setMeta('meta[property="og:type"]', 'content', type, () => createPropertyMeta('og:type'));
     setMeta('meta[property="og:site_name"]', 'content', siteConfig.siteName, () => createPropertyMeta('og:site_name'));
@@ -88,14 +105,23 @@ export function SeoHead(props: SeoHeadProps) {
     setMeta('meta[property="og:description"]', 'content', description, () => createPropertyMeta('og:description'));
     setMeta('meta[property="og:url"]', 'content', canonicalUrl, () => createPropertyMeta('og:url'));
     setMeta('meta[property="og:image"]', 'content', image, () => createPropertyMeta('og:image'));
+    setMeta('meta[property="og:image:alt"]', 'content', title, () => createPropertyMeta('og:image:alt'));
+    setMeta('meta[property="og:image:width"]', 'content', '1200', () => createPropertyMeta('og:image:width'));
+    setMeta('meta[property="og:image:height"]', 'content', '630', () => createPropertyMeta('og:image:height'));
 
     setMeta('meta[name="twitter:card"]', 'content', 'summary_large_image', () => createNamedMeta('twitter:card'));
     setMeta('meta[name="twitter:title"]', 'content', title, () => createNamedMeta('twitter:title'));
     setMeta('meta[name="twitter:description"]', 'content', description, () => createNamedMeta('twitter:description'));
     setMeta('meta[name="twitter:image"]', 'content', image, () => createNamedMeta('twitter:image'));
+    setMeta('meta[name="twitter:image:alt"]', 'content', title, () => createNamedMeta('twitter:image:alt'));
 
     document.head.querySelectorAll('script[data-seo-json-ld="true"]').forEach((element) => element.remove());
-    const dataItems = Array.isArray(structuredData) ? structuredData : structuredData ? [structuredData] : [];
+    const routeDataItems = Array.isArray(structuredData) ? structuredData : structuredData ? [structuredData] : [];
+    const dataItems = [
+      ...createBaseStructuredData(),
+      createBreadcrumbStructuredData(canonicalPath),
+      ...routeDataItems,
+    ];
     dataItems.forEach((item) => {
       const cleaned = cleanJsonLd(item);
       if (!cleaned) return;
@@ -105,7 +131,7 @@ export function SeoHead(props: SeoHeadProps) {
       script.textContent = JSON.stringify(cleaned);
       document.head.appendChild(script);
     });
-  }, [canonicalUrl, description, image, noindex, structuredData, title, type]);
+  }, [canonicalPath, canonicalUrl, description, image, noindex, structuredData, title, type]);
 
   return null;
 }

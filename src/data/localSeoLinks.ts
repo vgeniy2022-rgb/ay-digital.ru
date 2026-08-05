@@ -1,4 +1,5 @@
 export const localSeoLinks = [
+  { label: 'Приморский край', href: '/primorsky-krai' },
   { label: 'Компьютерная помощь во Владивостоке', href: '/computer-help-vladivostok' },
   { label: 'Установка программ во Владивостоке', href: '/program-installation-vladivostok' },
   { label: 'Настройка Windows во Владивостоке', href: '/windows-setup-vladivostok' },

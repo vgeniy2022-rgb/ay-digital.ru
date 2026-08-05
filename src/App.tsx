@@ -3,7 +3,6 @@ import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppLayout } from './layouts/AppLayout';
 import { privacyContent, termsContent } from './data/legal';
-import { seoLandingPages } from './data/seoLandingPages';
 
 const HomePage = lazy(() => import('./pages/HomePage').then((module) => ({ default: module.HomePage })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage').then((module) => ({ default: module.ServicesPage })));
@@ -15,10 +14,12 @@ const CartPage = lazy(() => import('./pages/CartPage').then((module) => ({ defau
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage').then((module) => ({ default: module.CheckoutPage })));
 const ProcessPage = lazy(() => import('./pages/ProcessPage').then((module) => ({ default: module.ProcessPage })));
 const CasesPage = lazy(() => import('./pages/CasesPage').then((module) => ({ default: module.CasesPage })));
+const CasePage = lazy(() => import('./pages/CasePage').then((module) => ({ default: module.CasePage })));
 const AboutPage = lazy(() => import('./pages/AboutPage').then((module) => ({ default: module.AboutPage })));
 const ContactsPage = lazy(() => import('./pages/ContactsPage').then((module) => ({ default: module.ContactsPage })));
 const LegalPage = lazy(() => import('./pages/LegalPage').then((module) => ({ default: module.LegalPage })));
 const SeoLandingPage = lazy(() => import('./pages/SeoLandingPage').then((module) => ({ default: module.SeoLandingPage })));
+const LocalSeoPage = lazy(() => import('./pages/LocalSeoPage').then((module) => ({ default: module.LocalSeoPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage })));
 
 export default function App() {
@@ -41,13 +42,19 @@ export default function App() {
             <Route path="/order-success" element={<Navigate to="/contacts" replace />} />
             <Route path="/process" element={<ProcessPage />} />
             <Route path="/cases" element={<CasesPage />} />
+            <Route path="/cases/:slug" element={<CasePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contacts" element={<ContactsPage />} />
             <Route path="/privacy" element={<LegalPage content={privacyContent} />} />
             <Route path="/terms" element={<LegalPage content={termsContent} />} />
-            {seoLandingPages.map((page) => (
-              <Route path={page.path} element={<SeoLandingPage page={page} />} key={page.path} />
-            ))}
+            <Route path="/primorsky-krai" element={<LocalSeoPage />} />
+            <Route path="/computer-help-artem" element={<LocalSeoPage />} />
+            <Route path="/computer-help-ussuriysk" element={<LocalSeoPage />} />
+            <Route path="/computer-help-nakhodka" element={<LocalSeoPage />} />
+            <Route path="/website-development-artem" element={<LocalSeoPage />} />
+            <Route path="/website-development-ussuriysk" element={<LocalSeoPage />} />
+            <Route path="/website-development-nakhodka" element={<LocalSeoPage />} />
+            <Route path="/:landingSlug" element={<SeoLandingPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>

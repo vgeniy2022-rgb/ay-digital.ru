@@ -18,17 +18,6 @@ const provider = {
   sameAs: [siteConfig.telegramUrl],
 };
 
-function breadcrumb(path: string, name: string) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Главная', item: siteConfig.siteUrl },
-      { '@type': 'ListItem', position: 2, name, item: absoluteUrl(path) },
-    ],
-  };
-}
-
 function serviceSchema(path: string, serviceType: string, description: string) {
   return {
     '@context': 'https://schema.org',
@@ -82,8 +71,8 @@ export const routeSeo: Record<string, RouteSeo> = {
     canonicalPath: '/cases',
   },
   '/about': {
-    title: 'О специалисте — Александр, частный IT-специалист',
-    description: 'Александр помогает с сайтами, техникой, приложениями, презентациями, Windows, macOS, iPhone, Android и цифровыми задачами во Владивостоке и удалённо.',
+    title: 'О специалисте — Александр, частный IT-специалист во Владивостоке',
+    description: 'Александр — частный IT-специалист во Владивостоке: сайты, веб-приложения, компьютерная помощь, Windows, MacBook, перенос данных, телефоны и подбор техники.',
     canonicalPath: '/about',
   },
   '/contacts': {
@@ -130,7 +119,7 @@ export function createLandingSeo(path: string, title: string, description: strin
     title,
     description,
     canonicalPath: path,
-    structuredData: [serviceSchema(path, h1, description), breadcrumb(path, h1)],
+    structuredData: serviceSchema(path, h1, description),
   } satisfies RouteSeo;
 }
 

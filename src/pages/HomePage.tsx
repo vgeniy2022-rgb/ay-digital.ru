@@ -9,6 +9,8 @@ import { Reveal } from '../components/Reveal';
 import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
 import { SpecialistStatus } from '../components/SpecialistStatus';
 import { TechVisual } from '../components/TechVisual';
+import { CasePreviewCard } from '../components/TrustBlocks';
+import { featuredCases } from '../data/cases';
 import { useSiteData } from '../hooks/useSiteData';
 
 const mainDirections = [
@@ -152,6 +154,27 @@ export function HomePage() {
         <Container>
           <Reveal>
             <SiteAdminPromoCard />
+          </Reveal>
+        </Container>
+      </section>
+
+      <section className="py-12 sm:py-16">
+        <Container>
+          <Reveal>
+            <div className="rounded-premium border border-line bg-white/84 p-7 shadow-glass sm:p-10">
+              <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">География</p>
+                  <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">
+                    Владивосток и удалённо по Приморскому краю
+                  </h2>
+                  <p className="mt-4 max-w-3xl text-base leading-7 text-muted">
+                    Основной регион — Владивосток. По Артёму, Уссурийску, Находке и другим городам Приморья часть задач можно обсудить и решить удалённо.
+                  </p>
+                </div>
+                <ButtonLink to="/primorsky-krai" variant="secondary">Подробнее</ButtonLink>
+              </div>
+            </div>
           </Reveal>
         </Container>
       </section>
@@ -302,7 +325,9 @@ export function HomePage() {
                         <img
                           className="h-12 w-12 rounded-full object-cover"
                           src={review.photoUrl}
-                          alt={review.name}
+                          alt={`Фото клиента: ${review.name}`}
+                          loading="lazy"
+                          decoding="async"
                         />
                       ) : (
                         <div className="grid h-12 w-12 place-items-center rounded-full bg-slate-100 text-sm font-extrabold text-ink">
@@ -319,7 +344,9 @@ export function HomePage() {
                       <img
                         className="mt-5 max-h-72 w-full rounded-3xl border border-line object-cover"
                         src={review.reviewImageUrl}
-                        alt={`Отзыв: ${review.name}`}
+                        alt={`Скриншот отзыва клиента: ${review.name}`}
+                        loading="lazy"
+                        decoding="async"
                       />
                     )}
                   </article>
@@ -329,6 +356,25 @@ export function HomePage() {
           </Container>
         </section>
       ) : null}
+
+      <section className="py-12 sm:py-16">
+        <Container>
+          <Reveal className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Кейсы</p>
+              <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">Реальные проекты</h2>
+            </div>
+            <ButtonLink to="/cases" variant="secondary">Все кейсы</ButtonLink>
+          </Reveal>
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
+            {featuredCases.map((item, index) => (
+              <Reveal delay={index * 0.04} key={item.slug}>
+                <CasePreviewCard item={item} />
+              </Reveal>
+            ))}
+          </div>
+        </Container>
+      </section>
 
       {faq.length ? (
         <section className="py-12 sm:py-16">
