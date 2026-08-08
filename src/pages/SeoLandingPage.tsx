@@ -216,6 +216,39 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
         </Container>
       </section>
 
+      {currentPage.searchIntents?.length ? (
+        <section className="py-10 sm:py-14">
+          <Container>
+            <Reveal>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Как это обычно формулируют</p>
+              <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">
+                С чем можно написать обычными словами
+              </h2>
+              <p className="mt-5 max-w-3xl text-base leading-7 text-muted">
+                Не обязательно знать точный термин. Достаточно описать ситуацию так, как вы её видите.
+              </p>
+            </Reveal>
+            <div className="mt-8 grid gap-5 lg:grid-cols-2">
+              {currentPage.searchIntents.map((group, index) => (
+                <Reveal delay={index * 0.04} key={group.title}>
+                  <article className="h-full rounded-premium border border-line bg-white/84 p-6 shadow-glass">
+                    <h3 className="text-xl font-extrabold leading-tight">{group.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-muted">{group.answer}</p>
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {group.phrases.map((phrase) => (
+                        <span className="rounded-full bg-slate-50 px-3 py-2 text-xs font-bold leading-5 text-graphite" key={phrase}>
+                          {phrase}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
       <section className="py-10 sm:py-14">
         <Container>
           <Reveal>
