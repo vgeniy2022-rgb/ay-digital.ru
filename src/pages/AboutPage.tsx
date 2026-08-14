@@ -94,6 +94,7 @@ export function AboutPage() {
                   <MessageCircle className="h-4 w-4" />
                   Написать в Telegram
                 </ButtonLink>
+                <ButtonLink to="/website-development-vladivostok" variant="secondary">Создание сайтов</ButtonLink>
                 <ButtonLink to="/cases" variant="secondary">Смотреть кейсы</ButtonLink>
               </div>
             </Reveal>

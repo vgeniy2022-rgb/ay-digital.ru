@@ -193,6 +193,38 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
         </Container>
       </section>
 
+      {currentPage.websiteTypes?.length ? (
+        <section className="py-10 sm:py-14">
+          <Container>
+            <Reveal>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Формат сайта</p>
+              <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">Какой сайт вам нужен</h2>
+              <p className="mt-5 max-w-3xl text-base leading-7 text-muted">
+                Формат зависит не от модного названия, а от задачи: показать услуги, собрать заявки, вести каталог или дать клиенту возможность самому обновлять контент.
+              </p>
+            </Reveal>
+            <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {currentPage.websiteTypes.map((item, index) => (
+                <Reveal delay={index * 0.04} key={item.title}>
+                  <article className="h-full rounded-premium border border-line bg-white/84 p-6 shadow-glass">
+                    <h3 className="text-2xl font-extrabold leading-tight">{item.title}</h3>
+                    <p className="mt-4 text-sm leading-6 text-muted">{item.description}</p>
+                    <div className="mt-5 grid gap-2">
+                      {item.items.map((point) => (
+                        <div className="flex items-start gap-3 text-sm font-semibold leading-6 text-graphite" key={point}>
+                          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                          {point}
+                        </div>
+                      ))}
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
       <section className="py-10 sm:py-14">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
@@ -267,6 +299,49 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
           </div>
         </Container>
       </section>
+
+      {currentPage.industries?.length ? (
+        <section className="py-10 sm:py-14">
+          <Container>
+            <Reveal>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Сферы</p>
+              <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">Сайт для вашей сферы</h2>
+              <p className="mt-5 max-w-3xl text-base leading-7 text-muted">
+                Не нужно заранее знать точную структуру. Достаточно рассказать, чем вы занимаетесь, а формат сайта можно подобрать под реальные вопросы клиентов.
+              </p>
+            </Reveal>
+            <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {currentPage.industries.map((item, index) => (
+                <Reveal delay={index * 0.04} key={item.title}>
+                  <article className="h-full rounded-premium border border-line bg-slate-50 p-6 shadow-glass">
+                    <h3 className="text-xl font-extrabold leading-tight">{item.title}</h3>
+                    <p className="mt-4 text-sm leading-6 text-muted">{item.description}</p>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
+            <Reveal>
+              <div className="mt-6 rounded-premium border border-line bg-white/84 p-6 text-sm font-semibold leading-7 text-graphite shadow-glass">
+                Сайт может быть разработан для салона красоты, мастера, кафе, ресторана, магазина, строительной компании, автосервиса, фотографа, юриста, сервисной компании, производства, поставщика оборудования, образовательного проекта, небольшой компании или индивидуального предпринимателя.
+              </div>
+            </Reveal>
+          </Container>
+        </section>
+      ) : null}
+
+      {currentPage.independenceNote ? (
+        <section className="py-10 sm:py-14">
+          <Container>
+            <Reveal>
+              <div className="rounded-premium border border-blue-100 bg-blue-50/70 p-7 shadow-glass sm:p-8">
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">После запуска</p>
+                <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">Почему сайт остаётся самостоятельным</h2>
+                <p className="mt-5 max-w-4xl text-base font-semibold leading-7 text-graphite">{currentPage.independenceNote}</p>
+              </div>
+            </Reveal>
+          </Container>
+        </section>
+      ) : null}
 
       <section className="py-10 sm:py-14">
         <Container>

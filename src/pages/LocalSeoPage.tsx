@@ -190,6 +190,38 @@ function LocalHubPage() {
             </section>
           </Reveal>
 
+          <Reveal className="mt-8">
+            <section className="rounded-premium border border-line bg-white/84 p-7 shadow-glass sm:p-8">
+              <div className="grid gap-7 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Создание сайтов</p>
+                  <h2 className="mt-4 text-3xl font-extrabold leading-tight">Создание сайтов в Приморском крае</h2>
+                  <p className="mt-4 text-base leading-7 text-muted">
+                    Разработка сайта не привязана к личной встрече. Для Владивостока, Уссурийска, Артёма, Находки и других городов края можно удалённо обсудить задачу, собрать структуру, подготовить страницы, адаптацию под телефон, базовое SEO и кнопки связи.
+                  </p>
+                  <div className="mt-6">
+                    <ButtonLink to="/website-development-vladivostok" variant="secondary">
+                      Подробнее о разработке сайтов
+                    </ButtonLink>
+                  </div>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {[
+                    { label: 'Владивосток', href: '/website-development-vladivostok' },
+                    { label: 'Уссурийск', href: '/website-development-ussuriysk' },
+                    { label: 'Артём', href: '/website-development-artem' },
+                    { label: 'Находка', href: '/website-development-nakhodka' },
+                  ].map((item) => (
+                    <Link className="group flex items-center justify-between gap-4 rounded-3xl border border-line bg-slate-50 p-5 text-sm font-extrabold text-ink shadow-glass transition hover:-translate-y-0.5 hover:border-slate-300" to={item.href} key={item.href}>
+                      Создание сайтов: {item.label}
+                      <ArrowRight className="h-4 w-4 text-accent transition group-hover:translate-x-0.5" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </Reveal>
+
           <div className="mt-8 grid gap-5 md:grid-cols-2">
             <Reveal>
               <ListCard

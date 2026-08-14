@@ -190,6 +190,13 @@ export function PriceDirectionPage() {
                 <ButtonLink href={data.site.telegramUrl} variant="secondary" showArrow={false}>
                   Написать в Telegram
                 </ButtonLink>
+                {direction.slug === 'websites' ? (
+                  <div className="mt-3">
+                    <ButtonLink to="/website-development-vladivostok" variant="secondary">
+                      Подробнее о создании сайтов
+                    </ButtonLink>
+                  </div>
+                ) : null}
               </div>
             </div>
           </Reveal>

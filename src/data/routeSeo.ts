@@ -50,8 +50,8 @@ const homeStructuredData = {
 
 export const routeSeo: Record<string, RouteSeo> = {
   '/': {
-    title: 'Сайты, приложения и IT-помощь во Владивостоке — Александр',
-    description: siteConfig.defaultDescription,
+    title: 'AY Digital — сайты для бизнеса и IT-помощь во Владивостоке',
+    description: 'AY Digital создаёт сайты для бизнеса во Владивостоке и удалённо по Приморскому краю: лендинги, сайты-визитки, сайты с админкой, каталоги и базовая SEO-подготовка.',
     canonicalPath: '/',
     structuredData: homeStructuredData,
   },

@@ -85,6 +85,19 @@ const taskExamples = [
   },
 ];
 
+const websiteBuildOptions = [
+  'сайт-визитка для специалиста или небольшой компании',
+  'лендинг под услугу, акцию или рекламу',
+  'корпоративный или информационный сайт',
+  'сайт с каталогом товаров или услуг',
+  'сайт с админкой для самостоятельного обновления контента',
+  'индивидуальный веб-сервис под нестандартную задачу',
+  'адаптация под смартфоны и планшеты',
+  'базовая SEO-подготовка для Google и Яндекса',
+  'формы заявок, Telegram, WhatsApp и телефон',
+  'обновление цен, услуг, фото и акций через админку',
+];
+
 export function HomePage() {
   const { data } = useSiteData();
   const { commonRequests, faq, homeHero, quickStats, reviews, site, workSteps } = data;
@@ -154,6 +167,41 @@ export function HomePage() {
         <Container>
           <Reveal>
             <SiteAdminPromoCard />
+          </Reveal>
+        </Container>
+      </section>
+
+      <section className="py-12 sm:py-16">
+        <Container>
+          <Reveal>
+            <div className="rounded-premium border border-line bg-white/84 p-7 shadow-glass sm:p-10">
+              <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Создание сайтов</p>
+                  <h2 className="mt-4 text-3xl font-extrabold leading-tight sm:text-5xl">
+                    Создание сайтов для бизнеса и специалистов
+                  </h2>
+                  <p className="mt-5 text-base leading-7 text-muted">
+                    Помогаю сделать сайт, который спокойно объясняет услугу: что вы предлагаете, сколько это стоит, почему вам можно доверять и как быстро написать в Telegram или WhatsApp.
+                  </p>
+                  <div className="mt-7">
+                    <ButtonLink to="/website-development-vladivostok" variant="secondary">
+                      Подробнее о создании сайтов
+                    </ButtonLink>
+                  </div>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {websiteBuildOptions.map((item) => (
+                    <div className="flex min-h-20 items-start gap-3 rounded-3xl border border-line bg-slate-50 p-5 text-sm font-bold leading-6 text-graphite" key={item}>
+                      <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-blue-50 text-accent">
+                        <Check className="h-4 w-4" />
+                      </span>
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </Reveal>
         </Container>
       </section>
