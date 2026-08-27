@@ -286,21 +286,23 @@ function LongreadList({
   return (
     <section className="py-10 sm:py-14">
       <Container>
+        <div className="mx-auto max-w-5xl">
         <Reveal>
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">{eyebrow}</p>
           <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">{title}</h2>
         </Reveal>
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
+        <div className="mt-8 grid gap-3 md:grid-cols-2">
           {items.map((item, index) => (
             <Reveal delay={index * 0.025} key={item}>
-              <div className="flex h-full gap-4 rounded-3xl border border-line bg-white/82 p-5 text-base font-semibold leading-7 text-graphite shadow-glass">
+              <div className="flex h-full min-w-0 gap-4 rounded-lg border border-line bg-white/88 p-5 text-[15px] font-semibold leading-6 text-graphite shadow-glass">
                 <span className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full ${toneClass}`}>
                   <Check className="h-4 w-4" />
                 </span>
-                <p>{item}</p>
+                <p className="min-w-0 [overflow-wrap:anywhere]">{item}</p>
               </div>
             </Reveal>
           ))}
+        </div>
         </div>
       </Container>
     </section>

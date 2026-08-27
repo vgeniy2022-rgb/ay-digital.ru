@@ -1,250 +1,365 @@
+import { toPng } from 'html-to-image';
+import {
+  Check,
+  Clock3,
+  Download,
+  FileJson,
+  ImagePlus,
+  LayoutTemplate,
+  Maximize2,
+  Monitor,
+  Palette,
+  Plus,
+  RotateCcw,
+  Send,
+  Smartphone,
+  Trash2,
+  X,
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Check, Clipboard, Monitor, Send, Smartphone, Tablet } from 'lucide-react';
-import { useMemo, useState, type Dispatch, type SetStateAction } from 'react';
-import { Link } from 'react-router-dom';
-import { HowMade, LabFrame, LabHero, LabSectionHeading } from '../components/lab/LabPrimitives';
-import { WebsitePreview, type PreviewDevice } from '../components/lab/WebsitePreview';
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type RefObject } from 'react';
+import { HowMade, LabFrame, LabHero } from '../components/lab/LabPrimitives';
 import { PageTransition } from '../components/PageTransition';
 import { SeoHead } from '../components/SeoHead';
-import {
-  budgetRecommendations,
-  builderBusinesses,
-  builderFeatures,
-  builderPages,
-  complexityLevels,
-  defaultBuilderFeatures,
-  defaultBuilderPages,
-} from '../data/lab';
-import {
-  calculateWebsitePrice,
-  websiteProjectTypeOptions,
-  type WebsitePageRangeId,
-  type WebsiteProjectTypeId,
-} from '../data/websiteCalculator';
 import { useSiteData } from '../hooks/useSiteData';
+import '../styles/websiteBuilder.css';
 
-type BuilderMode = 'configuration' | 'budget';
+type BuilderPanel = 'content' | 'services' | 'style' | 'export';
+type BuilderDevice = 'desktop' | 'mobile';
+type BuilderTheme = 'ink' | 'blue' | 'green' | 'coral';
 
-function pageRangeFromCount(count: number): WebsitePageRangeId {
-  if (count <= 1) return 'one';
-  if (count <= 5) return 'two-five';
-  if (count <= 10) return 'six-ten';
-  return 'more-ten';
+type BuilderService = {
+  id: string;
+  title: string;
+  text: string;
+  price: string;
+};
+
+type LandingDraft = {
+  brand: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  buttonText: string;
+  heroImage: string;
+  theme: BuilderTheme;
+  showAbout: boolean;
+  showServices: boolean;
+  showContact: boolean;
+  aboutTitle: string;
+  aboutText: string;
+  services: BuilderService[];
+};
+
+type StoredDraft = {
+  draft: LandingDraft;
+  sessionId: string;
+  expiresAt: number;
+};
+
+const sessionDuration = 30 * 60 * 1000;
+const storageKey = 'sitevl-landing-builder-v2';
+
+const initialDraft: LandingDraft = {
+  brand: 'Моя студия',
+  eyebrow: 'Услуги во Владивостоке',
+  title: 'Создаём пространство для ваших идей',
+  description: 'Коротко расскажите, чем вы занимаетесь, кому помогаете и почему клиенту стоит обратиться именно к вам.',
+  buttonText: 'Обсудить задачу',
+  heroImage: '/images/editorial/home-collaboration.webp',
+  theme: 'ink',
+  showAbout: true,
+  showServices: true,
+  showContact: true,
+  aboutTitle: 'Работаем спокойно и внимательно',
+  aboutText: 'Здесь можно рассказать о подходе, опыте и важных деталях, которые помогают принять решение.',
+  services: [
+    { id: 'landing-service-1', title: 'Основная услуга', text: 'Короткое объяснение результата для клиента.', price: 'от 5 000 ₽' },
+    { id: 'landing-service-2', title: 'Консультация', text: 'Подходит, чтобы разобраться с задачей и выбрать формат.', price: 'от 1 500 ₽' },
+    { id: 'landing-service-3', title: 'Комплексный проект', text: 'Решение под ключ с понятными этапами работы.', price: 'от 20 000 ₽' },
+  ],
+};
+
+function createSessionId() {
+  return `SV-${Date.now().toString(36).toUpperCase().slice(-6)}`;
 }
 
-function preparedLink(url: string, text: string) {
-  return `${url}${url.includes('?') ? '&' : '?'}text=${encodeURIComponent(text)}`;
+function freshSession(): StoredDraft {
+  return { draft: initialDraft, sessionId: createSessionId(), expiresAt: Date.now() + sessionDuration };
+}
+
+function readSession(): StoredDraft {
+  try {
+    const raw = window.localStorage.getItem(storageKey);
+    if (!raw) return freshSession();
+    const stored = JSON.parse(raw) as StoredDraft;
+    return stored.expiresAt > Date.now() ? { ...stored, draft: { ...initialDraft, ...stored.draft } } : freshSession();
+  } catch {
+    return freshSession();
+  }
+}
+
+async function optimizeImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Не удалось прочитать фотографию'));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error('Не удалось обработать фотографию'));
+      image.onload = () => {
+        const maxSide = 1600;
+        const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+        canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+        canvas.getContext('2d')?.drawImage(image, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', .84));
+      };
+      image.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function formatRemaining(milliseconds: number) {
+  const seconds = Math.max(0, Math.ceil(milliseconds / 1000));
+  return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+}
+
+function LandingPreview({ draft, previewRef }: { draft: LandingDraft; previewRef: RefObject<HTMLDivElement> }) {
+  return (
+    <div className="builder-landing" data-theme={draft.theme} ref={previewRef}>
+      <header><strong>{draft.brand || 'Название проекта'}</strong><nav><span>Услуги</span><span>О нас</span><span>Контакты</span></nav><button type="button">{draft.buttonText || 'Связаться'}</button></header>
+      <main>
+        <section className="builder-landing__hero">
+          <img src={draft.heroImage} alt="Главное изображение создаваемого лендинга" />
+          <div className="builder-landing__shade" />
+          <div><small>{draft.eyebrow}</small><h2>{draft.title || 'Заголовок вашего сайта'}</h2><p>{draft.description}</p><button type="button">{draft.buttonText || 'Связаться'}</button></div>
+        </section>
+        {draft.showServices ? (
+          <section className="builder-landing__section"><small>Что можно выбрать</small><h3>Услуги</h3><div className="builder-landing__services">{draft.services.map((service) => <article key={service.id}><span>{service.price}</span><h4>{service.title}</h4><p>{service.text}</p></article>)}</div></section>
+        ) : null}
+        {draft.showAbout ? (
+          <section className="builder-landing__about"><div><small>О проекте</small><h3>{draft.aboutTitle}</h3></div><p>{draft.aboutText}</p></section>
+        ) : null}
+        {draft.showContact ? (
+          <section className="builder-landing__contact"><small>Следующий шаг</small><h3>Давайте обсудим вашу задачу</h3><button type="button">{draft.buttonText || 'Связаться'}</button></section>
+        ) : null}
+      </main>
+      <footer><strong>{draft.brand}</strong><span>Сайт собран в SITEVL LAB</span></footer>
+    </div>
+  );
 }
 
 export function WebsiteBuilderPage() {
   const { data } = useSiteData();
-  const [mode, setMode] = useState<BuilderMode>('configuration');
-  const [businessId, setBusinessId] = useState('specialist');
-  const [projectTypeId, setProjectTypeId] = useState<WebsiteProjectTypeId>('business-card');
-  const [pages, setPages] = useState(defaultBuilderPages);
-  const [features, setFeatures] = useState(defaultBuilderFeatures);
-  const [device, setDevice] = useState<PreviewDevice>('desktop');
-  const [budgetId, setBudgetId] = useState('30000');
-  const [complexity, setComplexity] = useState(1);
-  const [copied, setCopied] = useState(false);
+  const [session, setSession] = useState<StoredDraft>(readSession);
+  const [panel, setPanel] = useState<BuilderPanel>('content');
+  const [device, setDevice] = useState<BuilderDevice>('desktop');
+  const [fullscreen, setFullscreen] = useState(false);
+  const [remaining, setRemaining] = useState(() => session.expiresAt - Date.now());
+  const [notice, setNotice] = useState('');
+  const [isCapturing, setIsCapturing] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const draft = session.draft;
 
-  const business = builderBusinesses.find((item) => item.id === businessId) ?? builderBusinesses[0];
-  const projectType = websiteProjectTypeOptions.find((item) => item.id === projectTypeId) ?? websiteProjectTypeOptions[0];
-  const effectiveFeatures = useMemo(
-    () => Array.from(new Set([...features, ...projectType.includedFeatures])),
-    [features, projectType.includedFeatures],
-  );
-  const calculationFeatureIds = useMemo(
-    () => Array.from(new Set(
-      builderFeatures
-        .filter((item) => effectiveFeatures.includes(item.id) && item.calculationId)
-        .map((item) => item.calculationId as string),
-    )),
-    [effectiveFeatures],
-  );
-  const calculation = useMemo(
-    () => calculateWebsitePrice({
-      projectTypeId,
-      pageRangeId: pageRangeFromCount(pages.length),
-      featureIds: calculationFeatureIds,
-    }),
-    [calculationFeatureIds, pages.length, projectTypeId],
-  );
-  const budget = budgetRecommendations.find((item) => item.id === budgetId) ?? budgetRecommendations[0];
-  const complexityItem = complexityLevels[complexity - 1];
-  const selectedPageLabels = builderPages.filter((item) => pages.includes(item.id)).map((item) => item.label);
-  const selectedFeatureLabels = builderFeatures.filter((item) => effectiveFeatures.includes(item.id)).map((item) => item.label);
-  const briefText = `Здравствуйте! Собрал конфигурацию в SITEVL Builder. Бизнес: ${business.label}. Тип: ${calculation.projectType.label}. Страницы: ${selectedPageLabels.join(', ') || 'нужно определить'}. Функции: ${selectedFeatureLabels.join(', ') || 'без дополнительных функций'}. Ориентир: ${calculation.display}.`;
+  useEffect(() => {
+    window.localStorage.setItem(storageKey, JSON.stringify(session));
+  }, [session]);
 
-  const toggleValue = (value: string, setter: Dispatch<SetStateAction<string[]>>) => {
-    setter((current) => current.includes(value) ? current.filter((item) => item !== value) : [...current, value]);
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const next = session.expiresAt - Date.now();
+      setRemaining(next);
+      if (next <= 0) {
+        const replacement = freshSession();
+        setSession(replacement);
+        setRemaining(sessionDuration);
+        setNotice('Предыдущий черновик очищен через 30 минут. Начата новая сессия.');
+      }
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [session.expiresAt]);
+
+  useEffect(() => {
+    document.body.classList.toggle('builder-preview-open', fullscreen);
+    return () => document.body.classList.remove('builder-preview-open');
+  }, [fullscreen]);
+
+  const update = <Key extends keyof LandingDraft>(key: Key, value: LandingDraft[Key]) => {
+    setSession((current) => ({ ...current, draft: { ...current.draft, [key]: value } }));
   };
 
-  const copyConfiguration = async () => {
-    await navigator.clipboard.writeText(briefText);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1800);
+  const updateService = (id: string, patch: Partial<BuilderService>) => {
+    update('services', draft.services.map((service) => service.id === id ? { ...service, ...patch } : service));
   };
+
+  const addService = () => {
+    update('services', [...draft.services, { id: `landing-service-${Date.now()}`, title: 'Новая услуга', text: 'Что получает клиент в результате.', price: 'от 3 000 ₽' }]);
+  };
+
+  const uploadHero = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      update('heroImage', await optimizeImage(file));
+      setNotice('Фотография добавлена в главный экран.');
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'Не удалось загрузить фотографию.');
+    }
+    event.target.value = '';
+  };
+
+  const saveScreenshot = async () => {
+    if (!previewRef.current) return;
+    setIsCapturing(true);
+    try {
+      const dataUrl = await toPng(previewRef.current, { cacheBust: true, pixelRatio: 1.6, backgroundColor: '#ffffff' });
+      const link = document.createElement('a');
+      link.download = `sitevl-${session.sessionId.toLowerCase()}.png`;
+      link.href = dataUrl;
+      link.click();
+      setNotice('Снимок лендинга сохранён в PNG.');
+    } catch (error) {
+      console.error('[Builder] Screenshot failed:', error);
+      setNotice('Не удалось создать снимок. Попробуйте ещё раз после загрузки всех фотографий.');
+    } finally {
+      setIsCapturing(false);
+    }
+  };
+
+  const exportJson = () => {
+    const blob = new Blob([JSON.stringify({ sessionId: session.sessionId, createdAt: new Date().toISOString(), draft }, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `sitevl-${session.sessionId.toLowerCase()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    setNotice('Конфигурация сохранена в JSON.');
+  };
+
+  const reset = () => {
+    const next = freshSession();
+    setSession(next);
+    setRemaining(sessionDuration);
+    setNotice('Конструктор очищен. Начата новая 30-минутная сессия.');
+  };
+
+  const briefText = useMemo(() => [
+    `Здравствуйте! Я собрал лендинг в SITEVL LAB. Код: ${session.sessionId}.`,
+    `Проект: ${draft.brand}.`,
+    `Заголовок: ${draft.title}.`,
+    `Описание: ${draft.description}.`,
+    `Услуги: ${draft.services.map((item) => `${item.title} — ${item.price}`).join('; ')}.`,
+    `Блоки: ${[draft.showServices && 'услуги', draft.showAbout && 'о проекте', draft.showContact && 'контакты'].filter(Boolean).join(', ')}.`,
+    `Цветовая тема: ${draft.theme}.`,
+    'Хочу обсудить создание такого сайта.',
+  ].join('\n'), [draft, session.sessionId]);
+  const telegramHref = `${data.site.telegramUrl}?text=${encodeURIComponent(briefText)}`;
 
   return (
     <PageTransition>
-      <SeoHead
-        title="Website Builder — SITEVL LAB"
-        description="Интерактивный конструктор структуры сайта, функций, адаптивного preview и ориентировочной стоимости."
-        canonicalPath="/lab/website-builder"
-        noindex
-      />
+      <SeoHead title="Конструктор лендинга — SITEVL LAB" description="Интерактивный конструктор лендинга с живым preview, загрузкой фотографии и экспортом результата." canonicalPath="/lab/website-builder" noindex />
       <LabFrame>
         <LabHero
-          title="Соберите свой сайт"
-          description="Выберите бизнес, страницы и функции. Preview перестроится сразу, а стоимость будет рассчитана по существующему pricing-конфигу SITEVL."
-          actions={(
-            <>
-              <button className="lab-button" type="button" onClick={() => setMode('configuration')}>Начать сборку</button>
-              <Link className="lab-button lab-button--secondary" to="/brief">Пройти мини-бриф</Link>
-            </>
-          )}
+          title="Соберите свой лендинг"
+          description="Изменяйте текст, услуги, фотографии и цвет. Скачайте снимок результата или отправьте подробную конфигурацию Александру. Черновик автоматически очищается через 30 минут."
+          actions={<button className="lab-button" type="button" onClick={() => setFullscreen(true)}><Maximize2 /> Открыть preview</button>}
         />
 
-        <section className="lab-section">
+        <section className="lab-section builder-section">
           <div className="lab-shell">
-            <div className="lab-tabs" aria-label="Режим конструктора">
-              <button className={mode === 'configuration' ? 'is-active' : ''} type="button" onClick={() => setMode('configuration')}>Собрать конфигурацию</button>
-              <button className={mode === 'budget' ? 'is-active' : ''} type="button" onClick={() => setMode('budget')}>Подобрать по бюджету</button>
+            <div className="builder-session-bar">
+              <div><span className="builder-session-bar__live" /><strong>Сессия {session.sessionId}</strong><small>Черновик хранится только в этом браузере</small></div>
+              <span><Clock3 /> Автоочистка через {formatRemaining(remaining)}</span>
+              <button type="button" onClick={reset}><RotateCcw /> Начать заново</button>
             </div>
 
-            <AnimatePresence mode="wait">
-              {mode === 'configuration' ? (
-                <motion.div className="lab-builder" key="configuration" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                  <form className="lab-builder__controls" onSubmit={(event) => event.preventDefault()}>
-                    <label className="lab-control">
-                      <span>Бизнес</span>
-                      <select value={businessId} onChange={(event) => setBusinessId(event.target.value)}>
-                        {builderBusinesses.map((item) => <option value={item.id} key={item.id}>{item.label}</option>)}
-                      </select>
-                    </label>
+            <div className="builder-workspace">
+              <aside className="builder-sidebar">
+                <nav aria-label="Разделы конструктора">
+                  {([
+                    ['content', 'Текст и фото', LayoutTemplate],
+                    ['services', 'Услуги', Plus],
+                    ['style', 'Стиль и блоки', Palette],
+                    ['export', 'Скачать и отправить', Download],
+                  ] as const).map(([id, label, Icon]) => <button className={panel === id ? 'is-active' : ''} type="button" onClick={() => setPanel(id)} key={id}><Icon />{label}</button>)}
+                </nav>
 
-                    <fieldset className="lab-fieldset">
-                      <legend>Тип сайта</legend>
-                      <div className="lab-choice-grid">
-                        {websiteProjectTypeOptions.map((option) => (
-                          <label className={`lab-choice ${projectTypeId === option.id ? 'is-selected' : ''}`} key={option.id}>
-                            <input type="radio" name="builder-project" checked={projectTypeId === option.id} onChange={() => setProjectTypeId(option.id)} />
-                            <i>{projectTypeId === option.id ? <Check /> : null}</i>
-                            {option.label}
-                          </label>
-                        ))}
-                      </div>
-                    </fieldset>
+                <div className="builder-sidebar__panel">
+                  {panel === 'content' ? (
+                    <form className="builder-form" onSubmit={(event) => event.preventDefault()}>
+                      <h2>Первый экран</h2>
+                      <label className="lab-control"><span>Название проекта</span><input value={draft.brand} onChange={(event) => update('brand', event.target.value)} /></label>
+                      <label className="lab-control"><span>Короткая подпись</span><input value={draft.eyebrow} onChange={(event) => update('eyebrow', event.target.value)} /></label>
+                      <label className="lab-control"><span>Главный заголовок</span><textarea value={draft.title} onChange={(event) => update('title', event.target.value)} /></label>
+                      <label className="lab-control"><span>Описание</span><textarea value={draft.description} onChange={(event) => update('description', event.target.value)} /></label>
+                      <label className="lab-control"><span>Текст кнопки</span><input value={draft.buttonText} onChange={(event) => update('buttonText', event.target.value)} /></label>
+                      <label className="builder-upload"><ImagePlus /> Загрузить свою фотографию<input type="file" accept="image/*" onChange={uploadHero} /></label>
+                    </form>
+                  ) : null}
 
-                    <fieldset className="lab-fieldset">
-                      <legend>Страницы</legend>
-                      <div className="lab-choice-grid lab-choice-grid--three">
-                        {builderPages.map((option) => {
-                          const selected = pages.includes(option.id);
-                          return (
-                            <label className={`lab-choice ${selected ? 'is-selected' : ''}`} key={option.id}>
-                              <input type="checkbox" checked={selected} onChange={() => toggleValue(option.id, setPages)} />
-                              <i>{selected ? <Check /> : null}</i>
-                              {option.label}
-                            </label>
-                          );
-                        })}
-                      </div>
-                    </fieldset>
-
-                    <fieldset className="lab-fieldset">
-                      <legend>Возможности</legend>
-                      <div className="lab-choice-grid lab-choice-grid--three">
-                        {builderFeatures.map((option) => {
-                          const selected = effectiveFeatures.includes(option.id);
-                          const included = projectType.includedFeatures.includes(option.id);
-                          return (
-                            <label className={`lab-choice ${selected ? 'is-selected' : ''}`} key={option.id} title={included ? 'Входит в выбранный тип сайта' : undefined}>
-                              <input type="checkbox" checked={selected} disabled={included} onChange={() => toggleValue(option.id, setFeatures)} />
-                              <i>{selected ? <Check /> : null}</i>
-                              {option.label}
-                            </label>
-                          );
-                        })}
-                      </div>
-                    </fieldset>
-
-                    <div className="lab-price-result" aria-live="polite">
-                      <span>Предварительный ориентир</span>
-                      <strong>{calculation.display}</strong>
-                      <p>{calculation.requiresEstimate ? 'В конфигурации есть сложные функции: перед оценкой нужно уточнить данные, роли и интеграции.' : 'Диапазон меняется вместе с выбранным типом, количеством страниц и функциями.'}</p>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <button className="lab-button" type="button" onClick={copyConfiguration}><Clipboard /> {copied ? 'Скопировано' : 'Скопировать конфигурацию'}</button>
-                        <a className="lab-button lab-button--secondary" href={preparedLink(data.site.telegramUrl, briefText)} target="_blank" rel="noreferrer"><Send /> Отправить в Telegram</a>
-                      </div>
+                  {panel === 'services' ? (
+                    <div className="builder-services-panel">
+                      <div className="builder-panel-title"><div><h2>Карточки услуг</h2><p>Добавьте название, цену и короткий результат.</p></div><button type="button" onClick={addService} aria-label="Добавить услугу"><Plus /></button></div>
+                      {draft.services.map((service) => (
+                        <article key={service.id}>
+                          <input aria-label="Название услуги" value={service.title} onChange={(event) => updateService(service.id, { title: event.target.value })} />
+                          <input aria-label="Цена услуги" value={service.price} onChange={(event) => updateService(service.id, { price: event.target.value })} />
+                          <textarea aria-label="Описание услуги" value={service.text} onChange={(event) => updateService(service.id, { text: event.target.value })} />
+                          <button type="button" onClick={() => update('services', draft.services.filter((item) => item.id !== service.id))} aria-label="Удалить услугу"><Trash2 /></button>
+                        </article>
+                      ))}
                     </div>
-                  </form>
+                  ) : null}
 
-                  <aside className="lab-builder__preview-panel">
-                    <div className="lab-builder__preview-toolbar">
-                      <span>LIVE PREVIEW</span>
-                      <div className="lab-tabs" aria-label="Размер preview">
-                        <button className={device === 'desktop' ? 'is-active' : ''} type="button" onClick={() => setDevice('desktop')} aria-label="Desktop"><Monitor /></button>
-                        <button className={device === 'tablet' ? 'is-active' : ''} type="button" onClick={() => setDevice('tablet')} aria-label="Tablet"><Tablet /></button>
-                        <button className={device === 'mobile' ? 'is-active' : ''} type="button" onClick={() => setDevice('mobile')} aria-label="Mobile"><Smartphone /></button>
-                      </div>
+                  {panel === 'style' ? (
+                    <div className="builder-style-panel">
+                      <h2>Внешний вид</h2>
+                      <fieldset><legend>Акцентный цвет</legend><div className="builder-theme-grid">{(['ink','blue','green','coral'] as const).map((theme) => <button className={draft.theme === theme ? 'is-active' : ''} type="button" onClick={() => update('theme', theme)} key={theme}><span data-theme={theme} />{theme === 'ink' ? 'Графит' : theme === 'blue' ? 'Синий' : theme === 'green' ? 'Зелёный' : 'Коралловый'}</button>)}</div></fieldset>
+                      <fieldset><legend>Блоки страницы</legend><div className="builder-toggle-grid">
+                        {([
+                          ['showServices','Услуги'],
+                          ['showAbout','О проекте'],
+                          ['showContact','Контакты'],
+                        ] as const).map(([key,label]) => <label className={draft[key] ? 'is-active' : ''} key={key}><input type="checkbox" checked={draft[key]} onChange={(event) => update(key, event.target.checked)} /><i>{draft[key] ? <Check /> : null}</i>{label}</label>)}
+                      </div></fieldset>
+                      {draft.showAbout ? <><label className="lab-control"><span>Заголовок «О проекте»</span><input value={draft.aboutTitle} onChange={(event) => update('aboutTitle', event.target.value)} /></label><label className="lab-control"><span>Текст «О проекте»</span><textarea value={draft.aboutText} onChange={(event) => update('aboutText', event.target.value)} /></label></> : null}
                     </div>
-                    <div className="lab-device-stage">
-                      <WebsitePreview business={business} pages={pages} features={effectiveFeatures} device={device} />
-                    </div>
-                  </aside>
-                </motion.div>
-              ) : (
-                <motion.div className="mt-10" key="budget" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                  <LabSectionHeading eyebrow="Обратный расчёт" title="Что можно сделать за мой бюджет?" description="Без обещаний, которые невозможно выполнить: выберите диапазон и посмотрите реалистичную первую версию проекта." />
-                  <div className="lab-budget-grid">
-                    {budgetRecommendations.map((item) => (
-                      <button className={`lab-budget-card ${budgetId === item.id ? 'is-active' : ''}`} type="button" onClick={() => setBudgetId(item.id)} key={item.id}>
-                        <strong>{item.label}</strong><span>{item.project}</span>
-                      </button>
-                    ))}
-                  </div>
-                  <motion.article className="lab-result-panel mt-4" key={budget.id} initial={{ opacity: 0.5, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-                    <p className="lab-eyebrow">Реалистичный формат</p>
-                    <h3 className="mt-3 text-2xl font-extrabold">{budget.project}</h3>
-                    <p className="mt-3 max-w-3xl leading-7 text-muted">{budget.description}</p>
-                    <div className="mt-5 flex flex-wrap gap-2">{budget.features.map((item) => <span className="rounded-full border border-line bg-white px-3 py-2 text-xs font-bold" key={item}>{item}</span>)}</div>
-                    <p className="mt-5 border-t border-line pt-4 text-sm font-semibold text-muted"><strong className="text-ink">Ограничения:</strong> {budget.limits}</p>
-                  </motion.article>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </section>
+                  ) : null}
 
-        <section className="lab-section border-t border-line/70 bg-white/55">
-          <div className="lab-shell">
-            <LabSectionHeading eyebrow="Website complexity" title="Почему один сайт стоит 5 000 ₽, а другой 70 000 ₽?" description="Цена растёт не из-за количества декоративных блоков, а из-за данных, управления, поиска, ролей и интеграций." />
-            <div className="lab-complexity">
-              <div className="lab-complexity__levels">
-                {complexityLevels.map((item) => (
-                  <button className={complexity === item.level ? 'is-active' : ''} type="button" onClick={() => setComplexity(item.level)} key={item.level}>
-                    <span>{item.level}</span><strong>{item.title}</strong>
-                  </button>
-                ))}
-              </div>
-              <motion.div className="lab-complexity__map" key={complexityItem.title} initial={{ opacity: 0.4 }} animate={{ opacity: 1 }}>
-                <div className="lab-complexity__map-content">
-                  <p className="lab-eyebrow">Уровень {complexityItem.level}</p>
-                  <h3>{complexityItem.title}</h3>
-                  <p>{complexityItem.description}</p>
-                  <div className="lab-complexity__layers">
-                    {complexityItem.layers.map((layer, index) => (
-                      <motion.span initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.06 }} key={layer}>{layer}</motion.span>
-                    ))}
-                  </div>
+                  {panel === 'export' ? (
+                    <div className="builder-export-panel">
+                      <h2>Заберите результат</h2>
+                      <p>PNG подойдёт для просмотра, JSON сохранит точные тексты и настройки. При отправке в Telegram конфигурация останется у Александра по коду сессии.</p>
+                      <button type="button" onClick={saveScreenshot} disabled={isCapturing}><Download />{isCapturing ? 'Создаю снимок…' : 'Скачать PNG'}</button>
+                      <button type="button" onClick={exportJson}><FileJson />Скачать JSON</button>
+                      <a href={telegramHref} target="_blank" rel="noreferrer"><Send />Передать Александру</a>
+                      <div><strong>{session.sessionId}</strong><span>Код поможет найти ваш вариант в переписке</span></div>
+                    </div>
+                  ) : null}
                 </div>
-              </motion.div>
+              </aside>
+
+              <section className="builder-preview-panel">
+                <header><span>LIVE LANDING</span><div><button className={device === 'desktop' ? 'is-active' : ''} type="button" onClick={() => setDevice('desktop')} aria-label="Версия для компьютера"><Monitor /></button><button className={device === 'mobile' ? 'is-active' : ''} type="button" onClick={() => setDevice('mobile')} aria-label="Мобильная версия"><Smartphone /></button><button type="button" onClick={() => setFullscreen(true)} aria-label="Открыть на весь экран"><Maximize2 /></button></div></header>
+                <div className="builder-preview-stage" data-device={device}><div className="builder-preview-canvas"><LandingPreview draft={draft} previewRef={previewRef} /></div></div>
+              </section>
             </div>
-            <HowMade items={[{ label: 'Состояние', value: 'React state' }, { label: 'Цена', value: 'общий pricing config' }, { label: 'Preview', value: 'компоненты без iframe' }, { label: 'Motion', value: 'Framer Motion' }]} />
+            {notice ? <div className="builder-notice" role="status">{notice}<button type="button" onClick={() => setNotice('')} aria-label="Закрыть сообщение"><X /></button></div> : null}
+            <HowMade items={[{ label: 'Черновик', value: '30 минут в localStorage' }, { label: 'Снимок', value: 'PNG из DOM' }, { label: 'Передача', value: 'только по действию посетителя' }, { label: 'Данные', value: 'JSON + код сессии' }]} />
           </div>
         </section>
+
+        <AnimatePresence>
+          {fullscreen ? (
+            <motion.div className="builder-fullscreen" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label="Полноэкранный просмотр лендинга">
+              <header><button type="button" onClick={() => setFullscreen(false)}><X /> Закрыть preview</button><span>{session.sessionId} · {formatRemaining(remaining)}</span><button type="button" onClick={saveScreenshot}><Download /> Снимок</button></header>
+              <div><LandingPreview draft={draft} previewRef={previewRef} /></div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </LabFrame>
     </PageTransition>
   );

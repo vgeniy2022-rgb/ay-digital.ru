@@ -1,4 +1,15 @@
-import { AppWindow, ArrowDownRight, Check, Code2, Computer, Laptop, MessageCircle, Presentation, Smartphone } from 'lucide-react';
+import {
+  ArrowRight,
+  Check,
+  Code2,
+  Gauge,
+  LayoutDashboard,
+  MessageCircle,
+  MonitorSmartphone,
+  MoveUpRight,
+  Settings2,
+  Sparkles,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ButtonLink } from '../components/ButtonLink';
@@ -13,271 +24,123 @@ import { CasePreviewCard } from '../components/TrustBlocks';
 import { featuredCases } from '../data/cases';
 import { editorialMedia } from '../data/editorialMedia';
 import { useSiteData } from '../hooks/useSiteData';
+import '../styles/home.css';
 
-const mainDirections = [
+const websiteDirections = [
   {
-    title: 'Сайты и админки',
-    text: 'Сайты для специалистов и небольшого бизнеса: услуги, цены, отзывы, контакты и возможность управлять контентом через админку.',
-    icon: Code2,
+    number: '01',
+    title: 'Создание сайтов',
+    text: 'Сайт для специалиста, услуги или компании: понятная структура, адаптация и быстрый путь до заявки.',
     href: '/website-development-vladivostok',
     media: editorialMedia.homeCollaboration,
+    icon: MonitorSmartphone,
   },
   {
-    title: 'Приложения и прототипы',
-    text: 'Прототипы и простые приложения под задачу: идея, структура, интерфейс и рабочая первая версия.',
-    icon: AppWindow,
+    number: '02',
+    title: 'Сайты с админкой',
+    text: 'Самостоятельно меняйте услуги, цены, фотографии, отзывы и акции без правки кода.',
+    href: '/lab/admin-demo',
+    media: editorialMedia.sitevlHomeCapture,
+    icon: LayoutDashboard,
+  },
+  {
+    number: '03',
+    title: 'Веб-приложения',
+    text: 'Личные кабинеты, учёт, внутренние сервисы и интерфейсы под реальный процесс небольшой команды.',
     href: '/services',
     media: editorialMedia.developerWorkspace,
+    icon: Code2,
   },
   {
-    title: 'Настройка ноутбуков и ПК',
-    text: 'Windows, MacBook, программы, браузеры, базовая настройка системы и подготовка устройства к работе.',
-    icon: Laptop,
-    href: '/computer-help-vladivostok',
+    number: '04',
+    title: 'Поддержка и развитие',
+    text: 'Обновление контента, новые разделы, улучшение скорости, аналитики и поисковой видимости.',
+    href: '/prices',
     media: editorialMedia.laptopOffice,
-  },
-  {
-    title: 'Телефоны и перенос данных',
-    text: 'Перенос данных, настройка нового телефона, подготовка устройства к продаже и базовая цифровая безопасность.',
-    icon: Smartphone,
-    href: '/data-transfer-vladivostok',
-    media: editorialMedia.dataTransferIphones,
-  },
-  {
-    title: 'Сборка ПК под ключ',
-    text: 'Подбор комплектующих, покупка, сборка, тестирование, установка Windows и программ.',
-    icon: Computer,
-    href: '/pc-build-vladivostok',
-    media: editorialMedia.ssdInstall,
-  },
-  {
-    title: 'Презентации и цифровые задачи',
-    text: 'Презентации, оформление материалов, консультации по технике и помощь с цифровыми задачами.',
-    icon: Presentation,
-    href: '/services',
-    media: editorialMedia.presentationWork,
+    icon: Gauge,
   },
 ];
 
-const beforeItems = [
-  'услуги объясняются в переписке',
-  'цены приходится уточнять каждый раз',
-  'фото работ разбросаны',
-  'клиенту сложно быстро принять решение',
+const processSteps = [
+  ['Знакомство', 'Вы рассказываете о задаче, клиентах и том, что сайт должен изменить.'],
+  ['Структура', 'Собираю страницы и смысловые блоки, чтобы человек быстро понял предложение.'],
+  ['Визуальная система', 'Подбираю типографику, ритм, фотографии и интерфейсные правила проекта.'],
+  ['Разработка', 'Собираю адаптивный интерфейс, анимации и нужные функции.'],
+  ['Проверка', 'Тестирую desktop и мобильную версию, формы, ссылки, скорость и SEO-основу.'],
+  ['Запуск', 'Публикую сайт и объясняю, как обновлять его и что развивать дальше.'],
 ];
 
-const afterItems = [
-  'услуги и цены собраны в одном месте',
-  'отзывы и фото работ выглядят аккуратно',
-  'есть кнопки Telegram / WhatsApp',
-  'сайт можно обновлять через админку',
-];
-
-const taskExamples = [
-  {
-    title: 'Сайт для салона красоты',
-    text: 'Услуги, цены, фото работ, отзывы и быстрые кнопки записи.',
-  },
-  {
-    title: 'Сайт для фотостудии',
-    text: 'Портфолио, пакеты съёмок, условия бронирования и контакты.',
-  },
-  {
-    title: 'Сайт с админкой для услуг',
-    text: 'Самостоятельное обновление цен, акций, отзывов и фото.',
-  },
-  {
-    title: 'Настройка техники и перенос данных',
-    text: 'Подготовка телефона, ноутбука или ПК к спокойной работе.',
-  },
-];
-
-const websiteBuildOptions = [
-  'сайт-визитка для специалиста или небольшой компании',
-  'лендинг под услугу, акцию или рекламу',
-  'корпоративный или информационный сайт',
-  'сайт с каталогом товаров или услуг',
-  'сайт с админкой для самостоятельного обновления контента',
-  'индивидуальный веб-сервис под нестандартную задачу',
-  'адаптация под смартфоны и планшеты',
-  'базовая SEO-подготовка для Google и Яндекса',
-  'формы заявок, Telegram, WhatsApp и телефон',
-  'обновление цен, услуг, фото и акций через админку',
+const capabilityItems = [
+  'Лендинг под конкретное предложение',
+  'Многостраничный сайт компании',
+  'Управление контентом через админку',
+  'Каталог услуг или товаров',
+  'Формы, Telegram и WhatsApp',
+  'Базовая SEO-подготовка',
 ];
 
 export function HomePage() {
   const { data } = useSiteData();
-  const { commonRequests, faq, homeHero, quickStats, reviews, site, workSteps } = data;
+  const { faq, homeHero, quickStats, reviews, site } = data;
 
   return (
     <PageTransition>
-      <section className="relative overflow-hidden py-12 sm:py-16 lg:py-20">
-        <Container>
-          <div className="grid items-center gap-12 lg:grid-cols-[1.03fr_0.97fr]">
-            <Reveal>
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-accent">{homeHero.subtitle}</p>
-              <h1 className="mt-5 max-w-4xl text-4xl font-extrabold leading-[1.02] tracking-normal text-ink sm:text-6xl lg:text-7xl">
-                {homeHero.title}
-              </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">{homeHero.description}</p>
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <ButtonLink to="/services">Выбрать услугу</ButtonLink>
-                <ButtonLink href={site.telegramUrl} variant="secondary" showArrow={false}>
-                  <MessageCircle className="h-4 w-4 text-accent" />
-                  Написать в Telegram
-                </ButtonLink>
-                <ButtonLink to="/prices" variant="ghost">Смотреть цены</ButtonLink>
-              </div>
-              <div className="mt-6 max-w-2xl">
-                <SpecialistStatus />
-              </div>
-            </Reveal>
-            <Reveal delay={0.12}>
-              <EditorialPhoto media={editorialMedia.homeCollaboration} aspect="hero" priority>
-                <div className="photo-ui-note">
-                  <strong>Сайт должен объяснять услугу сам</strong>
-                  <span>Структура, визуальная система, адаптация и понятный путь до обращения.</span>
-                </div>
-              </EditorialPhoto>
-            </Reveal>
-          </div>
-          <Reveal delay={0.18} className="mt-12 grid gap-4 sm:grid-cols-3">
-            {quickStats.map((item) => (
-              <div className="rounded-premium border border-line bg-white/80 p-5 shadow-glass" key={item.label}>
-                <div className="text-xl font-extrabold leading-tight sm:text-2xl">{item.value}</div>
-                <div className="mt-2 text-sm font-semibold leading-6 text-muted">{item.label}</div>
-              </div>
-            ))}
-          </Reveal>
-        </Container>
-      </section>
-
-      <section className="py-12 sm:py-16">
-        <Container>
+      <section className="home-cinematic-hero">
+        <img
+          className="home-cinematic-hero__image"
+          src={editorialMedia.homeCollaboration.src}
+          alt="Рабочее обсуждение структуры и интерфейса нового сайта"
+          width={1600}
+          height={1067}
+          loading="eager"
+          decoding="async"
+        />
+        <div className="home-cinematic-hero__shade" />
+        <Container className="home-cinematic-hero__content">
           <Reveal>
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Как проходит работа</p>
-            <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">Спокойный процесс без давления</h2>
-          </Reveal>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {workSteps.map((step, index) => (
-              <Reveal delay={index * 0.05} key={step}>
-                <div className="relative h-full min-h-40 rounded-premium border border-line bg-white p-5 shadow-glass">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-extrabold text-accent">0{index + 1}</span>
-                    <ArrowDownRight className="h-5 w-5 text-slate-300" />
-                  </div>
-                  <p className="mt-8 font-bold leading-6 text-graphite">{step}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <section className="py-12 sm:py-16">
-        <Container>
-          <Reveal>
-            <SiteAdminPromoCard />
-          </Reveal>
-        </Container>
-      </section>
-
-      <section className="py-12 sm:py-16">
-        <Container>
-          <Reveal>
-            <div className="rounded-premium border border-line bg-white/84 p-7 shadow-glass sm:p-10">
-              <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
-                <div>
-                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Создание сайтов</p>
-                  <h2 className="mt-4 text-3xl font-extrabold leading-tight sm:text-5xl">
-                    Создание сайтов для бизнеса и специалистов
-                  </h2>
-                  <p className="mt-5 text-base leading-7 text-muted">
-                    Помогаю сделать сайт, который спокойно объясняет услугу: что вы предлагаете, сколько это стоит, почему вам можно доверять и как быстро написать в Telegram или WhatsApp.
-                  </p>
-                  <div className="mt-7">
-                    <ButtonLink to="/website-development-vladivostok" variant="secondary">
-                      Подробнее о создании сайтов
-                    </ButtonLink>
-                  </div>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {websiteBuildOptions.map((item) => (
-                    <div className="flex min-h-20 items-start gap-3 rounded-3xl border border-line bg-slate-50 p-5 text-sm font-bold leading-6 text-graphite" key={item}>
-                      <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-blue-50 text-accent">
-                        <Check className="h-4 w-4" />
-                      </span>
-                      {item}
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <p className="home-cinematic-hero__eyebrow">SITEVL · Владивосток</p>
+            <h1>Создаю сайты и цифровые продукты для бизнеса</h1>
+            <p className="home-cinematic-hero__lead">{homeHero.description}</p>
+            <div className="home-cinematic-hero__actions">
+              <ButtonLink to="/website-development-vladivostok">Обсудить сайт</ButtonLink>
+              <ButtonLink to="/cases" variant="secondary">Смотреть работы</ButtonLink>
+              <a className="home-cinematic-hero__telegram" href={site.telegramUrl} target="_blank" rel="noreferrer">
+                <MessageCircle aria-hidden="true" /> Telegram
+              </a>
             </div>
+            <div className="home-cinematic-hero__status"><SpecialistStatus /></div>
           </Reveal>
+        </Container>
+        <Container className="home-cinematic-hero__facts">
+          {quickStats.slice(0, 3).map((item) => (
+            <div key={item.label}><strong>{item.value}</strong><span>{item.label}</span></div>
+          ))}
         </Container>
       </section>
 
-      <section className="py-12 sm:py-16">
+      <section className="home-editorial-section home-editorial-section--services">
         <Container>
-          <Reveal>
-            <div className="rounded-premium border border-line bg-white/84 p-7 shadow-glass sm:p-10">
-              <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-                <div>
-                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">География</p>
-                  <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">
-                    Владивосток и удалённо по Приморскому краю
-                  </h2>
-                  <p className="mt-4 max-w-3xl text-base leading-7 text-muted">
-                    Основной регион — Владивосток. По Артёму, Уссурийску, Находке и другим городам Приморья часть задач можно обсудить и решить удалённо.
-                  </p>
-                </div>
-                <ButtonLink to="/primorsky-krai" variant="secondary">Подробнее</ButtonLink>
-              </div>
-            </div>
-          </Reveal>
-        </Container>
-      </section>
-
-      <section className="py-12 sm:py-16">
-        <Container>
-          <Reveal className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <Reveal className="home-section-intro">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Основные направления</p>
-              <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">
-                Спокойная помощь без лишней сложности
-              </h2>
+              <p className="home-kicker">Что я создаю</p>
+              <h2>От первой идеи до работающего цифрового продукта</h2>
             </div>
-            <ButtonLink to="/services" variant="secondary">Смотреть услуги</ButtonLink>
+            <p>Спокойно разбираю задачу, проектирую путь клиента и собираю интерфейс, который выглядит профессионально и остаётся понятным обычному человеку.</p>
           </Reveal>
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {mainDirections.map((direction, index) => {
-              const Icon = direction.icon;
-
+          <div className="home-service-grid">
+            {websiteDirections.map((item, index) => {
+              const Icon = item.icon;
               return (
-                <Reveal delay={index * 0.04} key={direction.title}>
-                  <motion.div
-                    whileHover={{ y: -6, scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    transition={{ type: 'spring', stiffness: 280, damping: 24 }}
-                  >
-                    <Link
-                      className="group block h-full overflow-hidden rounded-[22px] border border-line bg-white shadow-glass transition duration-300 hover:border-slate-300 hover:shadow-soft"
-                      to={direction.href}
-                    >
-                      <EditorialPhoto media={direction.media} aspect="wide" className="rounded-none border-0 shadow-none" caption={direction.title} />
-                      <div className="p-6">
-                        <span className="grid h-11 w-11 place-items-center rounded-xl bg-slate-100 text-ink">
-                          <Icon className="h-5 w-5" />
-                        </span>
-                        <h3 className="mt-6 text-2xl font-extrabold leading-tight">{direction.title}</h3>
-                        <p className="mt-4 text-base leading-7 text-muted">{direction.text}</p>
-                        <div className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-accent transition group-hover:text-ink">
-                          Подробнее
-                          <ArrowDownRight className="h-4 w-4" />
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
+                <Reveal delay={index * 0.06} key={item.title}>
+                  <motion.article className="home-service-card" whileHover={{ y: -8 }} transition={{ type: 'spring', stiffness: 260, damping: 24 }}>
+                    <EditorialPhoto media={item.media} aspect="wide" className="home-service-card__photo" />
+                    <div className="home-service-card__body">
+                      <div className="home-service-card__meta"><span>{item.number}</span><Icon aria-hidden="true" /></div>
+                      <h3>{item.title}</h3>
+                      <p>{item.text}</p>
+                      <Link to={item.href}>Подробнее <ArrowRight aria-hidden="true" /></Link>
+                    </div>
+                  </motion.article>
                 </Reveal>
               );
             })}
@@ -285,148 +148,99 @@ export function HomePage() {
         </Container>
       </section>
 
-      <section className="editorial-band py-14 sm:py-20">
+      <section className="home-editorial-section home-capabilities">
         <Container>
-          <Reveal className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
+          <Reveal className="home-capabilities__grid">
             <div>
-              <p className="editorial-eyebrow">Не только макеты</p>
-              <h2 className="mt-4 text-4xl font-extrabold leading-tight sm:text-5xl">Работаю с живыми задачами и реальными устройствами</h2>
-              <p className="mt-5 max-w-xl text-base leading-7 text-muted">Сайт показывает процесс честно: от обсуждения интерфейса до настройки ноутбука, переноса данных и работы с комплектующими.</p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <EditorialPhoto media={editorialMedia.dataTransferIphones} aspect="landscape" />
-              <EditorialPhoto media={editorialMedia.ssdInstall} aspect="landscape" />
-            </div>
-          </Reveal>
-        </Container>
-      </section>
-
-      <section className="py-12 sm:py-16">
-        <Container>
-          <Reveal>
-            <div className="soft-section-bg rounded-premium border border-line p-7 shadow-glass sm:p-10">
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">До / После</p>
-              <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">
-                Что меняется после нормального сайта
-              </h2>
-              <div className="mt-8 grid gap-5 lg:grid-cols-2">
-                {[
-                  ['До', beforeItems, 'bg-white/82'],
-                  ['После', afterItems, 'bg-ink text-white'],
-                ].map(([title, items, className]) => (
-                  <div className={`rounded-[28px] border border-line p-6 shadow-glass ${className}`} key={title as string}>
-                    <h3 className="text-2xl font-extrabold">{title as string}</h3>
-                    <div className="mt-5 grid gap-3">
-                      {(items as string[]).map((item) => (
-                        <div className="flex items-start gap-3 text-sm font-semibold leading-6" key={item}>
-                          <span className="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-blue-50 text-accent">
-                            <Check className="h-3 w-3" />
-                          </span>
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+              <p className="home-kicker">Сайт под задачу</p>
+              <h2>Не шаблон ради шаблона, а понятный инструмент бизнеса</h2>
+              <p>Показываю услуги, цены, реальные работы и следующий шаг. При необходимости добавляю админку, чтобы изменения не зависели от программиста.</p>
+              <div className="home-capabilities__list">
+                {capabilityItems.map((item) => <span key={item}><Check aria-hidden="true" />{item}</span>)}
               </div>
+              <ButtonLink to="/website-development-vladivostok" variant="secondary">Как создаётся сайт</ButtonLink>
+            </div>
+            <div className="home-capabilities__visual">
+              <EditorialPhoto media={editorialMedia.webStudioCapture} aspect="landscape" priority />
+              <motion.div className="home-capabilities__floating" animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}>
+                <Settings2 aria-hidden="true" />
+                <strong>Контент под контролем</strong>
+                <span>Услуги · цены · фото · акции</span>
+              </motion.div>
             </div>
           </Reveal>
         </Container>
       </section>
 
-      <section className="py-12 sm:py-16">
+      <section className="home-editorial-section home-projects">
         <Container>
-          <Reveal>
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Примеры задач</p>
-            <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">
-              С чем можно прийти
-            </h2>
+          <Reveal className="home-section-intro home-section-intro--light">
+            <div><p className="home-kicker">Проекты</p><h2>Показываю не только финальный экран, но и логику внутри</h2></div>
+            <ButtonLink to="/cases" variant="secondary">Все кейсы</ButtonLink>
           </Reveal>
-          <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {taskExamples.map((example, index) => (
-              <Reveal delay={index * 0.04} key={example.title}>
-                <motion.article
-                  className="h-full rounded-premium border border-line bg-white/82 p-6 shadow-glass"
-                  whileHover={{ y: -5 }}
-                  transition={{ type: 'spring', stiffness: 260, damping: 24 }}
-                >
-                  <div className="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-extrabold text-graphite">
-                    Демонстрационный пример
-                  </div>
-                  <h3 className="mt-5 text-2xl font-extrabold leading-tight">{example.title}</h3>
-                  <p className="mt-4 text-sm leading-6 text-muted">{example.text}</p>
-                </motion.article>
+          <div className="home-project-mosaic">
+            {featuredCases.slice(0, 4).map((item, index) => (
+              <Reveal className={index === 0 ? 'home-project-mosaic__lead' : ''} delay={index * 0.05} key={item.slug}>
+                <CasePreviewCard item={item} />
               </Reveal>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="py-12 sm:py-16">
+      <section className="home-editorial-section home-process">
         <Container>
-          <Reveal>
-            <div className="rounded-premium border border-line bg-slate-50 p-7 shadow-glass sm:p-10">
-              <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-center">
-                <div>
-                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">С чем можно обратиться</p>
-                  <h2 className="mt-4 text-3xl font-extrabold leading-tight sm:text-5xl">Можно начать с простой ситуации</h2>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {commonRequests.map((request) => (
-                    <div className="flex min-h-20 items-center gap-3 rounded-3xl border border-line bg-white p-5 text-sm font-bold text-graphite" key={request}>
-                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-blue-50 text-accent">
-                        <Check className="h-4 w-4" />
-                      </span>
-                      {request}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <Reveal className="home-section-intro">
+            <div><p className="home-kicker">От идеи до результата</p><h2>Понятный процесс, в котором видно, что происходит</h2></div>
+            <p>До начала работы согласуем задачу, объём и стоимость. На каждом этапе есть конкретный результат, который можно посмотреть и обсудить.</p>
           </Reveal>
+          <div className="home-process__grid">
+            {processSteps.map(([title, text], index) => (
+              <Reveal delay={index * 0.05} key={title}>
+                <article><span>{String(index + 1).padStart(2, '0')}</span><h3>{title}</h3><p>{text}</p></article>
+              </Reveal>
+            ))}
+          </div>
         </Container>
       </section>
 
+      <section className="home-editorial-section home-lab-showcase">
+        <Container>
+          <Reveal className="home-lab-showcase__intro">
+            <p className="home-kicker">SITEVL LAB</p>
+            <h2>Не просто рассказываю об интерфейсах. Даю их попробовать.</h2>
+            <p>Откройте демо-админку, измените услуги и цены или соберите свой вариант лендинга в интерактивном конструкторе.</p>
+          </Reveal>
+          <div className="home-lab-showcase__grid">
+            <Link to="/lab/admin-demo" className="home-lab-product">
+              <div><span><LayoutDashboard /></span><small>FULLSCREEN ADMIN</small><h3>Управляйте сайтом как владелец</h3><p>Добавляйте услуги и фотографии, меняйте цены, порядок блоков и сразу смотрите результат.</p></div>
+              <MoveUpRight aria-hidden="true" />
+            </Link>
+            <Link to="/lab/website-builder" className="home-lab-product home-lab-product--blue">
+              <div><span><Sparkles /></span><small>LANDING BUILDER</small><h3>Соберите свой первый экран</h3><p>Настройте содержание, стиль и блоки, а затем сохраните снимок получившегося сайта.</p></div>
+              <MoveUpRight aria-hidden="true" />
+            </Link>
+          </div>
+        </Container>
+      </section>
+
+      <section className="home-editorial-section">
+        <Container><Reveal><SiteAdminPromoCard /></Reveal></Container>
+      </section>
+
       {reviews.length ? (
-        <section className="py-12 sm:py-16">
+        <section className="home-editorial-section">
           <Container>
-            <Reveal>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Отзывы</p>
-              <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">Что говорят клиенты</h2>
-            </Reveal>
-            <div className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-              {reviews.map((review, index) => (
-                <Reveal delay={index * 0.04} key={`${review.name}-${index}`}>
-                  <article className="h-full rounded-premium border border-line bg-white/82 p-6 shadow-glass">
-                    <div className="flex items-center gap-4">
-                      {review.photoUrl ? (
-                        <img
-                          className="h-12 w-12 rounded-full object-cover"
-                          src={review.photoUrl}
-                          alt={`Фото клиента: ${review.name}`}
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      ) : (
-                        <div className="grid h-12 w-12 place-items-center rounded-full bg-slate-100 text-sm font-extrabold text-ink">
-                          {review.name.slice(0, 1)}
-                        </div>
-                      )}
-                      <div>
-                        <h3 className="font-extrabold">{review.name}</h3>
-                        {review.service && <p className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-muted">{review.service}</p>}
-                      </div>
+            <Reveal className="home-section-intro"><div><p className="home-kicker">Отзывы</p><h2>Что замечают после совместной работы</h2></div></Reveal>
+            <div className="home-review-grid">
+              {reviews.slice(0, 3).map((review, index) => (
+                <Reveal delay={index * 0.05} key={`${review.name}-${index}`}>
+                  <article>
+                    <div className="home-review-grid__person">
+                      {review.photoUrl ? <img src={review.photoUrl} alt={`Фото клиента ${review.name}`} loading="lazy" decoding="async" /> : <span>{review.name.slice(0, 1)}</span>}
+                      <div><h3>{review.name}</h3><small>{review.service}</small></div>
                     </div>
-                    {review.text && <p className="mt-5 text-base leading-7 text-muted">{review.text}</p>}
-                    {review.reviewImageUrl && (
-                      <img
-                        className="mt-5 max-h-72 w-full rounded-3xl border border-line object-cover"
-                        src={review.reviewImageUrl}
-                        alt={`Скриншот отзыва клиента: ${review.name}`}
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    )}
+                    <p>{review.text}</p>
                   </article>
                 </Reveal>
               ))}
@@ -435,39 +249,14 @@ export function HomePage() {
         </section>
       ) : null}
 
-      <section className="py-12 sm:py-16">
-        <Container>
-          <Reveal className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Кейсы</p>
-              <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">Реальные проекты</h2>
-            </div>
-            <ButtonLink to="/cases" variant="secondary">Все кейсы</ButtonLink>
-          </Reveal>
-          <div className="mt-8 grid gap-5 md:grid-cols-2">
-            {featuredCases.map((item, index) => (
-              <Reveal delay={index * 0.04} key={item.slug}>
-                <CasePreviewCard item={item} />
-              </Reveal>
-            ))}
-          </div>
-        </Container>
-      </section>
-
       {faq.length ? (
-        <section className="py-12 sm:py-16">
+        <section className="home-editorial-section home-faq">
           <Container>
-            <Reveal>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">FAQ</p>
-              <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">Частые вопросы</h2>
-            </Reveal>
-            <div className="mt-8 grid gap-4">
-              {faq.map((item, index) => (
-                <Reveal delay={index * 0.035} key={`${item.question}-${index}`}>
-                  <article className="rounded-premium border border-line bg-white/82 p-6 shadow-glass">
-                    <h3 className="text-xl font-extrabold leading-tight">{item.question}</h3>
-                    {item.answer && <p className="mt-3 text-base leading-7 text-muted">{item.answer}</p>}
-                  </article>
+            <Reveal className="home-section-intro"><div><p className="home-kicker">FAQ</p><h2>Перед началом проекта</h2></div></Reveal>
+            <div className="home-faq__grid">
+              {faq.slice(0, 6).map((item, index) => (
+                <Reveal delay={index * 0.03} key={`${item.question}-${index}`}>
+                  <article><span>{String(index + 1).padStart(2, '0')}</span><div><h3>{item.question}</h3><p>{item.answer}</p></div></article>
                 </Reveal>
               ))}
             </div>
