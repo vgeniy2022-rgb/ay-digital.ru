@@ -7,7 +7,7 @@ import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SeoHead } from '../components/SeoHead';
 import { CaseExperience } from '../components/CaseExperience';
-import { CaseResultBlock, ProjectPlaceholder, RelatedCases, TechnologiesList } from '../components/TrustBlocks';
+import { CaseMedia, CaseResultBlock, RelatedCases, TechnologiesList } from '../components/TrustBlocks';
 import { absoluteUrl, siteConfig } from '../config/site';
 import { ProjectCase, publishedCases } from '../data/cases';
 import { useSiteData } from '../hooks/useSiteData';
@@ -103,7 +103,7 @@ export function CasePage() {
               </div>
             </Reveal>
             <Reveal delay={0.08}>
-              <ProjectPlaceholder label={item.category} alt={item.imageAlt} />
+              <CaseMedia label={`${item.category}: ${item.title}`} alt={item.imageAlt} />
             </Reveal>
           </div>
         </Container>
@@ -182,7 +182,7 @@ export function CasePage() {
                   data-fetchpriority={image.fetchPriority || 'auto'}
                   style={{ aspectRatio: `${image.width} / ${image.height}` }}
                 >
-                  <ProjectPlaceholder label={image.label} alt={image.alt} />
+                  <CaseMedia label={`${item.title}: ${image.label}`} alt={image.alt} />
                 </div>
               </Reveal>
             ))}

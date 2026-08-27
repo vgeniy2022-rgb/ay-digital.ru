@@ -1,6 +1,8 @@
-import { ArrowRight, CheckCircle2, Code2, ExternalLink, MonitorSmartphone, UserRound } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Code2, ExternalLink, UserRound } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ProjectCase, publishedCases } from '../data/cases';
+import { getServiceCategoryMedia } from '../data/editorialMedia';
+import { EditorialPhoto } from './EditorialPhoto';
 
 export function AuthorCard() {
   return (
@@ -50,35 +52,11 @@ export function TrustPrinciples({ compact = false }: { compact?: boolean }) {
   );
 }
 
-export function ProjectPlaceholder({ label, alt }: { label: string; alt: string }) {
+export function CaseMedia({ label, alt }: { label: string; alt: string }) {
+  const media = getServiceCategoryMedia(label);
+
   return (
-    <div
-      className="relative overflow-hidden rounded-[28px] border border-line bg-[radial-gradient(circle_at_18%_15%,rgba(37,99,235,0.14),transparent_28%),linear-gradient(145deg,#ffffff,#eef3fb)] p-5 shadow-glass"
-      aria-label={alt}
-      role="img"
-    >
-      <div className="rounded-3xl border border-white/80 bg-white/70 p-4 shadow-glass">
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-rose-200" />
-          <span className="h-3 w-3 rounded-full bg-amber-200" />
-          <span className="h-3 w-3 rounded-full bg-emerald-200" />
-        </div>
-        <div className="mt-5 grid gap-3">
-          <div className="h-6 w-2/3 rounded-full bg-slate-200" />
-          <div className="h-3 w-full rounded-full bg-slate-100" />
-          <div className="h-3 w-5/6 rounded-full bg-slate-100" />
-        </div>
-        <div className="mt-6 grid grid-cols-3 gap-3">
-          <div className="h-24 rounded-3xl bg-blue-50" />
-          <div className="h-24 rounded-3xl bg-emerald-50" />
-          <div className="h-24 rounded-3xl bg-slate-100" />
-        </div>
-      </div>
-      <div className="mt-4 flex items-center justify-between gap-3">
-        <span className="text-sm font-extrabold text-graphite">{label}</span>
-        <MonitorSmartphone className="h-5 w-5 text-accent" />
-      </div>
-    </div>
+    <EditorialPhoto media={{ ...media, alt, label }} aspect="wide" />
   );
 }
 
@@ -112,12 +90,18 @@ export function CaseResultBlock({ items }: { items: string[] }) {
 }
 
 export function CasePreviewCard({ item }: { item: ProjectCase }) {
+  const caseMedia = getServiceCategoryMedia(`${item.category} ${item.title}`);
+
   return (
     <Link
       className="group block h-full rounded-premium border border-line bg-white/84 p-6 shadow-glass transition duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-soft"
       to={item.path}
     >
-      <ProjectPlaceholder label={item.category} alt={item.imageAlt} />
+      <EditorialPhoto
+        media={{ ...caseMedia, alt: item.imageAlt, label: item.category }}
+        aspect="wide"
+        className="shadow-none"
+      />
       <div className="mt-6 flex flex-wrap gap-2">
         <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-extrabold text-accent">{item.category}</span>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-graphite">{item.clientType}</span>

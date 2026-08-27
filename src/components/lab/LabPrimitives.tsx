@@ -17,6 +17,14 @@ export function LabFrame({ children }: PropsWithChildren) {
 }
 
 export function LabHero({ eyebrow = 'SITEVL LAB', title, description, backTo = '/lab', actions }: LabHeroProps) {
+  const photo = title.includes('Admin')
+    ? '/images/editorial/phone-laptop.webp'
+    : title.includes('Architecture') || title.includes('SEO')
+      ? '/images/editorial/security-workspace.avif'
+      : title.includes('Builder')
+        ? '/images/editorial/home-collaboration.webp'
+        : '/images/editorial/developer-workspace.webp';
+
   return (
     <section className="lab-hero">
       <div className="lab-shell">
@@ -31,7 +39,19 @@ export function LabHero({ eyebrow = 'SITEVL LAB', title, description, backTo = '
           <p className="lab-hero__description">{description}</p>
           {actions ? <div className="lab-hero__actions">{actions}</div> : null}
         </motion.div>
-        <div className="lab-hero__signal" aria-hidden="true">
+        <div className="lab-hero__signal">
+          <motion.img
+            className="lab-hero__photo"
+            src={photo}
+            alt="Рабочий процесс SITEVL: разработка и проверка цифрового интерфейса"
+            width={1200}
+            height={900}
+            loading="eager"
+            decoding="async"
+            initial={{ scale: 1.06, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          />
           <span className="lab-hero__signal-core"><Code2 /></span>
           <i /><i /><i />
           <strong>SITEVL</strong>

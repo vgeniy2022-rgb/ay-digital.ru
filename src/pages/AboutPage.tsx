@@ -1,15 +1,17 @@
-import { Code2, Laptop, MapPin, MessageCircle, MonitorSmartphone, UserRound, Wrench } from 'lucide-react';
+import { Code2, Laptop, MapPin, MessageCircle, MonitorSmartphone, Wrench } from 'lucide-react';
 import { useState } from 'react';
 import { businessPortraitUrl } from '../assets/portrait';
 import { ButtonLink } from '../components/ButtonLink';
 import { CallToAction } from '../components/CallToAction';
 import { Container } from '../components/Container';
+import { EditorialPhoto } from '../components/EditorialPhoto';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SeoHead } from '../components/SeoHead';
 import { AuthorCard, CasePreviewCard, TrustPrinciples } from '../components/TrustBlocks';
 import { absoluteUrl, siteConfig } from '../config/site';
 import { featuredCases } from '../data/cases';
+import { editorialMedia } from '../data/editorialMedia';
 import { useSiteData } from '../hooks/useSiteData';
 
 const directions = [
@@ -113,18 +115,17 @@ export function AboutPage() {
                     onError={() => setIsPortraitVisible(false)}
                   />
                 ) : (
-                  <div className="grid min-h-[420px] place-items-center bg-[radial-gradient(circle_at_30%_20%,rgba(29,78,216,0.12),transparent_34%),linear-gradient(145deg,#ffffff,#eef3fb)] p-8 text-center">
-                    <div>
-                      <div className="mx-auto grid h-24 w-24 place-items-center rounded-full bg-white text-ink shadow-glass">
-                        <UserRound className="h-11 w-11" />
-                      </div>
-                      <p className="mt-6 text-sm font-bold uppercase tracking-[0.18em] text-accent">Фото автора</p>
-                      <h2 className="mt-3 text-3xl font-extrabold">Александр</h2>
-                      <p className="mx-auto mt-3 max-w-xs text-sm leading-6 text-muted">
-                        Здесь можно заменить плейсхолдер на файл src/assets/business-portrait.png
-                      </p>
+                  <EditorialPhoto
+                    media={editorialMedia.developerWorkspace}
+                    aspect="portrait"
+                    className="min-h-[420px] rounded-none border-0 shadow-none"
+                    caption="Рабочая среда и процесс разработки"
+                  >
+                    <div className="photo-ui-note">
+                      <strong>Работа над проектом SITEVL</strong>
+                      <span>Проектирование, разработка и настройка цифровых решений.</span>
                     </div>
-                  </div>
+                  </EditorialPhoto>
                 )}
               </div>
             </Reveal>

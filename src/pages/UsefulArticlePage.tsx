@@ -2,6 +2,8 @@ import { Navigate, useParams } from 'react-router-dom';
 import { CalendarDays, Check, Clock, Mail, MessageCircle, UserRound } from 'lucide-react';
 import { ButtonLink } from '../components/ButtonLink';
 import { Container } from '../components/Container';
+import { DataTransferPhotoGuide } from '../components/DataTransferPhotoGuide';
+import { EditorialPhoto } from '../components/EditorialPhoto';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SeoHead } from '../components/SeoHead';
@@ -11,13 +13,11 @@ import {
   AppleIdProtectionIllustration,
   AppsIllustration,
   ChecklistIllustration,
-  DataTransferIllustration,
   MacSecurityIllustration,
   ScamsIllustration,
-  UsefulIllustration,
 } from '../components/UsefulIllustrations';
 import { UsefulArticle, usefulArticles } from '../data/useful';
-import { getUsefulIllustrationConfig } from '../data/usefulIllustrations';
+import { getUsefulArticleMedia, getUsefulSecondaryMedia } from '../data/editorialMedia';
 import { useSiteData } from '../hooks/useSiteData';
 
 function createArticleSchema(article: UsefulArticle) {
@@ -84,23 +84,6 @@ function createServiceSchema(article: UsefulArticle) {
 }
 
 function UsefulVisualBreak({ slug, sectionTitle }: { slug: string; sectionTitle: string }) {
-  if (slug === 'data-transfer' && (sectionTitle === 'iPhone -> Android' || sectionTitle === 'Android -> iPhone')) {
-    return (
-      <Container>
-        <Reveal>
-          <div className="my-4 grid items-center gap-6 rounded-premium border border-line bg-white/72 p-5 shadow-glass lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="p-2">
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Схема переноса</p>
-              <h3 className="mt-3 text-2xl font-extrabold leading-tight">Данные лучше переносить по понятному маршруту</h3>
-              <p className="mt-3 text-sm leading-6 text-muted">Сначала резервная копия, затем перенос фото, контактов, чатов и отдельная проверка приложений.</p>
-            </div>
-            <DataTransferIllustration compact />
-          </div>
-        </Reveal>
-      </Container>
-    );
-  }
-
   if (slug === 'digital-hygiene' && sectionTitle === 'MacBook') {
     return (
       <Container>
@@ -190,7 +173,7 @@ function UsefulVisualBreak({ slug, sectionTitle }: { slug: string; sectionTitle:
 }
 
 function ArticleHero({ article }: { article: UsefulArticle }) {
-  const illustration = getUsefulIllustrationConfig(article.slug);
+  const media = getUsefulArticleMedia(article.slug);
 
   return (
     <section className="py-14 sm:py-20">
@@ -220,16 +203,12 @@ function ArticleHero({ article }: { article: UsefulArticle }) {
             </div>
           </Reveal>
           <Reveal delay={0.08}>
-            <figure
-              aria-label={illustration.heroImageAlt}
-              data-hero-image={illustration.heroImage}
-              data-loading={illustration.loading}
-              data-decoding={illustration.decoding}
-              data-fetchpriority={illustration.fetchPriority}
-              style={{ aspectRatio: `${illustration.width} / ${illustration.height}` }}
-            >
-              <UsefulIllustration variant={article.variant} />
-            </figure>
+            <EditorialPhoto media={media} aspect="hero" priority>
+              <div className="photo-ui-note">
+                <strong>{article.readingTime} на спокойное чтение</strong>
+                <span>Сначала короткий ответ, затем подробная последовательность действий.</span>
+              </div>
+            </EditorialPhoto>
           </Reveal>
         </div>
       </Container>
@@ -248,6 +227,39 @@ function DirectAnswerBlock({ article }: { article: UsefulArticle }) {
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Короткий ответ</p>
             <p className="mt-4 max-w-4xl text-xl font-extrabold leading-8 text-ink sm:text-2xl">{article.directAnswer}</p>
           </article>
+        </Reveal>
+      </Container>
+    </section>
+  );
+}
+
+function ArticlePhotoBreak({ article }: { article: UsefulArticle }) {
+  const media = getUsefulSecondaryMedia(article.slug);
+  const isWebsiteTopic = article.slug.includes('website') || article.slug.includes('landing') || article.slug.includes('hosting') || article.slug.includes('developer') || article.slug.includes('mvp') || article.slug.includes('automation');
+  const isTransferTopic = article.slug.includes('data-transfer') || article.slug === 'data-transfer';
+  const title = isWebsiteTopic
+    ? 'Сначала определить задачу, затем выбирать формат сайта'
+    : isTransferTopic
+      ? 'Сначала сделать копию, затем начинать перенос'
+      : 'Сначала проверить устройство, затем менять настройки';
+  const text = isWebsiteTopic
+    ? 'Страницы, функции и визуальный стиль должны поддерживать реальный путь клиента. Хорошая подготовка сокращает лишние переделки во время разработки.'
+    : isTransferTopic
+      ? 'Старое устройство остаётся страховкой, пока вы не проверили фотографии, контакты, чаты, аккаунты и важные приложения на новом.'
+      : 'Зафиксируйте исходное состояние и сохраните важные данные. Так каждый следующий шаг можно выполнить осознанно и при необходимости вернуть назад.';
+
+  return (
+    <section className="py-6 sm:py-10">
+      <Container>
+        <Reveal>
+          <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+            <EditorialPhoto media={media} aspect="wide" />
+            <div className="lg:px-4">
+              <p className="editorial-eyebrow">Практический контекст</p>
+              <h2 className="mt-4 text-3xl font-extrabold leading-tight">{title}</h2>
+              <p className="mt-4 text-base leading-7 text-muted">{text}</p>
+            </div>
+          </div>
         </Reveal>
       </Container>
     </section>
@@ -440,6 +452,7 @@ export function UsefulArticlePage() {
         </Container>
       </section>
       <DirectAnswerBlock article={article} />
+      {article.slug === 'data-transfer' || article.slug === 'safe-data-transfer' ? <DataTransferPhotoGuide /> : null}
       {article.warning && (
         <section className="pb-8">
           <Container>
@@ -451,6 +464,7 @@ export function UsefulArticlePage() {
         <div id={`section-${index + 1}`} key={section.title}>
           <UsefulVisualBreak slug={article.slug} sectionTitle={section.title} />
           <UsefulSection section={section} />
+          {index === 0 ? <ArticlePhotoBreak article={article} /> : null}
         </div>
       ))}
       {article.selfHelp?.length ? (

@@ -1,13 +1,15 @@
 import { Link, Navigate, useLocation } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, Laptop, MapPin, MessageCircle, MonitorSmartphone } from 'lucide-react';
+import { ArrowRight, CheckCircle2, MapPin, MessageCircle } from 'lucide-react';
 import { ButtonLink } from '../components/ButtonLink';
 import { CallToAction } from '../components/CallToAction';
 import { Container } from '../components/Container';
+import { EditorialPhoto } from '../components/EditorialPhoto';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SeoHead } from '../components/SeoHead';
 import { absoluteUrl, siteConfig } from '../config/site';
 import { localHubLinks, localSeoPages, primorskyCities, LocalSeoPage as LocalSeoPageData } from '../data/localSeo';
+import { editorialMedia, getServiceCategoryMedia } from '../data/editorialMedia';
 import { useSiteData } from '../hooks/useSiteData';
 
 const hubFaq = [
@@ -132,25 +134,34 @@ function LocalHubPage() {
         structuredData={[HubSchema(), faqSchema(hubFaq)]}
       />
 
-      <section className="relative overflow-hidden py-16 sm:py-20">
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[radial-gradient(circle_at_18%_12%,rgba(37,99,235,0.10),transparent_34%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.10),transparent_30%)]" />
+      <section className="relative overflow-hidden py-12 sm:py-16 lg:py-20">
         <Container>
-          <Reveal>
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Приморский край</p>
-            <h1 className="mt-5 max-w-5xl text-4xl font-extrabold leading-[1.03] text-ink sm:text-6xl">
-              IT-услуги во Владивостоке и удалённо по Приморскому краю
-            </h1>
-            <p className="mt-6 max-w-3xl text-lg leading-8 text-muted">
-              Основной регион работы — Владивосток. По Приморскому краю можно обратиться за удалённой консультацией, помощью с сайтами, настройкой программ, Windows, MacBook, телефонами и цифровыми задачами. Формат зависит от конкретной задачи.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-              <ButtonLink href={data.site.telegramUrl} showArrow={false}>
-                <MessageCircle className="h-4 w-4" />
-                Написать в Telegram
-              </ButtonLink>
-              <ButtonLink to="/prices" variant="secondary">Смотреть цены</ButtonLink>
-            </div>
-          </Reveal>
+          <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+            <Reveal>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Приморский край</p>
+              <h1 className="mt-5 max-w-5xl text-4xl font-extrabold leading-[1.03] text-ink sm:text-6xl">
+                IT-услуги во Владивостоке и удалённо по Приморскому краю
+              </h1>
+              <p className="mt-6 max-w-3xl text-lg leading-8 text-muted">
+                Основной регион работы — Владивосток. По Приморскому краю можно обратиться за удалённой консультацией, помощью с сайтами, настройкой программ, Windows, MacBook, телефонами и цифровыми задачами. Формат зависит от конкретной задачи.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                <ButtonLink href={data.site.telegramUrl} showArrow={false}>
+                  <MessageCircle className="h-4 w-4" />
+                  Написать в Telegram
+                </ButtonLink>
+                <ButtonLink to="/prices" variant="secondary">Смотреть цены</ButtonLink>
+              </div>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <EditorialPhoto media={editorialMedia.laptopOffice} aspect="hero" priority>
+                <div className="photo-ui-note">
+                  <strong>Владивосток + удалённо</strong>
+                  <span>Формат выбирается по задаче, состоянию устройства и необходимости личного доступа.</span>
+                </div>
+              </EditorialPhoto>
+            </Reveal>
+          </div>
         </Container>
       </section>
 
@@ -287,9 +298,8 @@ function LocalHubPage() {
 
 function CityPage({ page }: { page: LocalSeoPageData }) {
   const { data } = useSiteData();
-  const icon = page.serviceType === 'computer-help' ? Laptop : MonitorSmartphone;
-  const Icon = icon;
   const formatLabel = page.serviceType === 'computer-help' ? 'Удалённая диагностика и консультация' : 'Полностью удалённая разработка';
+  const heroMedia = getServiceCategoryMedia(page.serviceType === 'computer-help' ? 'Компьютеры и ноутбуки' : 'Сайты и админки');
 
   return (
     <PageTransition>
@@ -300,8 +310,7 @@ function CityPage({ page }: { page: LocalSeoPageData }) {
         structuredData={[localServiceSchema(page), faqSchema(page.faq)]}
       />
 
-      <section className="relative overflow-hidden py-16 sm:py-20">
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[radial-gradient(circle_at_18%_12%,rgba(37,99,235,0.10),transparent_34%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.10),transparent_30%)]" />
+      <section className="relative overflow-hidden py-12 sm:py-16 lg:py-20">
         <Container>
           <div className="grid gap-10 lg:grid-cols-[1fr_0.82fr] lg:items-center">
             <Reveal>
@@ -317,14 +326,12 @@ function CityPage({ page }: { page: LocalSeoPageData }) {
               </div>
             </Reveal>
             <Reveal delay={0.08}>
-              <div className="rounded-premium border border-line bg-white/84 p-7 shadow-glass sm:p-8">
-                <div className="grid h-16 w-16 place-items-center rounded-3xl bg-slate-100 text-ink">
-                  <Icon className="h-8 w-8" />
+              <EditorialPhoto media={heroMedia} aspect="hero" priority>
+                <div className="photo-ui-note">
+                  <strong>{formatLabel}</strong>
+                  <span>{page.format}</span>
                 </div>
-                <p className="mt-6 text-sm font-bold uppercase tracking-[0.18em] text-accent">Формат</p>
-                <h2 className="mt-3 text-2xl font-extrabold">{formatLabel}</h2>
-                <p className="mt-4 text-base leading-7 text-muted">{page.format}</p>
-              </div>
+              </EditorialPhoto>
             </Reveal>
           </div>
         </Container>

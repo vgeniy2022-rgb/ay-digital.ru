@@ -17,17 +17,17 @@ export function Header() {
   const openCommandPalette = () => window.dispatchEvent(new Event('sitevl:open-command-palette'));
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/70 bg-white/62 backdrop-blur-2xl">
+    <header className="site-header sticky top-0 z-50 border-b border-line/80 bg-white/88 backdrop-blur-2xl">
       <a
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-ink focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-white"
         href="#main-content"
       >
         Перейти к основному содержимому
       </a>
-      <Container className="py-3">
-        <div className="glass flex min-h-16 items-center justify-between rounded-full px-4 shadow-glass sm:px-5">
+      <Container>
+        <div className="flex min-h-[74px] items-center justify-between gap-4">
           <NavLink to="/" onClick={close} className="flex items-center gap-3" aria-label="SITEVL — на главную">
-            <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-sm font-bold text-white">S</span>
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-ink text-sm font-bold text-white shadow-glass">S</span>
             <span className="leading-tight">
               <span className="block text-sm font-bold sm:text-base">{site.name}</span>
               <span className="hidden text-xs text-muted sm:block">{site.brandLine}</span>
@@ -40,7 +40,7 @@ export function Header() {
                 key={item.href}
                 to={item.href}
                 className={({ isActive }) =>
-                  `rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  `rounded-xl px-3 py-2 text-sm font-semibold transition ${
                     isActive ? 'bg-slate-100 text-ink' : 'text-muted hover:bg-slate-50 hover:text-ink'
                   }`
                 }
@@ -52,7 +52,7 @@ export function Header() {
 
           <div className="hidden items-center gap-3 xl:flex">
             <button
-              className="grid h-11 w-11 place-items-center rounded-full border border-line bg-white transition hover:border-slate-300"
+              className="grid h-11 w-11 place-items-center rounded-xl border border-line bg-white transition hover:-translate-y-0.5 hover:border-slate-300"
               type="button"
               title="Быстрая навигация (Command или Ctrl + K)"
               aria-label="Открыть быструю навигацию"
@@ -61,7 +61,7 @@ export function Header() {
               <Search className="h-5 w-5" />
             </button>
             <NavLink
-              className="relative grid h-11 w-11 place-items-center rounded-full border border-line bg-white transition hover:border-slate-300"
+              className="relative grid h-11 w-11 place-items-center rounded-xl border border-line bg-white transition hover:-translate-y-0.5 hover:border-slate-300"
               to="/cart"
               aria-label={`Открыть корзину, товаров: ${totalQuantity}`}
             >
@@ -79,7 +79,7 @@ export function Header() {
 
           <div className="flex items-center gap-2 xl:hidden">
             <button
-              className="grid h-11 w-11 place-items-center rounded-full border border-line bg-white"
+              className="grid h-11 w-11 place-items-center rounded-xl border border-line bg-white"
               type="button"
               aria-label="Открыть быструю навигацию"
               onClick={openCommandPalette}
@@ -87,7 +87,7 @@ export function Header() {
               <Search className="h-5 w-5" />
             </button>
             <NavLink
-              className="relative grid h-11 w-11 place-items-center rounded-full border border-line bg-white"
+              className="relative grid h-11 w-11 place-items-center rounded-xl border border-line bg-white"
               to="/cart"
               onClick={close}
               aria-label={`Открыть корзину, товаров: ${totalQuantity}`}
@@ -100,7 +100,7 @@ export function Header() {
               ) : null}
             </NavLink>
             <button
-              className="grid h-11 w-11 place-items-center rounded-full border border-line bg-white"
+              className="grid h-11 w-11 place-items-center rounded-xl border border-line bg-white"
               type="button"
               aria-label={isOpen ? 'Закрыть меню' : 'Открыть меню'}
               onClick={() => setIsOpen((value) => !value)}
@@ -111,7 +111,7 @@ export function Header() {
         </div>
 
         {isOpen && (
-          <div className="glass mt-3 rounded-[28px] p-3 shadow-glass xl:hidden">
+          <div className="glass mb-3 rounded-2xl p-3 shadow-glass xl:hidden">
             {navItems.map((item) => (
               <NavLink
                 key={item.href}

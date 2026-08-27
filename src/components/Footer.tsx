@@ -21,19 +21,19 @@ export function Footer() {
   const { contacts, site } = data;
 
   return (
-    <footer className="border-t border-line bg-slate-50/80 py-12">
+    <footer className="site-footer border-t border-slate-800 bg-[#0d1117] py-14 text-white">
       <Container>
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.8fr_1fr_1fr]">
           <div>
             <div className="text-2xl font-extrabold">{site.name}</div>
-            <p className="mt-3 max-w-md text-sm leading-6 text-muted">{site.tagline}. {site.location}.</p>
-            <p className="mt-6 text-sm text-muted">SITEVL — создание сайтов и цифровых решений во Владивостоке.</p>
+            <p className="mt-3 max-w-md text-sm leading-6 text-slate-400">{site.tagline}. {site.location}.</p>
+            <p className="mt-6 text-sm text-slate-400">SITEVL — создание сайтов и цифровых решений во Владивостоке.</p>
           </div>
           <div>
             <div className="font-bold">Навигация</div>
-            <div className="mt-4 grid gap-3 text-sm text-muted">
+            <div className="mt-4 grid gap-3 text-sm text-slate-400">
               {navItems.map((item) => (
-                <Link className="transition hover:text-ink" key={item.href} to={item.href}>
+                <Link className="transition hover:text-white" key={item.href} to={item.href}>
                   {item.label}
                 </Link>
               ))}
@@ -41,9 +41,9 @@ export function Footer() {
           </div>
           <div>
             <div className="font-bold">Полезное</div>
-            <div className="mt-4 grid gap-3 text-sm text-muted">
+            <div className="mt-4 grid gap-3 text-sm text-slate-400">
               {usefulLinks.map((item) => (
-                <Link className="transition hover:text-ink" key={item.href} to={item.href}>
+                <Link className="transition hover:text-white" key={item.href} to={item.href}>
                   {item.label}
                 </Link>
               ))}
@@ -51,9 +51,9 @@ export function Footer() {
           </div>
           <div className="lg:col-span-2">
             <div className="font-bold">География и услуги</div>
-            <div className="mt-4 flex flex-wrap gap-2 text-sm text-muted">
+            <div className="mt-4 flex flex-wrap gap-2 text-sm text-slate-400">
               {localSeoLinks.slice(0, 5).map((item) => (
-                <Link className="rounded-full border border-line bg-white px-3 py-1.5 transition hover:text-ink" key={item.href} to={item.href}>
+                <Link className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1.5 transition hover:border-slate-500 hover:text-white" key={item.href} to={item.href}>
                   {item.label}
                 </Link>
               ))}
@@ -61,28 +61,28 @@ export function Footer() {
           </div>
           <div>
             <div className="font-bold">Контакты</div>
-            <div className="mt-4 grid gap-3 text-sm text-muted">
+            <div className="mt-4 grid gap-3 text-sm text-slate-400">
               {contacts.map((contact) => (
-                <a className="transition hover:text-ink" href={contact.href} key={`${contact.label}-${contact.value}`}>
+                <a className="transition hover:text-white" href={contact.href} key={`${contact.label}-${contact.value}`}>
                   {contact.label}: {contact.value}
                 </a>
               ))}
             </div>
           </div>
         </div>
-        <div className="mt-10 border-t border-line pt-6">
-          <div className="flex flex-col gap-4 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 border-t border-slate-800 pt-6">
+          <div className="flex flex-col gap-4 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap gap-x-5 gap-y-2">
-              <Link className="transition hover:text-ink" to="/privacy">Политика обработки персональных данных</Link>
-              <Link className="transition hover:text-ink" to="/terms">Условия оказания услуг</Link>
+              <Link className="transition hover:text-white" to="/privacy">Политика обработки персональных данных</Link>
+              <Link className="transition hover:text-white" to="/terms">Условия оказания услуг</Link>
             </div>
             <span>SITEVL · Владивосток</span>
           </div>
-          <p className="mt-4 text-sm font-semibold text-muted">Владивосток · выезд по городу · удалённо</p>
-          <p className="mt-5 max-w-5xl text-xs leading-5 text-muted">
+          <p className="mt-4 text-sm font-semibold text-slate-400">Владивосток · выезд по городу · удалённо</p>
+          <p className="mt-5 max-w-5xl text-xs leading-5 text-slate-500">
             Информация на сайте носит справочный характер. Цены ориентировочные и не являются публичной офертой. Точная стоимость и сроки согласуются индивидуально перед началом работы.
           </p>
-          <p className="mt-2 max-w-5xl text-xs leading-5 text-muted">
+          <p className="mt-2 max-w-5xl text-xs leading-5 text-slate-500">
             Аудит сайта является предварительной проверкой заметных рисков и не является юридическим заключением.
           </p>
         </div>

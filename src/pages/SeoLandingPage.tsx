@@ -2,12 +2,14 @@ import { ArrowRight, CheckCircle2, MessageCircle } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { ButtonLink } from '../components/ButtonLink';
 import { Container } from '../components/Container';
+import { EditorialPhoto } from '../components/EditorialPhoto';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SeoHead } from '../components/SeoHead';
 import { CasePreviewCard } from '../components/TrustBlocks';
 import { absoluteUrl, siteConfig } from '../config/site';
 import { publishedCases } from '../data/cases';
+import { getServiceCategoryMedia } from '../data/editorialMedia';
 import { seoLandingPages } from '../data/seoLandingPages';
 import type { SeoLandingPage as SeoLandingPageData } from '../data/seoLandingPages';
 import { useSiteData } from '../hooks/useSiteData';
@@ -121,6 +123,7 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
   const relatedCases = publishedCases.filter((caseItem) =>
     caseItem.relatedServices.some((service) => service.href === currentPage.path || currentPage.links.some((link) => link.href === service.href)),
   );
+  const heroMedia = getServiceCategoryMedia(`${currentPage.title} ${currentPage.eyebrow}`);
 
   return (
     <PageTransition>
@@ -131,8 +134,7 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
         structuredData={structuredData}
       />
 
-      <section className="relative overflow-hidden py-16 sm:py-20">
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[radial-gradient(circle_at_20%_10%,rgba(37,99,235,0.10),transparent_34%),radial-gradient(circle_at_84%_16%,rgba(16,185,129,0.10),transparent_30%)]" />
+      <section className="relative overflow-hidden py-12 sm:py-16 lg:py-20">
         <Container>
           <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <Reveal>
@@ -151,17 +153,12 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
               </div>
             </Reveal>
             <Reveal delay={0.08}>
-              <div className="rounded-premium border border-line bg-white/84 p-6 shadow-glass">
-                <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Формат</p>
-                <div className="mt-5 grid gap-3">
-                  {['Владивосток', 'выезд по городу', 'удалённая помощь', 'частный специалист', 'цена согласуется до начала'].map((item) => (
-                    <div className="flex items-center gap-3 rounded-3xl bg-slate-50 p-4 text-sm font-bold text-graphite" key={item}>
-                      <CheckCircle2 className="h-5 w-5 shrink-0 text-accent" />
-                      {item}
-                    </div>
-                  ))}
+              <EditorialPhoto media={heroMedia} aspect="hero" priority>
+                <div className="photo-ui-note">
+                  <strong>Владивосток и удалённо</strong>
+                  <span>Работаю лично. Объём, формат, стоимость и сроки обсуждаем до начала.</span>
                 </div>
-              </div>
+              </EditorialPhoto>
             </Reveal>
           </div>
         </Container>

@@ -4,7 +4,8 @@ import { ButtonLink } from './ButtonLink';
 import { Container } from './Container';
 import { Reveal } from './Reveal';
 import { UsefulArticleSection, UsefulCardData, UsefulIllustrationVariant } from '../data/useful';
-import { UsefulIllustration } from './UsefulIllustrations';
+import { getUsefulArticleMedia, getUsefulVariantMedia } from '../data/editorialMedia';
+import { EditorialPhoto } from './EditorialPhoto';
 
 export function UsefulHero({
   title,
@@ -35,7 +36,12 @@ export function UsefulHero({
             )}
           </Reveal>
           <Reveal delay={0.08}>
-            <UsefulIllustration variant={variant} />
+            <EditorialPhoto media={getUsefulVariantMedia(variant)} aspect="hero" priority>
+              <div className="photo-ui-note">
+                <strong>Понятно, что делать дальше</strong>
+                <span>Реальная техника, последовательные шаги и предупреждения без сложных слов.</span>
+              </div>
+            </EditorialPhoto>
           </Reveal>
         </div>
       </Container>
@@ -49,7 +55,12 @@ export function UsefulCard({ card }: { card: UsefulCardData }) {
       className="group block h-full rounded-premium border border-line bg-white/82 p-6 shadow-glass transition duration-300 hover:-translate-y-1 hover:shadow-soft"
       to={card.href}
     >
-      <UsefulIllustration variant={card.variant} />
+      <EditorialPhoto
+        media={getUsefulArticleMedia(card.href.split('/').filter(Boolean).slice(-1)[0] || '')}
+        aspect="wide"
+        className="shadow-none"
+        caption={card.title}
+      />
       <h2 className="mt-6 text-2xl font-extrabold leading-tight">{card.title}</h2>
       <p className="mt-3 text-base leading-7 text-muted">{card.description}</p>
       <div className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-accent transition group-hover:text-ink">

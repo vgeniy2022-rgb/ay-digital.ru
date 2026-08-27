@@ -83,7 +83,7 @@ export const projectCases: ProjectCase[] = [
       {
         id: 'website-desktop',
         label: 'Главная страница',
-        alt: 'Плейсхолдер скриншота главной страницы сайта SITEVL',
+        alt: 'Реальный экран главной страницы сайта SITEVL',
         width: 1200,
         height: 760,
         loading: 'eager',
@@ -93,7 +93,7 @@ export const projectCases: ProjectCase[] = [
       {
         id: 'website-mobile',
         label: 'Мобильная версия',
-        alt: 'Плейсхолдер мобильной версии сайта SITEVL',
+        alt: 'Реальный экран адаптивной страницы сайта SITEVL',
         width: 720,
         height: 960,
         loading: 'lazy',
@@ -163,7 +163,7 @@ export const projectCases: ProjectCase[] = [
       {
         id: 'catalog-grid',
         label: 'Каталог товаров',
-        alt: 'Плейсхолдер интерфейса каталога морского оборудования с карточками товаров',
+        alt: 'Рабочий процесс подготовки интерфейса каталога морского оборудования',
         width: 1200,
         height: 760,
         loading: 'eager',
@@ -173,7 +173,7 @@ export const projectCases: ProjectCase[] = [
       {
         id: 'catalog-admin',
         label: 'Панель управления',
-        alt: 'Плейсхолдер панели управления товарами, изображениями и PDF-документами',
+        alt: 'Рабочий процесс настройки панели управления каталогом и документами',
         width: 1200,
         height: 760,
         loading: 'lazy',

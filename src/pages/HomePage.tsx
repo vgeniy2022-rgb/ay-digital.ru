@@ -4,13 +4,14 @@ import { Link } from 'react-router-dom';
 import { ButtonLink } from '../components/ButtonLink';
 import { CallToAction } from '../components/CallToAction';
 import { Container } from '../components/Container';
+import { EditorialPhoto } from '../components/EditorialPhoto';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
 import { SpecialistStatus } from '../components/SpecialistStatus';
-import { TechVisual } from '../components/TechVisual';
 import { CasePreviewCard } from '../components/TrustBlocks';
 import { featuredCases } from '../data/cases';
+import { editorialMedia } from '../data/editorialMedia';
 import { useSiteData } from '../hooks/useSiteData';
 
 const mainDirections = [
@@ -19,36 +20,42 @@ const mainDirections = [
     text: 'Сайты для специалистов и небольшого бизнеса: услуги, цены, отзывы, контакты и возможность управлять контентом через админку.',
     icon: Code2,
     href: '/website-development-vladivostok',
+    media: editorialMedia.homeCollaboration,
   },
   {
     title: 'Приложения и прототипы',
     text: 'Прототипы и простые приложения под задачу: идея, структура, интерфейс и рабочая первая версия.',
     icon: AppWindow,
     href: '/services',
+    media: editorialMedia.developerWorkspace,
   },
   {
     title: 'Настройка ноутбуков и ПК',
     text: 'Windows, MacBook, программы, браузеры, базовая настройка системы и подготовка устройства к работе.',
     icon: Laptop,
     href: '/computer-help-vladivostok',
+    media: editorialMedia.laptopOffice,
   },
   {
     title: 'Телефоны и перенос данных',
     text: 'Перенос данных, настройка нового телефона, подготовка устройства к продаже и базовая цифровая безопасность.',
     icon: Smartphone,
     href: '/data-transfer-vladivostok',
+    media: editorialMedia.dataTransferIphones,
   },
   {
     title: 'Сборка ПК под ключ',
     text: 'Подбор комплектующих, покупка, сборка, тестирование, установка Windows и программ.',
     icon: Computer,
     href: '/pc-build-vladivostok',
+    media: editorialMedia.ssdInstall,
   },
   {
     title: 'Презентации и цифровые задачи',
     text: 'Презентации, оформление материалов, консультации по технике и помощь с цифровыми задачами.',
     icon: Presentation,
     href: '/services',
+    media: editorialMedia.presentationWork,
   },
 ];
 
@@ -104,8 +111,7 @@ export function HomePage() {
 
   return (
     <PageTransition>
-      <section className="relative overflow-hidden py-14 sm:py-20 lg:py-24">
-        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-full bg-[linear-gradient(180deg,rgba(248,250,252,0.8),rgba(255,255,255,0))]" />
+      <section className="relative overflow-hidden py-12 sm:py-16 lg:py-20">
         <Container>
           <div className="grid items-center gap-12 lg:grid-cols-[1.03fr_0.97fr]">
             <Reveal>
@@ -127,7 +133,12 @@ export function HomePage() {
               </div>
             </Reveal>
             <Reveal delay={0.12}>
-              <TechVisual />
+              <EditorialPhoto media={editorialMedia.homeCollaboration} aspect="hero" priority>
+                <div className="photo-ui-note">
+                  <strong>Сайт должен объяснять услугу сам</strong>
+                  <span>Структура, визуальная система, адаптация и понятный путь до обращения.</span>
+                </div>
+              </EditorialPhoto>
             </Reveal>
           </div>
           <Reveal delay={0.18} className="mt-12 grid gap-4 sm:grid-cols-3">
@@ -250,24 +261,43 @@ export function HomePage() {
                     transition={{ type: 'spring', stiffness: 280, damping: 24 }}
                   >
                     <Link
-                      className="group block h-full rounded-premium border border-line bg-white/82 p-6 shadow-glass transition duration-300 hover:border-slate-300 hover:shadow-soft"
+                      className="group block h-full overflow-hidden rounded-[22px] border border-line bg-white shadow-glass transition duration-300 hover:border-slate-300 hover:shadow-soft"
                       to={direction.href}
                     >
-                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 text-ink">
-                      <Icon className="h-5 w-5" />
-                    </span>
-                    <h3 className="mt-7 text-2xl font-extrabold leading-tight">{direction.title}</h3>
-                    <p className="mt-4 text-base leading-7 text-muted">{direction.text}</p>
-                    <div className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-accent transition group-hover:text-ink">
-                      Подробнее
-                      <ArrowDownRight className="h-4 w-4" />
-                    </div>
+                      <EditorialPhoto media={direction.media} aspect="wide" className="rounded-none border-0 shadow-none" caption={direction.title} />
+                      <div className="p-6">
+                        <span className="grid h-11 w-11 place-items-center rounded-xl bg-slate-100 text-ink">
+                          <Icon className="h-5 w-5" />
+                        </span>
+                        <h3 className="mt-6 text-2xl font-extrabold leading-tight">{direction.title}</h3>
+                        <p className="mt-4 text-base leading-7 text-muted">{direction.text}</p>
+                        <div className="mt-6 inline-flex items-center gap-2 text-sm font-extrabold text-accent transition group-hover:text-ink">
+                          Подробнее
+                          <ArrowDownRight className="h-4 w-4" />
+                        </div>
+                      </div>
                     </Link>
                   </motion.div>
                 </Reveal>
               );
             })}
           </div>
+        </Container>
+      </section>
+
+      <section className="editorial-band py-14 sm:py-20">
+        <Container>
+          <Reveal className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
+            <div>
+              <p className="editorial-eyebrow">Не только макеты</p>
+              <h2 className="mt-4 text-4xl font-extrabold leading-tight sm:text-5xl">Работаю с живыми задачами и реальными устройствами</h2>
+              <p className="mt-5 max-w-xl text-base leading-7 text-muted">Сайт показывает процесс честно: от обсуждения интерфейса до настройки ноутбука, переноса данных и работы с комплектующими.</p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <EditorialPhoto media={editorialMedia.dataTransferIphones} aspect="landscape" />
+              <EditorialPhoto media={editorialMedia.ssdInstall} aspect="landscape" />
+            </div>
+          </Reveal>
         </Container>
       </section>
 

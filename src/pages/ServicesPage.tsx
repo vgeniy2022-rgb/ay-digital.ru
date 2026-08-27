@@ -1,5 +1,6 @@
 import { CallToAction } from '../components/CallToAction';
 import { Container } from '../components/Container';
+import { EditorialPhoto } from '../components/EditorialPhoto';
 import { PageHero } from '../components/PageHero';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
@@ -10,6 +11,7 @@ import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
 import { absoluteUrl, siteConfig } from '../config/site';
 import { pageMeta } from '../data/pageMeta';
 import { localSeoLinks } from '../data/localSeoLinks';
+import { getServiceCategoryMedia } from '../data/editorialMedia';
 import { useSiteData } from '../hooks/useSiteData';
 import { Link } from 'react-router-dom';
 
@@ -91,12 +93,17 @@ export function ServicesPage() {
               {[...groupedServices, ...(uncategorizedServices.length ? [{ category: 'Другие услуги', items: uncategorizedServices }] : [])].map((group) => (
                 <section key={group.category}>
                   <Reveal>
-                    <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                    <div className="mb-6 grid gap-5 lg:grid-cols-[1fr_340px] lg:items-end">
                       <div>
                         <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Категория</p>
                         <h2 className="mt-2 text-3xl font-extrabold leading-tight sm:text-4xl">{group.category}</h2>
                       </div>
-                      <span className="text-sm font-bold text-muted">{group.items.length} услуг</span>
+                      <EditorialPhoto
+                        media={getServiceCategoryMedia(group.category)}
+                        aspect="wide"
+                        className="max-h-[190px] shadow-glass"
+                        caption={`${group.items.length} услуг в направлении`}
+                      />
                     </div>
                   </Reveal>
                   {group.category === 'Сайты и админки' ? (
