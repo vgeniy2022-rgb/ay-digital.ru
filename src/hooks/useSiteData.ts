@@ -373,6 +373,8 @@ function normalizeSettings(settings: PublicSiteData['settings'] | undefined, has
   return {
     ...localSite,
     ...settings,
+    name: localSite.name,
+    brandLine: localSite.brandLine,
     phones: splitList(settings.phones).length ? splitList(settings.phones) : localSite.phones,
   };
 }

@@ -10,7 +10,7 @@ import { useSiteData } from '../hooks/useSiteData';
 
 function formatCartMessage(items: ReturnType<typeof useCart>['items'], knownTotal: number, hasUnknownPrices: boolean) {
   const lines = [
-    'Здравствуйте! Меня интересуют услуги с сайта ay-digital.ru:',
+    'Здравствуйте! Меня интересуют услуги с сайта SITEVL:',
     '',
     ...items.map((item) => {
       const quantity = item.quantity > 1 ? ` × ${item.quantity}` : '';

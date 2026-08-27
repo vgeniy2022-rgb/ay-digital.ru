@@ -1,13 +1,14 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { extname, join } from 'node:path';
+import { resolveSiteUrl } from './site-env.mjs';
 
 const rootDir = process.cwd();
 const distDir = join(rootDir, 'dist');
 const srcDir = join(rootDir, 'src');
-const siteUrl = (process.env.VITE_SITE_URL || 'https://ay-digital-ru.vercel.app').replace(/\/$/, '');
+const siteUrl = resolveSiteUrl(rootDir);
 const manifestPath = join(distDir, 'seo-route-manifest.json');
 const sitemapPath = join(distDir, 'sitemap.xml');
-const technicalPaths = new Set(['/cart', '/checkout', '/admin']);
+const technicalPaths = new Set(['/cart', '/checkout', '/admin', '/lab', '/lab/website-builder', '/lab/admin-demo', '/lab/architecture', '/lab/web-evolution', '/lab/seo', '/brief', '/changelog']);
 const ignoredInternalTargets = [/^\/#/, /^\/assets\//, /\.(svg|png|jpe?g|webp|avif|ico|json|xml|txt|pdf)$/i];
 
 function fail(message) {
@@ -189,6 +190,14 @@ const allowedInternalPaths = new Set([
   '/process',
   '/cart',
   '/checkout',
+  '/lab',
+  '/lab/website-builder',
+  '/lab/admin-demo',
+  '/lab/architecture',
+  '/lab/web-evolution',
+  '/lab/seo',
+  '/brief',
+  '/changelog',
 ]);
 
 const sourceFiles = walkFiles(srcDir);

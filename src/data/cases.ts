@@ -33,13 +33,15 @@ export type ProjectCase = {
   seoTitle: string;
   seoDescription: string;
   draftNote?: string;
+  projectPrice?: string;
+  developmentTime?: string;
 };
 
 export const projectCases: ProjectCase[] = [
   {
     slug: 'ay-digital-personal-website',
     path: '/cases/ay-digital-personal-website',
-    title: 'Личный сайт AY Digital',
+    title: 'Сайт-портфолио SITEVL',
     shortDescription:
       'Сайт услуг частного IT-специалиста: страницы услуг, цен, кейсов, контактов и полезных материалов с SEO-структурой и prerender.',
     category: 'Сайт услуг',
@@ -81,7 +83,7 @@ export const projectCases: ProjectCase[] = [
       {
         id: 'website-desktop',
         label: 'Главная страница',
-        alt: 'Плейсхолдер скриншота главной страницы сайта AY Digital',
+        alt: 'Плейсхолдер скриншота главной страницы сайта SITEVL',
         width: 1200,
         height: 760,
         loading: 'eager',
@@ -91,14 +93,14 @@ export const projectCases: ProjectCase[] = [
       {
         id: 'website-mobile',
         label: 'Мобильная версия',
-        alt: 'Плейсхолдер мобильной версии сайта AY Digital',
+        alt: 'Плейсхолдер мобильной версии сайта SITEVL',
         width: 720,
         height: 960,
         loading: 'lazy',
         decoding: 'async',
       },
     ],
-    imageAlt: 'Светлый макет сайта AY Digital с десктопной и мобильной версией',
+    imageAlt: 'Светлый макет сайта SITEVL с десктопной и мобильной версией',
     relatedServices: [
       { label: 'Создание сайтов', href: '/website-development-vladivostok' },
       { label: 'Сайт с админкой', href: '/website-admin-vladivostok' },
@@ -111,9 +113,9 @@ export const projectCases: ProjectCase[] = [
     ],
     published: true,
     featured: true,
-    seoTitle: 'Кейс: личный сайт AY Digital на React и Vite',
+    seoTitle: 'Кейс: сайт-портфолио SITEVL на React и Vite',
     seoDescription:
-      'Кейс личного сайта AY Digital: React, Vite, TypeScript, адаптивная структура, страницы услуг, цен, кейсов, контактов, sitemap, robots, structured data и prerender.',
+      'Кейс сайта-портфолио SITEVL: React, Vite, TypeScript, адаптивная структура, страницы услуг, цен, кейсов, контактов, sitemap, robots, structured data и prerender.',
   },
   {
     slug: 'marine-equipment-catalog',

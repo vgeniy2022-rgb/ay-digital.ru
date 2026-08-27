@@ -50,8 +50,8 @@ const homeStructuredData = {
 
 export const routeSeo: Record<string, RouteSeo> = {
   '/': {
-    title: 'AY Digital — сайты для бизнеса и IT-помощь во Владивостоке',
-    description: 'AY Digital создаёт сайты для бизнеса во Владивостоке и удалённо по Приморскому краю: лендинги, сайты-визитки, сайты с админкой, каталоги и базовая SEO-подготовка.',
+    title: 'SITEVL — сайты для бизнеса и IT-помощь во Владивостоке',
+    description: 'SITEVL создаёт сайты для бизнеса во Владивостоке и удалённо по Приморскому краю: лендинги, сайты-визитки, сайты с админкой, каталоги и базовая SEO-подготовка.',
     canonicalPath: '/',
     structuredData: homeStructuredData,
   },
@@ -61,12 +61,12 @@ export const routeSeo: Record<string, RouteSeo> = {
     canonicalPath: '/services',
   },
   '/prices': {
-    title: 'Цены на IT-услуги во Владивостоке — AY Digital',
+    title: 'Цены на IT-услуги во Владивостоке — SITEVL',
     description: 'Ориентировочные цены на сайты, настройку Windows и MacBook, установку программ, перенос данных, сборку ПК и другие IT-услуги во Владивостоке.',
     canonicalPath: '/prices',
   },
   '/cases': {
-    title: 'Кейсы и примеры задач — AY Digital',
+    title: 'Кейсы и примеры задач — SITEVL',
     description: 'Примеры сайтов, админок, приложений, презентаций, настройки техники и цифровых задач, с которыми можно обратиться к Александру.',
     canonicalPath: '/cases',
   },
@@ -81,7 +81,7 @@ export const routeSeo: Record<string, RouteSeo> = {
     canonicalPath: '/contacts',
   },
   '/useful': {
-    title: 'Полезное по технике, данным и безопасности — AY Digital',
+    title: 'Полезное по технике, данным и безопасности — SITEVL',
     description: 'Простые инструкции по переносу данных, цифровой безопасности, приложениям, iPhone, Android, MacBook и защите от мошенников.',
     canonicalPath: '/useful',
   },
@@ -91,25 +91,73 @@ export const routeSeo: Record<string, RouteSeo> = {
     canonicalPath: '/process',
   },
   '/privacy': {
-    title: 'Политика обработки персональных данных — AY Digital',
-    description: 'Политика обработки персональных данных на сайте AY Digital.',
+    title: 'Политика обработки персональных данных — SITEVL',
+    description: 'Политика обработки персональных данных на сайте SITEVL.',
     canonicalPath: '/privacy',
   },
   '/terms': {
-    title: 'Условия обращения и оказания услуг — AY Digital',
-    description: 'Условия обращения, ориентировочные цены, порядок согласования задач и ограничения услуг AY Digital.',
+    title: 'Условия обращения и оказания услуг — SITEVL',
+    description: 'Условия обращения, ориентировочные цены, порядок согласования задач и ограничения услуг SITEVL.',
     canonicalPath: '/terms',
   },
   '/cart': {
-    title: 'Корзина услуг — AY Digital',
-    description: 'Корзина выбранных услуг AY Digital.',
+    title: 'Корзина услуг — SITEVL',
+    description: 'Корзина выбранных услуг SITEVL.',
     canonicalPath: '/cart',
     noindex: true,
   },
   '/checkout': {
-    title: 'Обсудить выбранные услуги — AY Digital',
-    description: 'Список выбранных услуг AY Digital для обсуждения в Telegram или WhatsApp.',
+    title: 'Обсудить выбранные услуги — SITEVL',
+    description: 'Список выбранных услуг SITEVL для обсуждения в Telegram или WhatsApp.',
     canonicalPath: '/checkout',
+    noindex: true,
+  },
+  '/lab': {
+    title: 'SITEVL LAB — интерактивная лаборатория',
+    description: 'Интерактивные эксперименты SITEVL: конструктор сайта, демо-админка, архитектура, эволюция веба и SEO-визуализатор.',
+    canonicalPath: '/lab',
+    noindex: true,
+  },
+  '/lab/website-builder': {
+    title: 'Website Builder — SITEVL LAB',
+    description: 'Интерактивный конструктор структуры сайта, функций, адаптивного preview и ориентировочной стоимости.',
+    canonicalPath: '/lab/website-builder',
+    noindex: true,
+  },
+  '/lab/admin-demo': {
+    title: 'Admin Demo — SITEVL LAB',
+    description: 'Локальная демонстрация управления услугами, ценами, акциями и карточками сайта.',
+    canonicalPath: '/lab/admin-demo',
+    noindex: true,
+  },
+  '/lab/architecture': {
+    title: 'Architecture Explorer — SITEVL LAB',
+    description: 'Интерактивная схема frontend, API, базы данных, файлов и админ-панели.',
+    canonicalPath: '/lab/architecture',
+    noindex: true,
+  },
+  '/lab/web-evolution': {
+    title: 'Website Evolution — SITEVL LAB',
+    description: 'Демонстрация эволюции одного бизнес-сайта в визуальном языке 2005, 2015 и 2026 годов.',
+    canonicalPath: '/lab/web-evolution',
+    noindex: true,
+  },
+  '/lab/seo': {
+    title: 'SEO Visualizer — SITEVL LAB',
+    description: 'Интерактивное объяснение индексации, sitemap, метаданных и поискового сниппета.',
+    canonicalPath: '/lab/seo',
+    noindex: true,
+  },
+  '/brief': {
+    title: 'Мини-бриф на создание сайта — SITEVL',
+    description: 'Интерактивный мини-бриф SITEVL: задача, структура, функции и ориентировочная стоимость сайта.',
+    canonicalPath: '/brief',
+    noindex: true,
+  },
+  '/changelog': {
+    title: 'Changelog — SITEVL',
+    description: 'Фактические изменения интерактивного интерфейса SITEVL.',
+    canonicalPath: '/changelog',
     noindex: true,
   },
 };

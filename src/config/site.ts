@@ -1,10 +1,13 @@
+const configuredSiteUrl = import.meta.env.VITE_SITE_URL?.trim();
+const runtimeSiteUrl = typeof window !== 'undefined' ? window.location.origin : '';
+
 export const siteConfig = {
-  siteName: 'AY Digital',
+  siteName: 'SITEVL',
   specialistName: 'Александр',
-  siteUrl: import.meta.env.VITE_SITE_URL?.trim() || 'https://ay-digital-ru.vercel.app',
-  defaultTitle: 'Александр — IT-помощь, сайты и техника во Владивостоке',
+  siteUrl: (configuredSiteUrl || runtimeSiteUrl).replace(/\/$/, ''),
+  defaultTitle: 'SITEVL — создание сайтов и цифровых решений во Владивостоке',
   defaultDescription:
-    'Частный IT-специалист во Владивостоке: компьютерная помощь, настройка Windows и MacBook, перенос данных, сборка ПК, создание сайтов и удалённая помощь.',
+    'SITEVL — создание сайтов и цифровых решений во Владивостоке: сайты для бизнеса, компьютерная помощь, настройка техники и удалённая работа.',
   defaultOgImage: '/og-image.svg',
   phone: '+79241308626',
   phoneDisplay: '+7 924 130-86-26',

@@ -82,7 +82,8 @@ export const siteAdminPromo = {
 };
 
 export const site = {
-  name: 'Александр',
+  name: 'SITEVL',
+  brandLine: 'сайты из Владивостока',
   domain: 'ay-digital.ru',
   location: 'Владивосток и удалённо',
   tagline: 'Сайты, приложения, техника и IT-помощь',
@@ -108,6 +109,7 @@ export const navItems: NavItem[] = [
   { label: 'Цены', href: '/prices' },
   { label: 'Кейсы', href: '/cases' },
   { label: 'Полезное', href: '/useful' },
+  { label: 'LAB', href: '/lab' },
   { label: 'Порядок работы', href: '/process' },
   { label: 'Контакты', href: '/contacts' },
 ];
@@ -532,7 +534,7 @@ export const priceGroups: PriceGroup[] = [
 
 export const cases: CaseItem[] = [
   {
-    title: 'Личный сайт AY Digital',
+    title: 'Сайт-портфолио SITEVL',
     category: 'Сайты',
     status: 'Выполненный проект',
     description: 'Многостраничный сайт-витрина для услуг: сайты, приложения, презентации, техника, перенос данных, сборка ПК и IT-помощь.',
@@ -544,7 +546,7 @@ export const cases: CaseItem[] = [
     icon: Code2,
   },
   {
-    title: 'iPhone-админка AY Admin',
+    title: 'iPhone-админка для управления сайтом',
     category: 'Админки',
     status: 'Выполненный проект',
     description: 'Нативное iOS-приложение для управления сайтом с телефона: услуги, цены, пакеты, отзывы, FAQ, акции и настройки.',

@@ -6,6 +6,7 @@ import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SeoHead } from '../components/SeoHead';
+import { CaseExperience } from '../components/CaseExperience';
 import { CaseResultBlock, ProjectPlaceholder, RelatedCases, TechnologiesList } from '../components/TrustBlocks';
 import { absoluteUrl, siteConfig } from '../config/site';
 import { ProjectCase, publishedCases } from '../data/cases';
@@ -110,6 +111,9 @@ export function CasePage() {
 
       <section className="pb-16">
         <Container>
+          <Reveal>
+            <CaseExperience item={item} />
+          </Reveal>
           <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
             <Reveal>
               <article className="h-full rounded-premium border border-line bg-white/84 p-6 shadow-glass sm:p-8">

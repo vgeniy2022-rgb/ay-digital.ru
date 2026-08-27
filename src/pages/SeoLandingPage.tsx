@@ -1,5 +1,5 @@
 import { ArrowRight, CheckCircle2, MessageCircle } from 'lucide-react';
-import { Navigate, Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ButtonLink } from '../components/ButtonLink';
 import { Container } from '../components/Container';
 import { PageTransition } from '../components/PageTransition';
@@ -11,6 +11,7 @@ import { publishedCases } from '../data/cases';
 import { seoLandingPages } from '../data/seoLandingPages';
 import type { SeoLandingPage as SeoLandingPageData } from '../data/seoLandingPages';
 import { useSiteData } from '../hooks/useSiteData';
+import { NotFoundPage } from './NotFoundPage';
 
 type SeoLandingPageProps = {
   page?: SeoLandingPageData;
@@ -104,7 +105,7 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
   const { data } = useSiteData();
   const currentPage = page || seoLandingPages.find((item) => item.slug === landingSlug);
 
-  if (!currentPage) return <Navigate to="/services" replace />;
+  if (!currentPage) return <NotFoundPage />;
 
   const priceGroups = data.priceGroups.filter((group) => currentPage.priceGroupTitles.includes(group.title));
   const structuredData = [serviceSchema(currentPage, priceGroups), faqSchema(currentPage)];

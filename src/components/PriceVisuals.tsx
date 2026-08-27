@@ -18,7 +18,7 @@ function BrowserWindow({ rows = ['Услуги', 'Цены', 'Отзывы'] }: 
         <span className="h-2.5 w-24 rounded-full bg-slate-100" />
       </div>
       <div className="pt-5">
-        <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-extrabold text-accent">AY Digital</span>
+        <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-extrabold text-accent">SITEVL</span>
         <div className="mt-5 h-7 w-44 rounded-full bg-ink" />
         <div className="mt-3 h-3 w-56 max-w-full rounded-full bg-slate-200" />
         <div className="mt-5 grid gap-3">

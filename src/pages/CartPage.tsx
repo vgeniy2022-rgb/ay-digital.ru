@@ -12,8 +12,8 @@ export function CartPage() {
   const { items, removeItem, increaseQuantity, decreaseQuantity, clearCart, knownTotal, hasUnknownPrices } = useCart();
 
   useEffect(() => {
-    document.title = 'Корзина услуг — AY Digital';
-    document.querySelector('meta[name="description"]')?.setAttribute('content', 'Корзина выбранных услуг AY Digital.');
+    document.title = 'Корзина услуг — SITEVL';
+    document.querySelector('meta[name="description"]')?.setAttribute('content', 'Корзина выбранных услуг SITEVL.');
   }, []);
 
   return (

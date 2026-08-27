@@ -24,7 +24,7 @@ export function TechVisual() {
         <div className="grid gap-5 pt-5 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
             <div className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-extrabold text-accent">
-              AY Digital
+              SITEVL
             </div>
             <div className="mt-5 h-8 w-52 rounded-full bg-ink" />
             <div className="mt-3 h-3 w-56 rounded-full bg-slate-200" />

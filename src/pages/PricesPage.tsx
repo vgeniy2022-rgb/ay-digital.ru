@@ -47,7 +47,7 @@ function createOfferCatalogSchema(groups: PriceGroup[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'OfferCatalog',
-    name: 'Цены на IT-услуги AY Digital',
+    name: 'Цены на IT-услуги SITEVL',
     url: absoluteUrl('/prices'),
     itemListElement: groups.map((group) => ({
       '@type': 'OfferCatalog',

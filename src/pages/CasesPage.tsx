@@ -15,7 +15,7 @@ function casesCollectionSchema() {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: 'Кейсы и примеры проектов',
-    description: 'Реальные проекты Александра: личный сайт AY Digital и каталог морского оборудования.',
+    description: 'Реальные проекты Александра: сайт-портфолио SITEVL и каталог морского оборудования.',
     url: absoluteUrl('/cases'),
     inLanguage: 'ru-RU',
     author: {
@@ -36,8 +36,8 @@ export function CasesPage() {
   return (
     <PageTransition>
       <SeoHead
-        title="Кейсы и реальные проекты — AY Digital"
-        description="Опубликованные кейсы Александра: личный сайт AY Digital и каталог морского оборудования с админкой, SEO-структурой и адаптивным интерфейсом."
+        title="Кейсы и реальные проекты — SITEVL"
+        description="Опубликованные кейсы Александра: сайт-портфолио SITEVL и каталог морского оборудования с админкой, SEO-структурой и адаптивным интерфейсом."
         canonicalPath="/cases"
         structuredData={casesCollectionSchema()}
       />

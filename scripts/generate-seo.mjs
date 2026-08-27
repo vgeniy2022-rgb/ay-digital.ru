@@ -1,21 +1,22 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { resolveSiteUrl } from './site-env.mjs';
 
 const rootDir = process.cwd();
 const distDir = join(rootDir, 'dist');
 const publicDir = join(rootDir, 'public');
-const siteUrl = (process.env.VITE_SITE_URL || 'https://ay-digital-ru.vercel.app').replace(/\/$/, '');
+const siteUrl = resolveSiteUrl(rootDir);
 const lastmod = new Date().toISOString().slice(0, 10);
 const defaultImage = `${siteUrl}/og-image.svg`;
 const phone = '+79241308626';
 const specialistName = 'Александр';
-const siteName = 'AY Digital';
+const siteName = 'SITEVL';
 
 const baseRoutes = [
   {
     path: '/',
-    title: 'AY Digital — сайты для бизнеса и IT-помощь во Владивостоке',
-    description: 'AY Digital создаёт сайты для бизнеса во Владивостоке и удалённо по Приморскому краю: лендинги, сайты-визитки, сайты с админкой, каталоги и базовая SEO-подготовка.',
+    title: 'SITEVL — сайты для бизнеса и IT-помощь во Владивостоке',
+    description: 'SITEVL создаёт сайты для бизнеса во Владивостоке и удалённо по Приморскому краю: лендинги, сайты-визитки, сайты с админкой, каталоги и базовая SEO-подготовка.',
     priority: 1,
     changefreq: 'weekly',
     schemaType: 'ProfessionalService',
@@ -30,7 +31,7 @@ const baseRoutes = [
   },
   {
     path: '/prices',
-    title: 'Цены на IT-услуги во Владивостоке — AY Digital',
+    title: 'Цены на IT-услуги во Владивостоке — SITEVL',
     description: 'Ориентировочные цены на сайты, настройку Windows и MacBook, установку программ, перенос данных, сборку ПК и другие IT-услуги во Владивостоке.',
     priority: 0.9,
     changefreq: 'weekly',
@@ -38,7 +39,7 @@ const baseRoutes = [
   },
   {
     path: '/cases',
-    title: 'Кейсы и примеры задач — AY Digital',
+    title: 'Кейсы и примеры задач — SITEVL',
     description: 'Примеры сайтов, админок, приложений, презентаций, настройки техники и цифровых задач, с которыми можно обратиться к Александру.',
     priority: 0.75,
     changefreq: 'monthly',
@@ -70,8 +71,8 @@ const baseRoutes = [
   },
   {
     path: '/primorsky-krai',
-    title: 'IT-услуги во Владивостоке и Приморском крае — AY Digital',
-    description: 'Локальный хаб AY Digital: услуги во Владивостоке, удалённая помощь по Приморскому краю, сайты, компьютерная помощь, Windows, MacBook и консультации.',
+    title: 'IT-услуги во Владивостоке и Приморском крае — SITEVL',
+    description: 'Локальный хаб SITEVL: услуги во Владивостоке, удалённая помощь по Приморскому краю, сайты, компьютерная помощь, Windows, MacBook и консультации.',
     priority: 0.74,
     changefreq: 'monthly',
     schemaType: 'CollectionPage',
@@ -86,16 +87,16 @@ const baseRoutes = [
   },
   {
     path: '/privacy',
-    title: 'Политика обработки персональных данных — AY Digital',
-    description: 'Политика обработки персональных данных на сайте AY Digital.',
+    title: 'Политика обработки персональных данных — SITEVL',
+    description: 'Политика обработки персональных данных на сайте SITEVL.',
     priority: 0.2,
     changefreq: 'yearly',
     schemaType: 'WebPage',
   },
   {
     path: '/terms',
-    title: 'Условия обращения и оказания услуг — AY Digital',
-    description: 'Условия обращения, ориентировочные цены, порядок согласования задач и ограничения услуг AY Digital.',
+    title: 'Условия обращения и оказания услуг — SITEVL',
+    description: 'Условия обращения, ориентировочные цены, порядок согласования задач и ограничения услуг SITEVL.',
     priority: 0.2,
     changefreq: 'yearly',
     schemaType: 'WebPage',
@@ -131,7 +132,7 @@ const usefulRoutes = [
   ['/useful/how-to-choose-hosting', 'Как выбрать хостинг для сайта', 'Как выбрать хостинг для сайта: домен, SSL, скорость, поддержка, резервные копии, почта, CMS, безопасность и рост проекта.'],
   ['/useful/prepare-photos-for-website', 'Как подготовить фотографии для сайта', 'Как подготовить фото для сайта: отбор, качество, формат, размер, фон, единый стиль, сжатие и понятные названия файлов.'],
   ['/useful/how-to-choose-website-developer', 'Как выбрать разработчика сайта', 'Как выбрать разработчика сайта: портфолио, состав работ, сроки, стоимость, админка, SEO, поддержка, договорённости и передача доступов.'],
-  ['/useful/website-development-cost', 'Сколько стоит создание сайта', 'Как формируется стоимость создания сайта: лендинг, сайт-визитка, сайт с админкой, каталог, контент, сроки и ссылка на актуальный прайс AY Digital.'],
+  ['/useful/website-development-cost', 'Сколько стоит создание сайта', 'Как формируется стоимость создания сайта: лендинг, сайт-визитка, сайт с админкой, каталог, контент, сроки и ссылка на актуальный прайс SITEVL.'],
   ['/useful/website-for-small-business', 'Какой сайт нужен малому бизнесу', 'Как понять, какой сайт заказать малому бизнесу: сайт-визитка, лендинг, сайт с админкой, каталог, заявки, цены, отзывы и мобильная версия.'],
   ['/useful/company-website-structure', 'Что должно быть на сайте компании', 'Структура сайта компании: главный экран, услуги, цены, кейсы, отзывы, FAQ, контакты, формы заявок, legal-страницы и базовое SEO.'],
   ['/useful/diy-or-developer-website', 'Сайт самому или заказать разработчику', 'Нейтральное сравнение: сделать сайт самостоятельно на конструкторе или заказать разработку. Когда подходит каждый вариант и какие риски учесть.'],
@@ -142,7 +143,7 @@ const usefulRoutes = [
 ].map(([path, title, description]) => ({ path, title, description, priority: 0.64, changefreq: 'monthly', type: 'article', schemaType: 'Article' }));
 
 const caseRoutes = [
-  ['/cases/ay-digital-personal-website', 'Кейс: личный сайт AY Digital на React и Vite', 'Кейс личного сайта AY Digital: React, Vite, TypeScript, адаптивная структура, страницы услуг, цен, кейсов, контактов, sitemap, robots, structured data и prerender.'],
+  ['/cases/ay-digital-personal-website', 'Кейс: сайт-портфолио SITEVL на React и Vite', 'Кейс сайта-портфолио SITEVL: React, Vite, TypeScript, адаптивная структура, страницы услуг, цен, кейсов, контактов, sitemap, robots, structured data и prerender.'],
   ['/cases/marine-equipment-catalog', 'Кейс: каталог морского оборудования на React и Supabase', 'Кейс каталога морского оборудования: до примерно 1000 товаров, категории, поиск, фильтры, PDF-документы, формы связи, админка, Supabase Auth, CRUD, Storage и RLS.'],
 ].map(([path, title, description]) => ({ path, title, description, priority: 0.68, changefreq: 'monthly', type: 'article', schemaType: 'CreativeWork' }));
 
@@ -163,22 +164,78 @@ const landingRoutes = [
   ['/pc-build-vladivostok', 'Сборка ПК во Владивостоке — компьютер под ключ', 'Сборка ПК во Владивостоке под задачи и бюджет: подбор комплектующих, покупка, сборка, кабель-менеджмент, тестирование, Windows и программы.'],
   ['/data-transfer-vladivostok', 'Перенос данных во Владивостоке — iPhone и Android', 'Перенос фото, контактов и файлов между iPhone и Android во Владивостоке. Настройка нового телефона и проверка данных после переноса.'],
   ['/phone-setup-vladivostok', 'Настройка iPhone и Android во Владивостоке', 'Настройка нового iPhone или Android во Владивостоке: аккаунт, мессенджеры, резервная копия, поиск устройства, перенос контактов и безопасность.'],
-  ['/website-development-vladivostok', 'Создание сайтов во Владивостоке и Приморском крае — AY Digital', 'Создание сайтов во Владивостоке и удалённо по Приморскому краю: сайты для бизнеса, лендинги, сайты-визитки, сайты с админкой, каталоги и базовая SEO-подготовка.'],
+  ['/website-development-vladivostok', 'Создание сайтов во Владивостоке и Приморском крае — SITEVL', 'Создание сайтов во Владивостоке и удалённо по Приморскому краю: сайты для бизнеса, лендинги, сайты-визитки, сайты с админкой, каталоги и базовая SEO-подготовка.'],
   ['/website-admin-vladivostok', 'Сайт с админкой во Владивостоке — управление без программиста', 'Разработка сайта с простой админкой во Владивостоке. Самостоятельно меняйте услуги, цены, отзывы, акции и фотографии без правки кода.'],
 ].map(([path, title, description]) => ({ path, title, description, priority: 0.82, changefreq: 'weekly', schemaType: 'Service' }));
 
 const technicalRoutes = [
   {
     path: '/cart',
-    title: 'Корзина услуг — AY Digital',
-    description: 'Корзина выбранных услуг AY Digital.',
+    title: 'Корзина услуг — SITEVL',
+    description: 'Корзина выбранных услуг SITEVL.',
     noindex: true,
     schemaType: 'WebPage',
   },
   {
     path: '/checkout',
-    title: 'Обсудить выбранные услуги — AY Digital',
-    description: 'Список выбранных услуг AY Digital для обсуждения в Telegram или WhatsApp.',
+    title: 'Обсудить выбранные услуги — SITEVL',
+    description: 'Список выбранных услуг SITEVL для обсуждения в Telegram или WhatsApp.',
+    noindex: true,
+    schemaType: 'WebPage',
+  },
+  {
+    path: '/lab',
+    title: 'SITEVL LAB — интерактивная лаборатория',
+    description: 'Интерактивные эксперименты SITEVL: конструктор сайта, демо-админка, архитектура, эволюция веба и SEO-визуализатор.',
+    noindex: true,
+    schemaType: 'WebPage',
+  },
+  {
+    path: '/lab/website-builder',
+    title: 'Website Builder — SITEVL LAB',
+    description: 'Интерактивный конструктор структуры сайта, функций, адаптивного preview и ориентировочной стоимости.',
+    noindex: true,
+    schemaType: 'WebPage',
+  },
+  {
+    path: '/lab/admin-demo',
+    title: 'Admin Demo — SITEVL LAB',
+    description: 'Локальная демонстрация управления услугами, ценами, акциями и карточками сайта.',
+    noindex: true,
+    schemaType: 'WebPage',
+  },
+  {
+    path: '/lab/architecture',
+    title: 'Architecture Explorer — SITEVL LAB',
+    description: 'Интерактивная схема frontend, API, базы данных, файлов и админ-панели.',
+    noindex: true,
+    schemaType: 'WebPage',
+  },
+  {
+    path: '/lab/web-evolution',
+    title: 'Website Evolution — SITEVL LAB',
+    description: 'Демонстрация эволюции одного бизнес-сайта в визуальном языке 2005, 2015 и 2026 годов.',
+    noindex: true,
+    schemaType: 'WebPage',
+  },
+  {
+    path: '/lab/seo',
+    title: 'SEO Visualizer — SITEVL LAB',
+    description: 'Интерактивное объяснение индексации, sitemap, метаданных и поискового сниппета.',
+    noindex: true,
+    schemaType: 'WebPage',
+  },
+  {
+    path: '/brief',
+    title: 'Мини-бриф на создание сайта — SITEVL',
+    description: 'Интерактивный мини-бриф SITEVL: задача, структура, функции и ориентировочная стоимость сайта.',
+    noindex: true,
+    schemaType: 'WebPage',
+  },
+  {
+    path: '/changelog',
+    title: 'Changelog — SITEVL',
+    description: 'Фактические изменения интерактивного интерфейса SITEVL.',
     noindex: true,
     schemaType: 'WebPage',
   },
@@ -293,10 +350,25 @@ function baseStructuredData(route) {
   ];
 }
 
+const websiteStudioFaq = [
+  ['Сколько занимает создание сайта?', 'Срок зависит от количества страниц, готовности материалов и правок. Простой сайт делается быстрее, каталог или проект с админкой требует больше подготовки.'],
+  ['Что нужно подготовить для сайта?', 'Описание услуг, цены, контакты, фотографии, примеры работ и понимание, что должен сделать посетитель.'],
+  ['Можно ли сделать сайт без готовых текстов?', 'Да, можно собрать структуру и помочь сформулировать тексты, но исходная информация о вашей услуге всё равно нужна.'],
+  ['Сайт будет работать на телефоне?', 'Да, адаптация под телефон, планшет и компьютер входит в базовый подход.'],
+  ['Можно ли подключить домен?', 'Да, подключение домена и публикация обсуждаются в составе проекта. Покупка и продление домена оплачиваются владельцем отдельно.'],
+  ['Вы делаете SEO-подготовку?', 'Да, можно добавить метаданные, sitemap, robots, schema, структуру заголовков и понятные URL.'],
+  ['Можно ли потом менять сайт?', 'Да. Можно заказывать доработки, а для самостоятельного обновления согласованного контента подойдёт сайт с админкой.'],
+  ['Можно ли сделать сайт срочно?', 'Иногда можно, если структура и материалы готовы. Срок и объём фиксируются до начала разработки.'],
+  ['Как понять стоимость сайта?', 'Сначала определяем формат, страницы и функции. После этого можно назвать ориентир и зафиксировать состав проекта.'],
+  ['Можно ли заказать сайт полностью удалённо?', 'Да. Обсуждение, материалы, правки, проверка и передача результата могут проходить онлайн.'],
+  ['Можно ли добавить каталог?', 'Да. Каталог может включать категории, карточки, поиск, фильтры, документы, заявки и админ-панель.'],
+  ['Можно ли подключить Telegram или WhatsApp?', 'Да, на сайте можно разместить кнопки связи, форму заявки и ссылки на Telegram, WhatsApp или телефон.'],
+];
+
 function routeStructuredData(route) {
   const url = absoluteUrl(route.path);
   if (route.schemaType === 'Service') {
-    return {
+    const service = {
       '@context': 'https://schema.org',
       '@type': 'Service',
       name: route.title.split(' — ')[0],
@@ -306,6 +378,23 @@ function routeStructuredData(route) {
       provider: { '@id': `${siteUrl}/#person` },
       areaServed: { '@type': 'City', name: 'Владивосток' },
     };
+
+    if (route.path === '/website-development-vladivostok') {
+      return [
+        service,
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: websiteStudioFaq.map(([question, answer]) => ({
+            '@type': 'Question',
+            name: question,
+            acceptedAnswer: { '@type': 'Answer', text: answer },
+          })),
+        },
+      ];
+    }
+
+    return service;
   }
 
   if (route.schemaType === 'LocalService') {
@@ -430,7 +519,78 @@ function routeHeading(route) {
   return route.title.split(' — ')[0].split(' | ')[0];
 }
 
+function renderWebsiteStudioFallback(route) {
+  const crumbs = breadcrumbItems(route.path);
+  const websiteTypes = [
+    ['Сайт-визитка', 'от 3 000 ₽', 'Компактный сайт для специалиста, услуги или небольшой компании.'],
+    ['Лендинг', 'от 8 000 ₽', 'Одностраничный сайт под конкретное предложение, рекламу или сбор заявок.'],
+    ['Многостраничный сайт', 'от 15 000 ₽', 'Связанные страницы услуг, цен, кейсов, полезных материалов и контактов.'],
+    ['Сайт с админкой', 'от 25 000 ₽', 'Управление согласованным контентом без правки кода.'],
+    ['Каталог', 'от 40 000 ₽', 'Категории, карточки, поиск, фильтры, документы, заявки и админ-панель.'],
+    ['Индивидуальная разработка', 'от 50 000 ₽', 'Нестандартный интерфейс, собственная логика, API и интеграции.'],
+  ];
+  const process = ['Разговор', 'Структура', 'Концепция', 'Разработка', 'Контент', 'Проверка', 'Публикация'];
+
+  return `<div id="root"><main style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f4f7fb;background:#05080e;">
+      <nav aria-label="Хлебные крошки" style="max-width:1180px;margin:0 auto;padding:24px 20px;color:#9aaabe;font-size:14px;">
+        ${crumbs.map((item, index) => `${index > 0 ? '<span aria-hidden="true" style="margin:0 8px;color:#526174;">/</span>' : ''}<a href="${escapeHtml(item.href)}" style="color:#b8c8d9;text-decoration:none;">${escapeHtml(item.label)}</a>`).join('')}
+      </nav>
+      <section style="max-width:1180px;margin:0 auto;padding:96px 20px 110px;">
+        <p style="margin:0 0 16px;color:#78b7f3;font-size:13px;font-weight:800;">SITEVL · ВЛАДИВОСТОК</p>
+        <h1 style="max-width:820px;margin:0;font-size:52px;line-height:1;letter-spacing:0;">Создаю самописные сайты для бизнеса</h1>
+        <p style="max-width:720px;margin:24px 0 0;color:#c7dbef;font-size:22px;line-height:1.45;font-weight:650;">От простой визитки до каталога, админ-панели и индивидуального веб-сервиса.</p>
+        <p style="max-width:720px;margin:18px 0 0;color:#a9b5c5;font-size:17px;line-height:1.7;">Работаю лично, без шаблонного подхода. Структура, дизайн и логика проекта подбираются под конкретную задачу бизнеса во Владивостоке или удалённо.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;">
+          <a href="https://t.me/AYDigitaLRu" style="border-radius:999px;padding:14px 20px;color:#07101b;background:#edf6ff;text-decoration:none;font-weight:750;">Обсудить сайт</a>
+          <a href="#projects" style="border:1px solid #2b4056;border-radius:999px;padding:14px 20px;color:#eef6ff;text-decoration:none;font-weight:750;">Посмотреть проекты</a>
+        </div>
+      </section>
+      <section style="max-width:1180px;margin:0 auto;padding:72px 20px;">
+        <p style="margin:0;color:#78b7f3;font-size:13px;font-weight:800;">ВЛАДИВОСТОК</p>
+        <h2 style="margin:14px 0 0;font-size:38px;line-height:1.1;">Здесь я живу и работаю</h2>
+        <p style="max-width:760px;margin:20px 0 0;color:#a9b5c5;line-height:1.7;">Владивосток формирует характер проектов: скорость, Азия рядом, порт, техника, автомобили и постоянное движение. Современному бизнесу нужна понятная цифровая точка присутствия, где собраны услуги, цены, документы, контакты и заявки.</p>
+      </section>
+      <section style="max-width:1180px;margin:0 auto;padding:72px 20px;">
+        <p style="margin:0;color:#78b7f3;font-size:13px;font-weight:800;">ФОРМАТЫ И ЦЕНЫ</p>
+        <h2 style="margin:14px 0 0;font-size:38px;line-height:1.1;">От визитки до индивидуального веб-сервиса</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:30px;">
+          ${websiteTypes.map(([name, price, description]) => `<article style="border:1px solid #26394d;border-radius:8px;padding:22px;background:#0b1725;"><h3 style="margin:0;font-size:20px;">${name}</h3><strong style="display:block;margin-top:14px;color:#6bd3d0;">${price}</strong><p style="margin:12px 0 0;color:#a9b5c5;font-size:14px;line-height:1.6;">${description}</p></article>`).join('')}
+        </div>
+        <p style="margin:22px 0 0;color:#91a3b6;font-size:14px;line-height:1.6;">Точная стоимость зависит от задачи. До начала разработки обсуждаем объём проекта и фиксируем, что должно быть реализовано.</p>
+      </section>
+      <section id="projects" style="max-width:1180px;margin:0 auto;padding:72px 20px;">
+        <p style="margin:0;color:#78b7f3;font-size:13px;font-weight:800;">ПРОЕКТ</p>
+        <h2 style="margin:14px 0 0;font-size:38px;line-height:1.1;">Каталог морского оборудования</h2>
+        <p style="max-width:780px;margin:20px 0 0;color:#a9b5c5;line-height:1.7;">Опубликованный кейс каталога с категориями, поиском, фильтрами, документами, адаптивной версией, административной частью и управлением контентом. Название клиента и стоимость не публикуются без отдельного подтверждения.</p>
+      </section>
+      <section style="max-width:1180px;margin:0 auto;padding:72px 20px;">
+        <p style="margin:0;color:#78b7f3;font-size:13px;font-weight:800;">ПРОЦЕСС</p>
+        <h2 style="margin:14px 0 0;font-size:38px;line-height:1.1;">Как проходит разработка</h2>
+        <ol style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:28px 0 0;padding:0;list-style:none;">
+          ${process.map((step, index) => `<li style="border-top:1px solid #2b3c50;padding:18px 0;color:#dbe7f3;"><span style="display:block;margin-bottom:9px;color:#6daff1;font-size:12px;font-weight:800;">${String(index + 1).padStart(2, '0')}</span>${step}</li>`).join('')}
+        </ol>
+      </section>
+      <section style="max-width:1180px;margin:0 auto;padding:72px 20px;">
+        <p style="margin:0;color:#78b7f3;font-size:13px;font-weight:800;">ПЕРЕД НАЧАЛОМ</p>
+        <h2 style="margin:14px 0 0;font-size:38px;line-height:1.1;">Вопросы о создании сайта</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-top:28px;">
+          ${websiteStudioFaq.map(([question, answer]) => `<details style="align-self:start;border:1px solid #26394d;border-radius:8px;padding:16px;background:#0b1725;"><summary style="cursor:pointer;color:#e6f0fa;font-weight:750;">${escapeHtml(question)}</summary><p style="margin:14px 0 0;color:#a9b5c5;font-size:14px;line-height:1.65;">${escapeHtml(answer)}</p></details>`).join('')}
+        </div>
+      </section>
+      <section style="max-width:1180px;margin:0 auto;padding:72px 20px 120px;text-align:center;">
+        <p style="margin:0;color:#78b7f3;font-size:13px;font-weight:800;">СДЕЛАНО ВО ВЛАДИВОСТОКЕ</p>
+        <h2 style="margin:14px 0 0;font-size:42px;line-height:1.1;">Работает везде.</h2>
+        <p style="max-width:620px;margin:20px auto 0;color:#a9b5c5;line-height:1.7;">Разработка сайта полностью может проходить удалённо. Поэтому география клиента почти не ограничивает проект.</p>
+        <a href="https://t.me/AYDigitaLRu" style="display:inline-block;margin-top:28px;border-radius:999px;padding:14px 20px;color:#07101b;background:#edf6ff;text-decoration:none;font-weight:750;">Написать в Telegram</a>
+      </section>
+    </main></div>`;
+}
+
 function renderStaticFallback(route) {
+  if (route.path === '/website-development-vladivostok') {
+    return renderWebsiteStudioFallback(route);
+  }
+
   const crumbs = breadcrumbItems(route.path);
   const helpfulLinks = [
     { label: 'Услуги', href: '/services' },
@@ -444,7 +604,7 @@ function renderStaticFallback(route) {
         ${crumbs.map((item, index) => `${index > 0 ? '<span aria-hidden="true" style="margin:0 8px;">/</span>' : ''}<a href="${escapeHtml(item.href)}" style="color:#475467;text-decoration:none;">${escapeHtml(item.label)}</a>`).join('')}
       </nav>
       <section>
-        <p style="margin:0 0 12px;color:#2563eb;font-size:15px;font-weight:700;">AY Digital</p>
+        <p style="margin:0 0 12px;color:#2563eb;font-size:15px;font-weight:700;">SITEVL</p>
         <h1 style="max-width:880px;margin:0 0 18px;font-size:clamp(36px,7vw,72px);line-height:.95;letter-spacing:-.02em;">${escapeHtml(routeHeading(route))}</h1>
         <p style="max-width:760px;margin:0 0 28px;color:#475467;font-size:20px;line-height:1.55;">${escapeHtml(route.description)}</p>
         <div style="display:flex;flex-wrap:wrap;gap:12px;">

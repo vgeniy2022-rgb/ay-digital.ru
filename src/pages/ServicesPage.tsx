@@ -27,7 +27,7 @@ function createServicesSchema(services: ReturnType<typeof useSiteData>['data']['
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Услуги AY Digital',
+    name: 'Услуги SITEVL',
     url: absoluteUrl('/services'),
     itemListElement: services.map((service, index) => ({
       '@type': 'ListItem',

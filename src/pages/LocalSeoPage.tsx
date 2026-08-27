@@ -126,8 +126,8 @@ function LocalHubPage() {
   return (
     <PageTransition>
       <SeoHead
-        title="IT-услуги во Владивостоке и Приморском крае — AY Digital"
-        description="Локальный хаб AY Digital: услуги во Владивостоке, удалённая помощь по Приморскому краю, сайты, компьютерная помощь, Windows, MacBook и консультации."
+        title="IT-услуги во Владивостоке и Приморском крае — SITEVL"
+        description="Локальный хаб SITEVL: услуги во Владивостоке, удалённая помощь по Приморскому краю, сайты, компьютерная помощь, Windows, MacBook и консультации."
         canonicalPath="/primorsky-krai"
         structuredData={[HubSchema(), faqSchema(hubFaq)]}
       />

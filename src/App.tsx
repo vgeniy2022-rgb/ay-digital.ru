@@ -19,6 +19,15 @@ const AboutPage = lazy(() => import('./pages/AboutPage').then((module) => ({ def
 const ContactsPage = lazy(() => import('./pages/ContactsPage').then((module) => ({ default: module.ContactsPage })));
 const LegalPage = lazy(() => import('./pages/LegalPage').then((module) => ({ default: module.LegalPage })));
 const SeoLandingPage = lazy(() => import('./pages/SeoLandingPage').then((module) => ({ default: module.SeoLandingPage })));
+const WebStudioPage = lazy(() => import('./pages/WebStudioPage').then((module) => ({ default: module.WebStudioPage })));
+const LabPage = lazy(() => import('./pages/LabPage').then((module) => ({ default: module.LabPage })));
+const WebsiteBuilderPage = lazy(() => import('./pages/WebsiteBuilderPage').then((module) => ({ default: module.WebsiteBuilderPage })));
+const AdminDemoPage = lazy(() => import('./pages/AdminDemoPage').then((module) => ({ default: module.AdminDemoPage })));
+const ArchitectureLabPage = lazy(() => import('./pages/ArchitectureLabPage').then((module) => ({ default: module.ArchitectureLabPage })));
+const WebEvolutionPage = lazy(() => import('./pages/WebEvolutionPage').then((module) => ({ default: module.WebEvolutionPage })));
+const SeoLabPage = lazy(() => import('./pages/SeoLabPage').then((module) => ({ default: module.SeoLabPage })));
+const BriefPage = lazy(() => import('./pages/BriefPage').then((module) => ({ default: module.BriefPage })));
+const ChangelogPage = lazy(() => import('./pages/ChangelogPage').then((module) => ({ default: module.ChangelogPage })));
 const LocalSeoPage = lazy(() => import('./pages/LocalSeoPage').then((module) => ({ default: module.LocalSeoPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage })));
 
@@ -54,6 +63,15 @@ export default function App() {
             <Route path="/website-development-artem" element={<LocalSeoPage />} />
             <Route path="/website-development-ussuriysk" element={<LocalSeoPage />} />
             <Route path="/website-development-nakhodka" element={<LocalSeoPage />} />
+            <Route path="/website-development-vladivostok" element={<WebStudioPage />} />
+            <Route path="/lab" element={<LabPage />} />
+            <Route path="/lab/website-builder" element={<WebsiteBuilderPage />} />
+            <Route path="/lab/admin-demo" element={<AdminDemoPage />} />
+            <Route path="/lab/architecture" element={<ArchitectureLabPage />} />
+            <Route path="/lab/web-evolution" element={<WebEvolutionPage />} />
+            <Route path="/lab/seo" element={<SeoLabPage />} />
+            <Route path="/brief" element={<BriefPage />} />
+            <Route path="/changelog" element={<ChangelogPage />} />
             <Route path="/:landingSlug" element={<SeoLandingPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>

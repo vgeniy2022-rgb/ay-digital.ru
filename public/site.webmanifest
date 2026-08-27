@@ -1,7 +1,7 @@
 {
-  "name": "Александр | ay-digital.ru",
-  "short_name": "AY Digital",
-  "description": "Сайты, приложения, техника и IT-помощь во Владивостоке и удалённо.",
+  "name": "SITEVL — сайты и цифровые решения во Владивостоке",
+  "short_name": "SITEVL",
+  "description": "Создание сайтов, цифровые решения и IT-помощь во Владивостоке и удалённо.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

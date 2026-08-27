@@ -11,6 +11,9 @@ const usefulLinks = [
   { label: 'Перенос данных', href: '/useful/data-transfer' },
   { label: 'Защита от мошенников', href: '/useful/scams' },
   { label: 'Приложения и чек-листы', href: '/useful/apps-checklists' },
+  { label: 'SITEVL LAB', href: '/lab' },
+  { label: 'Мини-бриф', href: '/brief' },
+  { label: 'Changelog', href: '/changelog' },
 ];
 
 export function Footer() {
@@ -24,7 +27,7 @@ export function Footer() {
           <div>
             <div className="text-2xl font-extrabold">{site.name}</div>
             <p className="mt-3 max-w-md text-sm leading-6 text-muted">{site.tagline}. {site.location}.</p>
-            <p className="mt-6 text-sm text-muted">{site.domain}</p>
+            <p className="mt-6 text-sm text-muted">SITEVL — создание сайтов и цифровых решений во Владивостоке.</p>
           </div>
           <div>
             <div className="font-bold">Навигация</div>
@@ -73,7 +76,7 @@ export function Footer() {
               <Link className="transition hover:text-ink" to="/privacy">Политика обработки персональных данных</Link>
               <Link className="transition hover:text-ink" to="/terms">Условия оказания услуг</Link>
             </div>
-            <span>{site.domain}</span>
+            <span>SITEVL · Владивосток</span>
           </div>
           <p className="mt-4 text-sm font-semibold text-muted">Владивосток · выезд по городу · удалённо</p>
           <p className="mt-5 max-w-5xl text-xs leading-5 text-muted">
