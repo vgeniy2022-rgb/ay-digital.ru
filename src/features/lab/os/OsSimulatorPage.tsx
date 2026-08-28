@@ -25,7 +25,7 @@ function readPreferences(): OsPreferences {
 }
 
 const appDefinitions: Record<OsAppId, { title: string; icon: typeof Files; width: number; height: number }> = {
-  files: { title: 'Файлы', icon: Files, width: 680, height: 460 }, terminal: { title: 'Терминал', icon: Terminal, width: 620, height: 390 }, notes: { title: 'Заметки', icon: NotebookPen, width: 520, height: 470 }, browser: { title: 'Браузер', icon: Globe2, width: 720, height: 500 }, settings: { title: 'Настройки', icon: Settings, width: 480, height: 430 }, about: { title: 'О SITEVL LAB', icon: Info, width: 480, height: 430 }, calculator: { title: 'Калькулятор', icon: Calculator, width: 360, height: 470 }, gallery: { title: 'Галерея', icon: GalleryHorizontal, width: 650, height: 460 }, tasks: { title: 'Диспетчер задач', icon: Workflow, width: 560, height: 430 }, paint: { title: 'Paint Lite', icon: Paintbrush, width: 680, height: 500 },
+  files: { title: 'Файлы', icon: Files, width: 680, height: 460 }, terminal: { title: 'Терминал', icon: Terminal, width: 620, height: 390 }, notes: { title: 'Заметки', icon: NotebookPen, width: 520, height: 470 }, browser: { title: 'Браузер', icon: Globe2, width: 720, height: 500 }, settings: { title: 'Настройки', icon: Settings, width: 480, height: 430 }, about: { title: 'О SITEVL LAB', icon: Info, width: 480, height: 430 }, calculator: { title: 'Калькулятор', icon: Calculator, width: 360, height: 470 }, gallery: { title: 'Галерея', icon: GalleryHorizontal, width: 650, height: 460 }, tasks: { title: 'Диспетчер задач', icon: Workflow, width: 560, height: 430 }, paint: { title: 'Рисование', icon: Paintbrush, width: 680, height: 500 },
 };
 
 export function OsSimulatorPage() {

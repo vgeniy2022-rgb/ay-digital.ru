@@ -1,11 +1,12 @@
 import type { CSSProperties } from 'react';
+import { studioRu } from '../i18n/ru';
 import type { ResponsiveSettings, ResponsiveStyle, StudioBreakpoint, StudioThemeTokens } from '../schema/types';
 
 export const studioBreakpoints: Array<{ id: StudioBreakpoint; label: string; width: number }> = [
-  { id: 'desktop', label: 'Desktop', width: 1440 },
-  { id: 'laptop', label: 'Laptop', width: 1024 },
-  { id: 'tablet', label: 'Tablet', width: 768 },
-  { id: 'mobile', label: 'Mobile', width: 390 },
+  { id: 'desktop', label: studioRu.breakpoints.desktop, width: 1440 },
+  { id: 'laptop', label: studioRu.breakpoints.laptop, width: 1024 },
+  { id: 'tablet', label: studioRu.breakpoints.tablet, width: 768 },
+  { id: 'mobile', label: studioRu.breakpoints.mobile, width: 390 },
 ];
 
 const breakpointOrder: StudioBreakpoint[] = ['desktop', 'laptop', 'tablet', 'mobile'];

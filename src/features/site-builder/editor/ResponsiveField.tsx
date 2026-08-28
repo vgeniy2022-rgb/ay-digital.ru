@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { studioFieldLabels, studioRu, studioValueLabels } from '../i18n/ru';
 import type { ResponsiveSettings, ResponsiveStyle, StudioBreakpoint } from '../schema/types';
 import { studioBreakpoints } from '../responsive/styleResolver';
 
@@ -15,12 +16,7 @@ const selectOptions = {
 const numberKeys: Array<keyof ResponsiveStyle> = ['gap', 'columns', 'padding', 'margin', 'fontSize', 'lineHeight', 'radius', 'order'];
 const textKeys: Array<keyof ResponsiveStyle> = ['width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'background', 'border'];
 
-const labels: Record<string, string> = {
-  display: 'Display', direction: 'Direction', alignItems: 'Align', justifyContent: 'Justify', gap: 'Gap', columns: 'Columns',
-  width: 'Width', minWidth: 'Min width', maxWidth: 'Max width', height: 'Height', minHeight: 'Min height', padding: 'Padding',
-  margin: 'Margin', fontSize: 'Font size', lineHeight: 'Line height', textAlign: 'Text align', background: 'Background',
-  border: 'Border', radius: 'Radius', shadow: 'Shadow', visibility: 'Visibility', order: 'Order',
-};
+const labels: Record<string, string> = studioFieldLabels;
 
 export function ResponsiveField({ value = {}, onChange, readOnly }: { value?: ResponsiveSettings; onChange: (value: ResponsiveSettings) => void; readOnly?: boolean }) {
   const [active, setActive] = useState<StudioBreakpoint>('desktop');
@@ -38,17 +34,16 @@ export function ResponsiveField({ value = {}, onChange, readOnly }: { value?: Re
       </div>
       <div className="studio-responsive-field__grid">
         {Object.entries(selectOptions).map(([key, options]) => (
-          <label key={key}><span>{labels[key]}</span><select disabled={readOnly} value={String(override[key as keyof ResponsiveStyle] || '')} onChange={(event) => patch(key as keyof ResponsiveStyle, event.target.value || undefined)}>{options.map((option) => <option value={option} key={option}>{option || 'inherit'}</option>)}</select></label>
+          <label key={key}><span>{labels[key]}</span><select disabled={readOnly} value={String(override[key as keyof ResponsiveStyle] || '')} onChange={(event) => patch(key as keyof ResponsiveStyle, event.target.value || undefined)}>{options.map((option) => <option value={option} key={option}>{studioValueLabels[option || 'inherit'] || option}</option>)}</select></label>
         ))}
         {numberKeys.map((key) => <label key={key}><span>{labels[key]}</span><input disabled={readOnly} type="number" value={typeof override[key] === 'number' ? String(override[key]) : ''} onChange={(event) => patch(key, event.target.value === '' ? undefined : Number(event.target.value))} /></label>)}
-        {textKeys.map((key) => <label key={key}><span>{labels[key]}</span><input disabled={readOnly} type="text" value={typeof override[key] === 'string' ? String(override[key]) : ''} placeholder="inherit" onChange={(event) => patch(key, event.target.value || undefined)} /></label>)}
+        {textKeys.map((key) => <label key={key}><span>{labels[key]}</span><input disabled={readOnly} type="text" value={typeof override[key] === 'string' ? String(override[key]) : ''} placeholder="Наследовать" onChange={(event) => patch(key, event.target.value || undefined)} /></label>)}
       </div>
       <button className="studio-responsive-field__reset" type="button" disabled={readOnly || !value[active]} onClick={() => {
         const next = { ...value };
         delete next[active];
         onChange(next);
-      }}>Сбросить override для {active}</button>
+      }}>Сбросить настройки: {studioRu.breakpoints[active]}</button>
     </div>
   );
 }
-

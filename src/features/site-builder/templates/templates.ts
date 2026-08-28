@@ -88,14 +88,14 @@ function studioTemplate(name = 'Студия разработки') {
   const pages = [
     page('Главная', '', [
       header(brand, 'floating'),
-      block('Hero', { variant: 'split', align: 'left', eyebrow: 'Product studio', title: 'Проектируем цифровые продукты, которыми удобно пользоваться', text: 'Стратегия, интерфейс и разработка в одной команде.', buttonLabel: 'Начать проект', buttonHref: '/contacts', image: '/images/editorial/developer-workspace.webp' }),
+      block('Hero', { variant: 'split', align: 'left', eyebrow: 'Студия цифровых продуктов', title: 'Проектируем цифровые продукты, которыми удобно пользоваться', text: 'Стратегия, интерфейс и разработка в одной команде.', buttonLabel: 'Начать проект', buttonHref: '/contacts', image: '/images/editorial/developer-workspace.webp' }),
       block('Stats', { title: 'Работа в цифрах', items: [{ value: '24', label: 'запуска' }, { value: '7 лет', label: 'в разработке' }, { value: '4.9', label: 'средняя оценка' }] }),
       block('Services', { idAnchor: 'services', variant: 'editorial', eyebrow: 'Направления', title: 'От идеи до работающей системы', items: [{ title: 'Сайты', text: 'Коммерческие страницы и каталоги.', price: 'от 80 000 ₽' }, { title: 'Приложения', text: 'Личные кабинеты и рабочие системы.', price: 'от 150 000 ₽' }, { title: 'Поддержка', text: 'Развитие после запуска.', price: 'от 25 000 ₽/мес' }] }),
-      block('Portfolio', { variant: 'mosaic', eyebrow: 'Проекты', title: 'Выбранные работы', items: [{ title: 'Каталог оборудования', category: 'Web platform' }, { title: 'Сервис бронирования', category: 'Product design' }, { title: 'Сайт девелопера', category: 'Corporate' }] }),
+      block('Portfolio', { variant: 'mosaic', eyebrow: 'Проекты', title: 'Выбранные работы', items: [{ title: 'Каталог оборудования', category: 'Веб-платформа' }, { title: 'Сервис бронирования', category: 'Дизайн продукта' }, { title: 'Сайт девелопера', category: 'Корпоративный сайт' }] }),
       block('Contact', { idAnchor: 'contact', variant: 'contrast', title: 'Есть идея продукта?', text: 'Соберём вводные и предложим рабочий формат.', buttonLabel: 'Написать студии', buttonHref: 'https://t.me/AYDigitaLRu' }),
       footer(brand),
     ], true),
-    page('Услуги', 'services', [header(brand), block('Pricing', { variant: 'columns', eyebrow: 'Форматы', title: 'Выберите подходящий старт', items: [{ title: 'Discovery', price: 'от 40 000 ₽', features: 'Интервью, структура, прототип' }, { title: 'Launch', price: 'от 120 000 ₽', features: 'Дизайн, разработка, публикация' }, { title: 'Growth', price: 'от 25 000 ₽/мес', features: 'Поддержка и развитие' }] }), footer(brand)], false, 1),
+    page('Услуги', 'services', [header(brand), block('Pricing', { variant: 'columns', eyebrow: 'Форматы', title: 'Выберите подходящий старт', items: [{ title: 'Исследование', price: 'от 40 000 ₽', features: 'Интервью, структура, прототип' }, { title: 'Запуск', price: 'от 120 000 ₽', features: 'Дизайн, разработка, публикация' }, { title: 'Развитие', price: 'от 25 000 ₽/мес', features: 'Поддержка и развитие' }] }), footer(brand)], false, 1),
   ];
   return project('development-studio', name, pages, theme('#5b5cf0', '#32d296', '#f4f3ff'));
 }
@@ -132,7 +132,7 @@ function portfolioTemplate(name = 'Портфолио') {
   const pages = [page('Главная', '', [
     header(brand, 'minimal'),
     block('Hero', { variant: 'minimal', align: 'left', eyebrow: 'Дизайнер и фотограф', title: 'Визуальные истории для людей и брендов', text: 'Проекты, в которых форма помогает передать характер.', buttonLabel: 'Смотреть проекты', buttonHref: '#portfolio', image: '/images/editorial/presentation-work.avif' }),
-    block('Portfolio', { idAnchor: 'portfolio', variant: 'editorial', eyebrow: 'Работы', title: 'Избранные проекты', items: [{ title: 'Дом у моря', category: 'Identity' }, { title: 'SLOW journal', category: 'Editorial' }, { title: 'Local heroes', category: 'Photo' }, { title: 'New shape', category: 'Digital' }] }),
+    block('Portfolio', { idAnchor: 'portfolio', variant: 'editorial', eyebrow: 'Работы', title: 'Избранные проекты', items: [{ title: 'Дом у моря', category: 'Айдентика' }, { title: 'SLOW journal', category: 'Редакционный дизайн' }, { title: 'Local heroes', category: 'Фотография' }, { title: 'New shape', category: 'Цифровой проект' }] }),
     block('Quote', { text: 'Хорошая визуальная система помогает человеку быстрее понять идею.', author: 'Анна, арт-директор' }),
     block('Contact', { idAnchor: 'contact', variant: 'minimal', title: 'Обсудим проект', text: 'Пришлите короткое описание и желаемые сроки.', buttonLabel: 'Написать', buttonHref: 'mailto:hello@example.com' }),
     footer(brand, 'light'),
@@ -156,11 +156,11 @@ function localBusinessTemplate(name = 'Локальный бизнес') {
 
 export const studioTemplates: StudioTemplate[] = [
   { id: 'specialist', name: 'Услуги специалиста', description: 'Личная услуга, доверие, процесс, отзывы и контакт.', category: 'Услуги', accent: '#1769ff', create: specialistTemplate },
-  { id: 'development-studio', name: 'Студия разработки', description: 'Проекты, направления, цифры и отдельная страница тарифов.', category: 'Digital', accent: '#5b5cf0', create: studioTemplate },
-  { id: 'restaurant', name: 'Ресторан', description: 'Атмосферный hero, галерея, история и бронирование.', category: 'HoReCa', accent: '#9a3f2c', create: restaurantTemplate },
-  { id: 'tech-store', name: 'Магазин техники', description: 'Категории, преимущества, подбор и понятные предложения.', category: 'Retail', accent: '#0b70e0', create: techStoreTemplate },
-  { id: 'portfolio', name: 'Портфолио', description: 'Проекты, авторская подача, цитата и спокойный контакт.', category: 'Creative', accent: '#ec5b43', create: portfolioTemplate },
-  { id: 'local-business', name: 'Локальный бизнес', description: 'Услуги, этапы, локация и запись для компании в городе.', category: 'Local', accent: '#ff8a3d', create: localBusinessTemplate },
+  { id: 'development-studio', name: 'Студия разработки', description: 'Проекты, направления, цифры и отдельная страница тарифов.', category: 'Цифровые продукты', accent: '#5b5cf0', create: studioTemplate },
+  { id: 'restaurant', name: 'Ресторан', description: 'Атмосферный первый экран, галерея, история и бронирование.', category: 'Ресторан', accent: '#9a3f2c', create: restaurantTemplate },
+  { id: 'tech-store', name: 'Магазин техники', description: 'Категории, преимущества, подбор и понятные предложения.', category: 'Магазин', accent: '#0b70e0', create: techStoreTemplate },
+  { id: 'portfolio', name: 'Портфолио', description: 'Проекты, авторская подача, цитата и спокойный контакт.', category: 'Творчество', accent: '#ec5b43', create: portfolioTemplate },
+  { id: 'local-business', name: 'Локальный бизнес', description: 'Услуги, этапы, локация и запись для компании в городе.', category: 'Локальный бизнес', accent: '#ff8a3d', create: localBusinessTemplate },
 ];
 
 export function createProjectFromTemplate(templateId: string, name?: string) {

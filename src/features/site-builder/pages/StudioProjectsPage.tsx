@@ -74,15 +74,15 @@ export function StudioProjectsPage() {
 
       <section className="studio-projects-intro">
         <div><span>Визуальная среда SITEVL</span><h1>Проекты</h1><p>Создавайте многостраничные сайты, управляйте компонентами и храните работу в браузере без ограничения по времени.</p></div>
-        <aside><strong>{projects.length}</strong><span>проектов в IndexedDB</span><small>Autosave включён</small></aside>
+        <aside><strong>{projects.length}</strong><span>проектов в IndexedDB</span><small>Автосохранение включено</small></aside>
       </section>
 
       {notice ? <div className="studio-notice" role="status">{notice}<button type="button" onClick={() => setNotice('')}>Закрыть</button></div> : null}
 
-      {legacyAvailable ? <section className="studio-legacy-card"><div><FileJson /><span><strong>Найден черновик старого конструктора</strong><small>Исходные данные останутся в localStorage после импорта.</small></span></div><button type="button" onClick={importLegacy}>Преобразовать в Studio</button><a href="/lab/builder-legacy">Открыть legacy</a></section> : null}
+      {legacyAvailable ? <section className="studio-legacy-card"><div><FileJson /><span><strong>Найден черновик старого конструктора</strong><small>Исходные данные останутся в localStorage после импорта.</small></span></div><button type="button" onClick={importLegacy}>Преобразовать в Studio</button><a href="/lab/builder-legacy">Открыть старую версию</a></section> : null}
 
       <section className="studio-project-list" aria-busy={loading}>
-        <div className="studio-section-title"><div><small>Workspace</small><h2>Ваши проекты</h2></div><button type="button" onClick={() => setShowTemplates(true)}><LayoutTemplate /> Шаблоны</button></div>
+        <div className="studio-section-title"><div><small>Рабочее пространство</small><h2>Ваши проекты</h2></div><button type="button" onClick={() => setShowTemplates(true)}><LayoutTemplate /> Шаблоны</button></div>
         {loading ? <div className="studio-project-skeleton"><i /><i /><i /></div> : null}
         {!loading && projects.length === 0 ? <div className="studio-empty"><FolderOpen /><h3>Начните с готового шаблона</h3><p>Он создаст настоящий проект со страницами, компонентами и темой.</p><button type="button" onClick={() => setShowTemplates(true)}>Выбрать шаблон <ArrowRight /></button></div> : null}
         <div className="studio-project-grid">
@@ -90,8 +90,7 @@ export function StudioProjectsPage() {
         </div>
       </section>
 
-      {showTemplates ? <div className="studio-dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowTemplates(false); }}><section className="studio-template-dialog" role="dialog" aria-modal="true" aria-labelledby="studio-template-title"><header><div><small>New project</small><h2 id="studio-template-title">Выберите основу</h2></div><button type="button" onClick={() => setShowTemplates(false)} aria-label="Закрыть">×</button></header><div className="studio-template-grid">{studioTemplates.map((template) => <button type="button" onClick={() => void create(template.id)} key={template.id}><div style={{ '--template-accent': template.accent } as React.CSSProperties}><i /><i /><i /></div><small>{template.category}</small><strong>{template.name}</strong><span>{template.description}</span></button>)}</div></section></div> : null}
+      {showTemplates ? <div className="studio-dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowTemplates(false); }}><section className="studio-template-dialog" role="dialog" aria-modal="true" aria-labelledby="studio-template-title"><header><div><small>Новый проект</small><h2 id="studio-template-title">Выберите основу</h2></div><button type="button" onClick={() => setShowTemplates(false)} aria-label="Закрыть">×</button></header><div className="studio-template-grid">{studioTemplates.map((template) => <button type="button" onClick={() => void create(template.id)} key={template.id}><div style={{ '--template-accent': template.accent } as React.CSSProperties}><i /><i /><i /></div><small>{template.category}</small><strong>{template.name}</strong><span>{template.description}</span></button>)}</div></section></div> : null}
     </main>
   );
 }
-

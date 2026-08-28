@@ -9,6 +9,7 @@ import { defaultStudioTheme } from '../schema/defaults';
 import type { ResponsiveSettings, StudioThemeTokens } from '../schema/types';
 import { safeStudioHref } from '../utils/url';
 import { studioComponentGroups } from './componentCatalog';
+import { studioComponentLabels, studioRu, studioValueLabels, studioVisibleLabelTranslations } from '../i18n/ru';
 import '../styles/renderer.css';
 
 type BaseProps = { responsive?: ResponsiveSettings; idAnchor?: string };
@@ -62,7 +63,7 @@ type StudioMetadata = { theme?: StudioThemeTokens; assetUrls?: Record<string, st
 
 const responsiveField = {
   type: 'custom' as const,
-  label: 'Responsive',
+  label: 'Адаптивность',
   render: ({ value, onChange, readOnly }: { value?: ResponsiveSettings; onChange: (value: ResponsiveSettings) => void; readOnly?: boolean }) => <ResponsiveField value={value} onChange={onChange} readOnly={readOnly} />,
 };
 
@@ -140,9 +141,9 @@ function iconFor(name: StudioComponentProps['Icon']['icon'], size: number) {
 
 export const studioConfig: Config<StudioComponentProps, StudioRootProps> = {
   categories: {
-    layout: { title: 'Layout', components: [...studioComponentGroups.layout], defaultExpanded: true },
-    basic: { title: 'Basic', components: [...studioComponentGroups.basic], defaultExpanded: true },
-    business: { title: 'Business sections', components: [...studioComponentGroups.business], defaultExpanded: true },
+    layout: { title: studioRu.categories.layout, components: [...studioComponentGroups.layout], defaultExpanded: true },
+    basic: { title: studioRu.categories.basic, components: [...studioComponentGroups.basic], defaultExpanded: true },
+    business: { title: studioRu.categories.business, components: [...studioComponentGroups.business], defaultExpanded: true },
   },
   root: {
     fields: { title: { type: 'text', label: 'Название страницы', contentEditable: false } },
@@ -154,44 +155,44 @@ export const studioConfig: Config<StudioComponentProps, StudioRootProps> = {
   },
   components: {
     Section: {
-      label: 'Section',
+      label: studioComponentLabels.Section,
       fields: { ...baseFields, tone: { type: 'select', label: 'Фон', options: [{ label: 'Обычный', value: 'default' }, { label: 'Мягкий', value: 'muted' }, { label: 'Контрастный', value: 'contrast' }] }, minHeight: { type: 'number', label: 'Мин. высота', min: 0, max: 1200 }, children: { type: 'slot', allow: ['Container', 'VerticalStack', 'HorizontalStack', 'Grid', 'Columns', 'Card', 'Heading', 'RichText', 'Button', 'Image'] } },
       defaultProps: { children: [], tone: 'default', minHeight: 0, responsive: {}, idAnchor: '' },
       render: ({ id, idAnchor, tone, minHeight, responsive, children, puck }) => <><ResponsiveCss id={id} responsive={responsive} theme={metadataOf(puck).theme || defaultStudioTheme} /><section id={sectionId(idAnchor)} className={responsiveClass(id, `sv-section sv-tone-${tone}`)} style={{ minHeight }}>{children({ minEmptyHeight: 96 })}</section></>,
     },
     Container: {
-      label: 'Container',
+      label: studioComponentLabels.Container,
       fields: { ...baseFields, width: { type: 'select', label: 'Ширина', options: [{ label: 'Узкая', value: 'narrow' }, { label: 'Обычная', value: 'default' }, { label: 'Широкая', value: 'wide' }] }, children: { type: 'slot', allow: ['VerticalStack', 'HorizontalStack', 'Grid', 'Columns', 'Card', 'Heading', 'RichText', 'Button', 'Image', 'Badge', 'List', 'Quote'] } },
       defaultProps: { children: [], width: 'default', responsive: {}, idAnchor: '' },
       render: ({ id, idAnchor, width, responsive, children, puck }) => <><ResponsiveCss id={id} responsive={responsive} theme={metadataOf(puck).theme || defaultStudioTheme} /><div id={sectionId(idAnchor)} className={responsiveClass(id, `sv-container sv-container-${width}`)}>{children({ minEmptyHeight: 72 })}</div></>,
     },
     VerticalStack: {
-      label: 'Vertical stack',
-      fields: { ...baseFields, gap: { type: 'number', label: 'Gap', min: 0, max: 120 }, align: { type: 'select', label: 'Align', options: ['stretch', 'start', 'center', 'end'].map((value) => ({ label: value, value })) }, children: { type: 'slot', allow: ['VerticalStack', 'HorizontalStack', 'Grid', 'Columns', 'Card', 'Heading', 'RichText', 'Button', 'Image', 'Icon', 'Badge', 'List', 'Quote', 'Spacer', 'Divider'] } },
+      label: studioComponentLabels.VerticalStack,
+      fields: { ...baseFields, gap: { type: 'number', label: 'Интервал', min: 0, max: 120 }, align: { type: 'select', label: 'Выравнивание', options: ['stretch', 'start', 'center', 'end'].map((value) => ({ label: studioValueLabels[value], value })) }, children: { type: 'slot', allow: ['VerticalStack', 'HorizontalStack', 'Grid', 'Columns', 'Card', 'Heading', 'RichText', 'Button', 'Image', 'Icon', 'Badge', 'List', 'Quote', 'Spacer', 'Divider'] } },
       defaultProps: { children: [], gap: 24, align: 'stretch', responsive: {}, idAnchor: '' },
       render: ({ id, idAnchor, gap, align, responsive, children, puck }) => <><ResponsiveCss id={id} responsive={responsive} theme={metadataOf(puck).theme || defaultStudioTheme} /><div id={sectionId(idAnchor)} className={responsiveClass(id, 'sv-stack sv-stack-vertical')} style={{ gap, alignItems: align }}>{children({ minEmptyHeight: 56 })}</div></>,
     },
     HorizontalStack: {
-      label: 'Horizontal stack',
-      fields: { ...baseFields, gap: { type: 'number', label: 'Gap', min: 0, max: 120 }, justify: { type: 'select', label: 'Justify', options: ['start', 'center', 'end', 'space-between'].map((value) => ({ label: value, value })) }, wrap: { type: 'radio', label: 'Wrap', options: [{ label: 'Переносить', value: 'wrap' }, { label: 'В одну строку', value: 'nowrap' }] }, children: { type: 'slot', allow: ['Card', 'Heading', 'RichText', 'Button', 'Image', 'Icon', 'Badge', 'List', 'Quote', 'Spacer', 'Divider'] } },
+      label: studioComponentLabels.HorizontalStack,
+      fields: { ...baseFields, gap: { type: 'number', label: 'Интервал', min: 0, max: 120 }, justify: { type: 'select', label: 'Распределение', options: ['start', 'center', 'end', 'space-between'].map((value) => ({ label: studioValueLabels[value], value })) }, wrap: { type: 'radio', label: 'Перенос', options: [{ label: 'Переносить', value: 'wrap' }, { label: 'В одну строку', value: 'nowrap' }] }, children: { type: 'slot', allow: ['Card', 'Heading', 'RichText', 'Button', 'Image', 'Icon', 'Badge', 'List', 'Quote', 'Spacer', 'Divider'] } },
       defaultProps: { children: [], gap: 20, justify: 'start', wrap: 'wrap', responsive: {}, idAnchor: '' },
       render: ({ id, idAnchor, gap, justify, wrap, responsive, children, puck }) => <><ResponsiveCss id={id} responsive={responsive} theme={metadataOf(puck).theme || defaultStudioTheme} /><div id={sectionId(idAnchor)} className={responsiveClass(id, 'sv-stack sv-stack-horizontal')} style={{ gap, justifyContent: justify, flexWrap: wrap }}>{children({ minEmptyHeight: 56, collisionAxis: 'x' })}</div></>,
     },
     Grid: {
-      label: 'Grid',
-      fields: { ...baseFields, columns: { type: 'number', label: 'Колонки', min: 1, max: 6 }, gap: { type: 'number', label: 'Gap', min: 0, max: 120 }, children: { type: 'slot', allow: ['Card', 'Heading', 'RichText', 'Button', 'Image', 'Icon', 'Badge', 'List', 'Quote'] } },
+      label: studioComponentLabels.Grid,
+      fields: { ...baseFields, columns: { type: 'number', label: 'Колонки', min: 1, max: 6 }, gap: { type: 'number', label: 'Интервал', min: 0, max: 120 }, children: { type: 'slot', allow: ['Card', 'Heading', 'RichText', 'Button', 'Image', 'Icon', 'Badge', 'List', 'Quote'] } },
       defaultProps: { children: [], columns: 3, gap: 24, responsive: { tablet: { columns: 2 }, mobile: { columns: 1 } }, idAnchor: '' },
       render: ({ id, idAnchor, columns, gap, responsive, children, puck }) => <><ResponsiveCss id={id} responsive={responsive} theme={metadataOf(puck).theme || defaultStudioTheme} /><div id={sectionId(idAnchor)} className={responsiveClass(id, 'sv-grid')} style={{ gridTemplateColumns: `repeat(${columns}, minmax(0,1fr))`, gap }}>{children({ minEmptyHeight: 80 })}</div></>,
     },
     Columns: {
-      label: 'Columns',
-      fields: { ...baseFields, ratio: { type: 'radio', label: 'Пропорция', options: [{ label: '1 / 1', value: '1-1' }, { label: '2 / 1', value: '2-1' }, { label: '1 / 2', value: '1-2' }] }, gap: { type: 'number', label: 'Gap', min: 0, max: 120 }, children: { type: 'slot', allow: ['Card', 'VerticalStack', 'Heading', 'RichText', 'Button', 'Image', 'List', 'Quote'] } },
+      label: studioComponentLabels.Columns,
+      fields: { ...baseFields, ratio: { type: 'radio', label: 'Пропорция', options: [{ label: '1 / 1', value: '1-1' }, { label: '2 / 1', value: '2-1' }, { label: '1 / 2', value: '1-2' }] }, gap: { type: 'number', label: 'Интервал', min: 0, max: 120 }, children: { type: 'slot', allow: ['Card', 'VerticalStack', 'Heading', 'RichText', 'Button', 'Image', 'List', 'Quote'] } },
       defaultProps: { children: [], ratio: '1-1', gap: 32, responsive: { mobile: { display: 'block' } }, idAnchor: '' },
       render: ({ id, idAnchor, ratio, gap, responsive, children, puck }) => <><ResponsiveCss id={id} responsive={responsive} theme={metadataOf(puck).theme || defaultStudioTheme} /><div id={sectionId(idAnchor)} className={responsiveClass(id, `sv-columns sv-columns-${ratio}`)} style={{ gap }}>{children({ minEmptyHeight: 96 })}</div></>,
     },
     Card: {
-      label: 'Card',
-      fields: { ...baseFields, tone: { type: 'select', label: 'Стиль', options: [{ label: 'Surface', value: 'surface' }, { label: 'Muted', value: 'muted' }, { label: 'Contrast', value: 'contrast' }] }, padding: { type: 'number', label: 'Padding', min: 0, max: 96 }, children: { type: 'slot', allow: ['VerticalStack', 'HorizontalStack', 'Heading', 'RichText', 'Button', 'Image', 'Icon', 'Badge', 'List', 'Quote', 'Spacer', 'Divider'] } },
+      label: studioComponentLabels.Card,
+      fields: { ...baseFields, tone: { type: 'select', label: 'Стиль', options: [{ label: 'Поверхность', value: 'surface' }, { label: 'Приглушённый', value: 'muted' }, { label: 'Контрастный', value: 'contrast' }] }, padding: { type: 'number', label: 'Внутренние отступы', min: 0, max: 96 }, children: { type: 'slot', allow: ['VerticalStack', 'HorizontalStack', 'Heading', 'RichText', 'Button', 'Image', 'Icon', 'Badge', 'List', 'Quote', 'Spacer', 'Divider'] } },
       defaultProps: { children: [], tone: 'surface', padding: 28, responsive: {}, idAnchor: '' },
       render: ({ id, idAnchor, tone, padding, responsive, children, puck }) => <><ResponsiveCss id={id} responsive={responsive} theme={metadataOf(puck).theme || defaultStudioTheme} /><article id={sectionId(idAnchor)} className={responsiveClass(id, `sv-card sv-tone-${tone}`)} style={{ padding }}>{children({ minEmptyHeight: 72 })}</article></>,
     },
@@ -284,6 +285,24 @@ export const studioConfig: Config<StudioComponentProps, StudioRootProps> = {
     },
   },
 };
+
+type LocalizableField = { label?: string; options?: Array<{ label: string; value: string }>; arrayFields?: Record<string, LocalizableField>; objectFields?: Record<string, LocalizableField> };
+
+function localizeStudioFields(fields: Record<string, LocalizableField> | undefined) {
+  Object.values(fields || {}).forEach((field) => {
+    if (field.label && studioVisibleLabelTranslations[field.label]) field.label = studioVisibleLabelTranslations[field.label];
+    field.options?.forEach((option) => { option.label = studioValueLabels[option.value] || option.label; });
+    localizeStudioFields(field.arrayFields);
+    localizeStudioFields(field.objectFields);
+  });
+}
+
+Object.entries(studioComponentLabels).forEach(([id, label]) => {
+  const component = studioConfig.components[id as keyof StudioComponentProps];
+  if (!component) return;
+  component.label = label;
+  localizeStudioFields(component.fields as Record<string, LocalizableField>);
+});
 
 export function getStudioMetadata(theme: StudioThemeTokens, assetUrls: Record<string, string>) {
   return { theme, assetUrls } satisfies StudioMetadata;

@@ -25,7 +25,7 @@ export function StudioPreviewPage() {
   useEffect(() => () => Object.values(urls).forEach((url) => URL.revokeObjectURL(url)), [urls]);
   const page = project?.pages.find((item) => item.slug === selectedSlug) || project?.pages.find((item) => item.isHome) || project?.pages[0];
 
-  useEffect(() => { if (page) document.title = `${page.title} — Preview`; }, [page]);
+  useEffect(() => { if (page) document.title = `${page.title} — Предпросмотр`; }, [page]);
 
   const handleNavigation = (event: MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
@@ -41,7 +41,7 @@ export function StudioPreviewPage() {
     }
   };
 
-  if (!project || !page) return <main className="studio-loading"><span>SITEVL Studio</span><p>Загружаем preview…</p></main>;
+  if (!project || !page) return <main className="studio-loading"><span>SITEVL Studio</span><p>Загружаем предпросмотр…</p></main>;
 
-  return <main className="studio-preview-shell"><header><button type="button" onClick={() => navigate(`/studio/project/${project.id}`)}><ArrowLeft /> Редактор</button><div><strong>{project.name}</strong><select value={page.slug} onChange={(event) => setSearchParams(event.target.value ? { page: event.target.value } : {})}>{[...project.pages].sort((a, b) => a.order - b.order).map((item) => <option value={item.slug} key={item.id}>{item.name}</option>)}</select></div><nav aria-label="Размер preview"><button className={viewport === 'desktop' ? 'is-active' : ''} type="button" onClick={() => setViewport('desktop')} aria-label="Desktop"><Monitor /></button><button className={viewport === 'tablet' ? 'is-active' : ''} type="button" onClick={() => setViewport('tablet')} aria-label="Tablet"><Tablet /></button><button className={viewport === 'mobile' ? 'is-active' : ''} type="button" onClick={() => setViewport('mobile')} aria-label="Mobile"><Smartphone /></button></nav><button type="button" onClick={() => window.open(window.location.href, '_blank')}><ExternalLink /> Новая вкладка</button></header><div className="studio-preview-viewport" data-viewport={viewport}><div className="sv-preview-container" style={{ width: viewportWidths[viewport] }} onClick={handleNavigation}><StudioRenderer project={project} page={page} assetUrls={urls} /></div></div></main>;
+  return <main className="studio-preview-shell"><header><button type="button" onClick={() => navigate(`/studio/project/${project.id}`)}><ArrowLeft /> Редактор</button><div><strong>{project.name}</strong><select value={page.slug} onChange={(event) => setSearchParams(event.target.value ? { page: event.target.value } : {})}>{[...project.pages].sort((a, b) => a.order - b.order).map((item) => <option value={item.slug} key={item.id}>{item.name}</option>)}</select></div><nav aria-label="Размер предпросмотра"><button className={viewport === 'desktop' ? 'is-active' : ''} type="button" onClick={() => setViewport('desktop')} aria-label="Компьютер"><Monitor /></button><button className={viewport === 'tablet' ? 'is-active' : ''} type="button" onClick={() => setViewport('tablet')} aria-label="Планшет"><Tablet /></button><button className={viewport === 'mobile' ? 'is-active' : ''} type="button" onClick={() => setViewport('mobile')} aria-label="Телефон"><Smartphone /></button></nav><button type="button" onClick={() => window.open(window.location.href, '_blank')}><ExternalLink /> Новая вкладка</button></header><div className="studio-preview-viewport" data-viewport={viewport}><div className="sv-preview-container" style={{ width: viewportWidths[viewport] }} onClick={handleNavigation}><StudioRenderer project={project} page={page} assetUrls={urls} /></div></div></main>;
 }
