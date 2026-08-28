@@ -114,38 +114,56 @@ export const routeSeo: Record<string, RouteSeo> = {
   },
   '/lab': {
     title: 'SITEVL LAB — интерактивная лаборатория',
-    description: 'Интерактивные эксперименты SITEVL: конструктор сайта, демо-админка, архитектура, эволюция веба и SEO-визуализатор.',
+    description: 'SITEVL LAB — семь интерактивных браузерных экспериментов: конструктор, 2D и 3D игры, физика, OS, Retro Computing и Infinite Canvas.',
     canonicalPath: '/lab',
     noindex: true,
   },
-  '/lab/website-builder': {
+  '/lab/builder': {
     title: 'Website Builder — SITEVL LAB',
-    description: 'Интерактивный конструктор структуры сайта, функций, адаптивного preview и ориентировочной стоимости.',
-    canonicalPath: '/lab/website-builder',
+    description: 'Полноценный визуальный конструктор SITEVL с секциями, responsive preview, drag and drop, undo, redo и экспортом проекта.',
+    canonicalPath: '/lab/builder',
     noindex: true,
   },
-  '/lab/admin-demo': {
-    title: 'Admin Demo — SITEVL LAB',
-    description: 'Локальная демонстрация управления услугами, ценами, акциями и карточками сайта.',
-    canonicalPath: '/lab/admin-demo',
+  '/lab/2d': {
+    title: 'Break the Website — 2D Game — SITEVL LAB',
+    description: 'Управляемая 2D-игра SITEVL LAB: используйте элементы интерфейса как платформы, двигайте карточки и найдите скрытый CORE.',
+    canonicalPath: '/lab/2d',
     noindex: true,
   },
-  '/lab/architecture': {
-    title: 'Architecture Explorer — SITEVL LAB',
-    description: 'Интерактивная схема frontend, API, базы данных, файлов и админ-панели.',
-    canonicalPath: '/lab/architecture',
+  '/lab/3d': {
+    title: 'The Room — 3D Game — SITEVL LAB',
+    description: 'Процедурная WebGL-комната SITEVL LAB: найдите четыре интерактивных модуля и откройте сюрреалистический выход.',
+    canonicalPath: '/lab/3d',
     noindex: true,
   },
-  '/lab/web-evolution': {
-    title: 'Website Evolution — SITEVL LAB',
-    description: 'Демонстрация эволюции одного бизнес-сайта в визуальном языке 2005, 2015 и 2026 годов.',
-    canonicalPath: '/lab/web-evolution',
+  '/lab/physics': {
+    title: 'Physics Lab — SITEVL LAB',
+    description: 'Физическая браузерная песочница с объектами, столкновениями, настройкой массы, gravity, friction и device feedback.',
+    canonicalPath: '/lab/physics',
     noindex: true,
   },
-  '/lab/seo': {
-    title: 'SEO Visualizer — SITEVL LAB',
-    description: 'Интерактивное объяснение индексации, sitemap, метаданных и поискового сниппета.',
-    canonicalPath: '/lab/seo',
+  '/lab/os': {
+    title: 'OS Simulator — SITEVL LAB',
+    description: 'Оригинальная браузерная SITEVL OS с окнами, Files, Terminal, Notes, Browser, Settings и локальными достижениями.',
+    canonicalPath: '/lab/os',
+    noindex: true,
+  },
+  '/lab/retro': {
+    title: 'Retro Computing — SITEVL LAB',
+    description: 'Две оригинальные ретро-системы с рабочими Files, Notes, Paint, Calculator, Control Panel и управляемым CRT-режимом.',
+    canonicalPath: '/lab/retro',
+    noindex: true,
+  },
+  '/lab/canvas': {
+    title: 'Infinite Canvas — SITEVL LAB',
+    description: 'Бесконечный Canvas 2D для заметок, текста, фигур и связей с pan, zoom, touch, pinch и локальным сохранением.',
+    canonicalPath: '/lab/canvas',
+    noindex: true,
+  },
+  '/lab/builder-legacy': {
+    title: 'Legacy Website Builder — SITEVL LAB',
+    description: 'Предыдущая версия конструктора SITEVL сохранена для совместимости и переноса старых черновиков.',
+    canonicalPath: '/lab/builder-legacy',
     noindex: true,
   },
   '/brief': {

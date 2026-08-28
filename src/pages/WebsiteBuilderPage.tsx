@@ -260,7 +260,7 @@ export function WebsiteBuilderPage() {
 
   return (
     <PageTransition>
-      <SeoHead title="Конструктор лендинга — SITEVL LAB" description="Интерактивный конструктор лендинга с живым preview, загрузкой фотографии и экспортом результата." canonicalPath="/lab/website-builder" noindex />
+      <SeoHead title="Legacy-конструктор лендинга — SITEVL LAB" description="Сохранённая предыдущая версия конструктора SITEVL с живым preview, загрузкой фотографии и экспортом результата." canonicalPath="/lab/builder-legacy" noindex />
       <LabFrame>
         <LabHero
           title="Соберите свой лендинг"

@@ -20,19 +20,63 @@ const ContactsPage = lazy(() => import('./pages/ContactsPage').then((module) => 
 const LegalPage = lazy(() => import('./pages/LegalPage').then((module) => ({ default: module.LegalPage })));
 const SeoLandingPage = lazy(() => import('./pages/SeoLandingPage').then((module) => ({ default: module.SeoLandingPage })));
 const WebStudioPage = lazy(() => import('./pages/WebStudioPage').then((module) => ({ default: module.WebStudioPage })));
-const LabPage = lazy(() => import('./pages/LabPage').then((module) => ({ default: module.LabPage })));
+const LabHomePage = lazy(() => import('./features/lab/home/LabHomePage').then((module) => ({ default: module.LabHomePage })));
+const LabBuilderPage = lazy(() => import('./features/lab/builder/LabBuilderPage').then((module) => ({ default: module.LabBuilderPage })));
+const BreakWebsitePage = lazy(() => import('./features/lab/game2d/BreakWebsitePage').then((module) => ({ default: module.BreakWebsitePage })));
+const TheRoomPage = lazy(() => import('./features/lab/game3d/TheRoomPage').then((module) => ({ default: module.TheRoomPage })));
+const PhysicsLabPage = lazy(() => import('./features/lab/physics/PhysicsLabPage').then((module) => ({ default: module.PhysicsLabPage })));
+const OsSimulatorPage = lazy(() => import('./features/lab/os/OsSimulatorPage').then((module) => ({ default: module.OsSimulatorPage })));
+const RetroOsPage = lazy(() => import('./features/lab/retro/RetroOsPage').then((module) => ({ default: module.RetroOsPage })));
+const InfiniteCanvasPage = lazy(() => import('./features/lab/infiniteCanvas/InfiniteCanvasPage').then((module) => ({ default: module.InfiniteCanvasPage })));
 const WebsiteBuilderPage = lazy(() => import('./pages/WebsiteBuilderPage').then((module) => ({ default: module.WebsiteBuilderPage })));
-const AdminDemoPage = lazy(() => import('./pages/AdminDemoPage').then((module) => ({ default: module.AdminDemoPage })));
-const ArchitectureLabPage = lazy(() => import('./pages/ArchitectureLabPage').then((module) => ({ default: module.ArchitectureLabPage })));
-const WebEvolutionPage = lazy(() => import('./pages/WebEvolutionPage').then((module) => ({ default: module.WebEvolutionPage })));
-const SeoLabPage = lazy(() => import('./pages/SeoLabPage').then((module) => ({ default: module.SeoLabPage })));
 const BriefPage = lazy(() => import('./pages/BriefPage').then((module) => ({ default: module.BriefPage })));
 const ChangelogPage = lazy(() => import('./pages/ChangelogPage').then((module) => ({ default: module.ChangelogPage })));
 const LocalSeoPage = lazy(() => import('./pages/LocalSeoPage').then((module) => ({ default: module.LocalSeoPage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage })));
+const StudioProjectsPage = lazy(() => import('./features/site-builder/pages/StudioProjectsPage').then((module) => ({ default: module.StudioProjectsPage })));
+const StudioEditorPage = lazy(() => import('./features/site-builder/pages/StudioEditorPage').then((module) => ({ default: module.StudioEditorPage })));
+const StudioPreviewPage = lazy(() => import('./features/site-builder/pages/StudioPreviewPage').then((module) => ({ default: module.StudioPreviewPage })));
 
 export default function App() {
   const location = useLocation();
+
+  if (location.pathname === '/studio' || location.pathname.startsWith('/studio/')) {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-[#0f1115]" />}>
+        <Routes>
+          <Route path="/studio" element={<StudioProjectsPage />} />
+          <Route path="/studio/projects" element={<StudioProjectsPage />} />
+          <Route path="/studio/project/:projectId" element={<StudioEditorPage />} />
+          <Route path="/studio/preview/:projectId" element={<StudioPreviewPage />} />
+          <Route path="*" element={<Navigate to="/studio/projects" replace />} />
+        </Routes>
+      </Suspense>
+    );
+  }
+
+  if (location.pathname === '/lab' || location.pathname.startsWith('/lab/')) {
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-[#0c0e12]" />}>
+        <Routes>
+          <Route path="/lab" element={<LabHomePage />} />
+          <Route path="/lab/builder" element={<LabBuilderPage />} />
+          <Route path="/lab/2d" element={<BreakWebsitePage />} />
+          <Route path="/lab/3d" element={<TheRoomPage />} />
+          <Route path="/lab/physics" element={<PhysicsLabPage />} />
+          <Route path="/lab/os" element={<OsSimulatorPage />} />
+          <Route path="/lab/retro" element={<RetroOsPage />} />
+          <Route path="/lab/canvas" element={<InfiniteCanvasPage />} />
+          <Route path="/lab/website-builder" element={<Navigate to="/lab/builder" replace />} />
+          <Route path="/lab/builder-legacy" element={<WebsiteBuilderPage />} />
+          <Route path="/lab/admin-demo" element={<Navigate to="/lab" replace />} />
+          <Route path="/lab/architecture" element={<Navigate to="/lab" replace />} />
+          <Route path="/lab/web-evolution" element={<Navigate to="/lab" replace />} />
+          <Route path="/lab/seo" element={<Navigate to="/lab" replace />} />
+          <Route path="*" element={<Navigate to="/lab" replace />} />
+        </Routes>
+      </Suspense>
+    );
+  }
 
   return (
     <AppLayout>
@@ -64,12 +108,6 @@ export default function App() {
             <Route path="/website-development-ussuriysk" element={<LocalSeoPage />} />
             <Route path="/website-development-nakhodka" element={<LocalSeoPage />} />
             <Route path="/website-development-vladivostok" element={<WebStudioPage />} />
-            <Route path="/lab" element={<LabPage />} />
-            <Route path="/lab/website-builder" element={<WebsiteBuilderPage />} />
-            <Route path="/lab/admin-demo" element={<AdminDemoPage />} />
-            <Route path="/lab/architecture" element={<ArchitectureLabPage />} />
-            <Route path="/lab/web-evolution" element={<WebEvolutionPage />} />
-            <Route path="/lab/seo" element={<SeoLabPage />} />
             <Route path="/brief" element={<BriefPage />} />
             <Route path="/changelog" element={<ChangelogPage />} />
             <Route path="/:landingSlug" element={<SeoLandingPage />} />

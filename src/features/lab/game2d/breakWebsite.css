@@ -1,0 +1,21 @@
+.break-game-stage { height: min(720px, calc(100dvh - 250px)); min-height: 520px; background: #101319; }
+.break-game-stage.is-restoring { animation: break-restore .65s cubic-bezier(.2,.8,.2,1); }
+@keyframes break-restore { 0% { filter: brightness(2); transform: scale(.96); } 45% { filter: brightness(.7); } 100% { filter: none; transform: none; } }
+.break-game-hud { position: absolute; z-index: 10; top: 14px; left: 14px; display: flex; gap: 18px; color: #9da7b6; font: 700 9px/1 ui-monospace, monospace; letter-spacing: .08em; }
+.break-game-hud strong { margin-left: 5px; color: #fff; }
+.break-game-help { position: absolute; z-index: 10; top: 14px; right: 14px; display: flex; gap: 12px; color: #9da7b6; font: 700 8px/1 ui-monospace, monospace; }
+.break-game-help b { margin-left: 4px; color: #e7ecf4; }
+.break-game-complete { position: absolute; z-index: 30; display: grid; place-items: center; text-align: center; background: rgba(10,12,16,.87); backdrop-filter: blur(18px); inset: 0; animation: break-complete .6s ease both; }
+@keyframes break-complete { from { opacity: 0; transform: scale(1.08); } }
+.break-game-complete small { color: #78aaff; font: 800 10px/1 ui-monospace, monospace; letter-spacing: .16em; }
+.break-game-complete h2 { margin: 18px 0; font-size: clamp(54px, 9vw, 120px); line-height: .78; letter-spacing: -.06em; }
+.break-game-complete p { max-width: 480px; margin: 0; color: #a2aab8; }
+.break-game-complete button { display: inline-flex; min-height: 50px; align-items: center; gap: 9px; margin-top: 28px; border: 1px solid #527fcb; border-radius: 8px; padding: 0 18px; color: #fff; background: #245ebd; font-size: 10px; font-weight: 850; letter-spacing: .08em; cursor: pointer; }
+.break-game-complete svg, .lab-experiment-intro button svg { width: 15px; }
+@media (max-width: 767px) {
+  .break-game-stage { height: calc(100svh - 175px); min-height: 560px; touch-action: none; }
+  .break-game-help { display: none; }
+  .break-game-hud { right: 10px; left: 10px; justify-content: space-between; gap: 6px; }
+  .break-game-complete { padding: 24px; }
+  .break-game-complete h2 { font-size: clamp(52px, 16vw, 82px); }
+}

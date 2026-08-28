@@ -1,0 +1,46 @@
+.infinite-canvas-host { overflow: hidden; background: #090b0f; }
+.infinite-canvas-host .lab-system-main { height: calc(100dvh - 62px); min-height: 520px; overflow: hidden; }
+.infinite-canvas-app { display: grid; height: 100%; grid-template-rows: auto minmax(0, 1fr); }
+.infinite-canvas-toolbar { position: relative; z-index: 10; display: grid; min-height: 66px; grid-template-columns: auto minmax(0,1fr) auto; align-items: center; gap: 14px; border-bottom: 1px solid rgba(255,255,255,.11); padding: 8px 12px; background: rgba(14,17,22,.92); backdrop-filter: blur(14px); }
+.infinite-canvas-toolbar > div:first-child { display: flex; align-items: center; gap: 9px; white-space: nowrap; }
+.infinite-canvas-toolbar > div:first-child span { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid rgba(255,255,255,.16); color: #ff8dc7; font: 800 9px/1 ui-monospace, monospace; }
+.infinite-canvas-toolbar strong { font-size: 11px; letter-spacing: .08em; }
+.infinite-canvas-toolbar nav, .infinite-canvas-toolbar > div:last-child { display: flex; min-width: 0; align-items: center; gap: 5px; }
+.infinite-canvas-toolbar nav { justify-content: center; overflow-x: auto; scrollbar-width: none; }
+.infinite-canvas-toolbar button { display: inline-flex; min-width: 42px; min-height: 42px; flex: 0 0 auto; align-items: center; justify-content: center; gap: 6px; border: 1px solid rgba(255,255,255,.11); border-radius: 6px; padding: 0 10px; color: #cbd0dc; background: #171a21; font-size: 8px; font-weight: 800; letter-spacing: .06em; cursor: pointer; }
+.infinite-canvas-toolbar button:hover, .infinite-canvas-toolbar button.is-active { border-color: #ff8dc7; color: #fff; background: #27202a; }
+.infinite-canvas-toolbar button:disabled { opacity: .35; cursor: not-allowed; }
+.infinite-canvas-toolbar svg { width: 14px; height: 14px; }
+.infinite-canvas-stage { position: relative; min-height: 0; overflow: hidden; }
+.infinite-canvas-stage canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+.infinite-canvas-stage canvas:active { cursor: grabbing; }
+.infinite-canvas-hint { position: absolute; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,.1); border-radius: 6px; padding: 8px 10px; color: #89909e; background: rgba(12,14,18,.78); font: 700 8px/1 ui-monospace, monospace; pointer-events: none; }
+.infinite-canvas-hint svg { width: 13px; }
+.infinite-canvas-inspector { position: absolute; z-index: 8; top: 14px; right: 14px; display: grid; width: min(300px, calc(100% - 28px)); gap: 12px; border: 1px solid rgba(255,255,255,.14); border-radius: 8px; padding: 13px; background: rgba(20,23,29,.94); box-shadow: 0 25px 70px rgba(0,0,0,.35); backdrop-filter: blur(16px); }
+.infinite-canvas-inspector > header { display: flex; align-items: center; justify-content: space-between; color: #ff8dc7; font: 800 8px/1 ui-monospace, monospace; }
+.infinite-canvas-inspector > header button { border: 0; color: #979dab; background: transparent; font-size: 8px; cursor: pointer; }
+.infinite-canvas-inspector label { display: grid; gap: 6px; color: #8f96a5; font: 800 8px/1 ui-monospace, monospace; }
+.infinite-canvas-inspector textarea { min-height: 86px; resize: vertical; border: 1px solid rgba(255,255,255,.12); border-radius: 5px; padding: 9px; color: #fff; background: #0f1217; font: 12px/1.45 Inter, sans-serif; }
+.infinite-canvas-inspector input[type=color] { width: 100%; height: 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 5px; padding: 3px; background: #0f1217; }
+.infinite-canvas-inspector section { display: grid; grid-template-columns: 1fr 38px auto 38px; align-items: center; gap: 5px; }
+.infinite-canvas-inspector section > span { color: #8f96a5; font: 800 8px/1 ui-monospace, monospace; }
+.infinite-canvas-inspector section button { display: grid; height: 36px; place-items: center; border: 1px solid rgba(255,255,255,.12); border-radius: 5px; color: #fff; background: #171a21; }
+.infinite-canvas-inspector section svg { width: 13px; }
+.infinite-canvas-inspector output { color: #d9dde7; font: 700 9px/1 ui-monospace, monospace; }
+.infinite-canvas-portal-button { min-height: 40px; border: 1px solid #ff8dc7; border-radius: 5px; color: #fff; background: #352232; font: 800 9px/1 ui-monospace, monospace; cursor: pointer; }
+
+@media (max-width: 920px) {
+  .infinite-canvas-toolbar { grid-template-columns: auto 1fr; }
+  .infinite-canvas-toolbar nav { grid-column: 1 / -1; grid-row: 2; justify-content: flex-start; }
+  .infinite-canvas-toolbar > div:last-child { justify-content: flex-end; }
+}
+@media (max-width: 640px) {
+  .infinite-canvas-host .lab-system-main { height: calc(100dvh - 58px); }
+  .infinite-canvas-toolbar { min-height: 104px; padding: 6px 8px; }
+  .infinite-canvas-toolbar strong { display: none; }
+  .infinite-canvas-toolbar button { min-width: 44px; min-height: 44px; padding: 0 9px; }
+  .infinite-canvas-toolbar button span { display: none; }
+  .infinite-canvas-inspector { top: 8px; right: 8px; width: min(280px, calc(100% - 16px)); }
+  .infinite-canvas-hint { right: 9px; bottom: calc(9px + env(safe-area-inset-bottom)); }
+  .infinite-canvas-hint span { display: none; }
+}

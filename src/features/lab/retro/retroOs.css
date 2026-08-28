@@ -1,0 +1,117 @@
+.retro-host { --retro-black: #101014; --retro-paper: #e8e5dc; overflow: hidden; background: #07090d; }
+.retro-host .lab-system-main { height: calc(100dvh - 62px); min-height: 540px; overflow: hidden; }
+.retro-chooser { display: grid; height: 100%; min-height: 540px; place-items: center; overflow: auto; padding: 36px 20px calc(36px + env(safe-area-inset-bottom)); background: radial-gradient(circle at 25% 20%, rgba(117,167,255,.14), transparent 35%), linear-gradient(145deg, #11141a, #08090d 65%); }
+.retro-chooser__screen { width: min(100%, 1040px); border: 1px solid rgba(255,255,255,.14); border-radius: 12px; padding: clamp(26px, 5vw, 64px); background: #14171d; box-shadow: 0 40px 120px rgba(0,0,0,.46), inset 0 1px rgba(255,255,255,.06); }
+.retro-chooser__screen > span { color: #ffd66b; font: 700 10px/1 ui-monospace, monospace; letter-spacing: .15em; }
+.retro-chooser h1 { margin: 20px 0 18px; color: #f5f1e7; font-size: clamp(54px, 9vw, 112px); line-height: .78; letter-spacing: -.055em; }
+.retro-chooser p { max-width: 590px; margin: 0 0 36px; color: #a8a7a1; font-size: 15px; line-height: 1.6; }
+.retro-chooser__screen > div { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.retro-chooser__screen > div > button { display: grid; grid-template-columns: 120px 1fr; min-width: 0; align-items: center; gap: 20px; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; padding: 15px; color: #fff; text-align: left; background: #1b1e25; cursor: pointer; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+.retro-chooser__screen > div > button:hover { border-color: #ffd66b; background: #22252c; transform: translateY(-3px); }
+.retro-chooser__screen strong, .retro-chooser__screen small { display: block; }
+.retro-chooser__screen strong { font-size: 15px; }
+.retro-chooser__screen small { margin-top: 7px; color: #94969e; font: 700 8px/1.4 ui-monospace, monospace; letter-spacing: .08em; }
+.retro-choice-preview { position: relative; display: block; height: 82px; overflow: hidden; border: 4px solid #c9c6b9; background: #167c7c; box-shadow: inset 0 0 0 2px #111; }
+.retro-choice-preview b { position: absolute; display: block; border: 2px solid #111; background: #e9e6db; box-shadow: 2px 2px #111; }
+.retro-choice-preview b:nth-child(1) { inset: 12px 13px 18px 12px; }
+.retro-choice-preview b:nth-child(2) { top: 20px; left: 22px; width: 32px; height: 28px; background: #253c89; }
+.retro-choice-preview b:nth-child(3) { right: 19px; bottom: 10px; width: 36px; height: 12px; }
+.retro-choice-preview--classic { border-radius: 6px; background: #a8a8a8; }
+.retro-choice-preview--classic b:nth-child(1) { inset: 9px 18px 13px; border-radius: 3px; background: #f3f1e9; }
+.retro-choice-preview--classic b:nth-child(2) { top: 18px; left: 31px; width: 45px; height: 28px; background: #fff; }
+.retro-chooser footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 30px; }
+.retro-crt-toggle, .retro-session-controls button { min-height: 42px; border: 1px solid rgba(255,255,255,.16); border-radius: 4px; padding: 0 13px; color: #fff; background: #0e1015; font: 800 9px/1 ui-monospace, monospace; cursor: pointer; }
+.retro-desktop { position: relative; height: 100%; min-height: 500px; overflow: hidden; image-rendering: pixelated; }
+.retro-desktop--desk95 { color: #111; background: #1b8581; font-family: Arial, sans-serif; }
+.retro-desktop--classic { color: #111; background: repeating-linear-gradient(45deg, #aaa 0 2px, #999 2px 4px); font-family: Geneva, Arial, sans-serif; }
+.retro-desktop__icons { position: absolute; z-index: 2; top: 28px; left: 16px; display: grid; width: 92px; gap: 18px; }
+.retro-desktop--classic .retro-desktop__icons { top: 46px; right: 18px; left: auto; }
+.retro-desktop__icons button, .retro-trash { display: grid; place-items: center; gap: 4px; border: 0; padding: 4px; color: #fff; text-shadow: 1px 1px #000; background: transparent; font-size: 10px; cursor: pointer; }
+.retro-desktop__icons svg, .retro-trash svg { width: 32px; height: 32px; padding: 5px; color: #111; background: #e6d77a; filter: drop-shadow(2px 2px 0 rgba(0,0,0,.5)); }
+.retro-desktop--classic .retro-desktop__icons button, .retro-desktop--classic .retro-trash { color: #111; text-shadow: none; }
+.retro-window { position: absolute; display: grid; width: min(620px, calc(100vw - 160px)); height: min(430px, calc(100dvh - 160px)); grid-template-rows: 26px minmax(0,1fr) 8px; border: 2px solid #111; background: #d7d3c7; box-shadow: 7px 8px 0 rgba(0,0,0,.24); }
+.retro-window > header { display: flex; align-items: center; justify-content: space-between; padding: 2px 3px 2px 7px; color: #fff; background: #253c89; font-size: 11px; font-weight: 800; touch-action: none; user-select: none; cursor: move; }
+.retro-window > header span { display: flex; align-items: center; gap: 6px; }
+.retro-window > header svg { width: 14px; height: 14px; }
+.retro-window > header button { display: grid; width: 20px; height: 20px; place-items: center; border: 1px solid #111; padding: 0; color: #111; background: #d7d3c7; box-shadow: inset 1px 1px #fff; cursor: pointer; }
+.retro-window--classic { border-radius: 4px; background: #eeeae0; box-shadow: 5px 6px 0 rgba(0,0,0,.25); }
+.retro-window--classic > header { color: #111; background: repeating-linear-gradient(#111 0 1px, #eee 1px 3px); }
+.retro-window--classic > header span { padding: 2px 7px; background: #eee; }
+.retro-window__content { min-height: 0; overflow: auto; border: 2px inset #efede5; background: #f4f1e8; }
+.retro-window > footer { border-top: 1px solid #777; background: #d6d2c7; }
+.retro-classic-menu { position: absolute; z-index: 100; top: 0; right: 0; left: 0; display: flex; height: 26px; align-items: center; gap: 22px; border-bottom: 1px solid #111; padding: 0 12px; background: #f2efe6; font-size: 12px; }
+.retro-classic-menu button { border: 0; background: transparent; font-weight: 900; cursor: pointer; }
+.retro-classic-menu time { margin-left: auto; }
+.retro-taskbar { position: absolute; z-index: 100; right: 0; bottom: 0; left: 0; display: grid; height: 36px; grid-template-columns: auto 1fr auto; align-items: center; gap: 5px; border-top: 2px solid #fff; padding: 3px; background: #d4d0c8; }
+.retro-taskbar button { height: 28px; border: 2px outset #eee; background: #d4d0c8; font-size: 10px; font-weight: 750; cursor: pointer; }
+.retro-taskbar > button { display: flex; align-items: center; gap: 5px; }
+.retro-taskbar > button span { padding: 3px; color: #fff; background: #273e91; }
+.retro-taskbar > div { display: flex; min-width: 0; gap: 3px; overflow: hidden; }
+.retro-taskbar time { border: 2px inset #eee; padding: 5px 8px; font-size: 10px; }
+.retro-start-menu { position: absolute; z-index: 150; bottom: 35px; left: 3px; display: grid; width: 240px; border: 2px outset #fff; padding: 3px 3px 3px 31px; background: #d4d0c8; box-shadow: 5px 5px rgba(0,0,0,.24); }
+.retro-start-menu > strong { position: absolute; bottom: 4px; left: 3px; color: #ddd; font-size: 13px; letter-spacing: .1em; transform: rotate(-90deg); transform-origin: left bottom; }
+.retro-start-menu button { display: flex; min-height: 39px; align-items: center; gap: 10px; border: 0; padding: 7px 8px; text-align: left; background: transparent; font-size: 11px; cursor: pointer; }
+.retro-start-menu button:hover { color: #fff; background: #253c89; }
+.retro-start-menu svg { width: 20px; }
+.retro-start-menu--classic { top: 27px; bottom: auto; left: 4px; border: 1px solid #111; padding-left: 3px; border-radius: 0 0 4px 4px; background: #f1eee5; }
+.retro-start-menu--classic > strong { display: none; }
+.retro-trash { position: absolute; right: 18px; bottom: 18px; }
+.retro-session-controls { position: absolute; z-index: 120; top: 10px; right: 10px; display: flex; gap: 5px; }
+.retro-desktop--classic .retro-session-controls { top: 34px; right: 118px; }
+.retro-session-controls button { border-color: #111; color: #111; background: #dedbd1; }
+.retro-notepad { display: grid; height: 100%; grid-template-rows: auto 1fr auto; }
+.retro-app-menu { border-bottom: 1px solid #777; padding: 6px 8px; font-size: 9px; }
+.retro-notepad textarea { width: 100%; min-height: 220px; resize: none; border: 0; padding: 14px; color: #111; background: #fffdf4; font: 14px/1.45 "Courier New", monospace; outline: 0; }
+.retro-notepad small { display: flex; align-items: center; gap: 5px; border-top: 1px solid #999; padding: 5px 8px; font-size: 8px; }
+.retro-notepad small svg { width: 12px; }
+.retro-calculator { width: min(100%, 300px); margin: 20px auto; border: 2px outset #fff; padding: 10px; background: #c9c6bb; }
+.retro-calculator output { display: block; min-height: 47px; overflow: hidden; border: 2px inset #fff; padding: 10px; text-align: right; background: #c3d1ae; font: 22px/1 monospace; overflow-wrap: anywhere; }
+.retro-calculator > div { display: grid; grid-template-columns: repeat(4,1fr); gap: 5px; margin-top: 8px; }
+.retro-calculator button { min-height: 41px; border: 2px outset #fff; color: #111; background: #ddd9cc; cursor: pointer; }
+.retro-calculator .is-equals { grid-column: span 4; background: #273e91; color: #fff; }
+.retro-paint { display: grid; height: 100%; grid-template-columns: 48px 1fr; background: #aca99f; }
+.retro-paint aside { display: grid; align-content: start; gap: 6px; border-right: 2px inset #fff; padding: 7px; }
+.retro-paint aside button { width: 30px; height: 30px; border: 2px outset #fff; padding: 3px; cursor: pointer; }
+.retro-paint aside button.is-active { outline: 2px solid #111; }
+.retro-paint aside svg { width: 18px; }
+.retro-paint canvas { width: 100%; height: 100%; min-height: 280px; background: #fffdf4; touch-action: none; }
+.retro-files { display: grid; height: 100%; grid-template-columns: 138px 1fr; }
+.retro-files aside { display: grid; align-content: start; gap: 7px; border-right: 1px solid #777; padding: 13px; background: #dedad0; font-size: 9px; }
+.retro-files section { padding: 12px; }
+.retro-files article, .retro-files a { display: grid; grid-template-columns: 38px 1fr auto; align-items: start; gap: 10px; margin-bottom: 8px; border: 1px solid #aaa; padding: 9px; color: #111; text-decoration: none; background: #fffdf4; }
+.retro-files i { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid #111; background: #f4dda2; font: 800 8px/1 monospace; }
+.retro-files p { margin: 4px 0 0; font-size: 10px; line-height: 1.4; }
+.retro-files svg { width: 14px; }
+.retro-control { display: grid; gap: 12px; padding: 18px; }
+.retro-control section { border: 1px solid #888; padding: 13px; }
+.retro-control strong { display: block; margin-bottom: 10px; font-size: 10px; }
+.retro-control label { display: flex; align-items: center; gap: 9px; font-size: 11px; }
+.retro-control input[type=range] { max-width: 160px; }
+.retro-control button { min-height: 34px; border: 2px outset #fff; background: #d7d3c7; font-size: 9px; }
+.retro-control button.is-active { color: #fff; background: #253c89; }
+.is-crt .retro-desktop::after, .is-crt .retro-chooser::after { position: absolute; z-index: 500; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.10) 0 1px, transparent 1px 3px), radial-gradient(circle at center, transparent 60%, rgba(0,0,0,.2)); content: ""; mix-blend-mode: multiply; opacity: .55; pointer-events: none; }
+
+@media (max-width: 760px) {
+  .retro-host .lab-system-main { height: calc(100dvh - 58px); }
+  .retro-chooser { padding: 16px 10px calc(16px + env(safe-area-inset-bottom)); }
+  .retro-chooser__screen { padding: 24px 16px; }
+  .retro-chooser h1 { font-size: clamp(48px, 17vw, 74px); }
+  .retro-chooser__screen > div { grid-template-columns: 1fr; }
+  .retro-chooser__screen > div > button { grid-template-columns: 90px 1fr; }
+  .retro-choice-preview { height: 66px; }
+  .retro-chooser footer small { display: none; }
+  .retro-desktop__icons { grid-template-columns: repeat(3, 74px); width: auto; }
+  .retro-desktop--classic .retro-desktop__icons { right: 8px; left: 8px; grid-template-columns: repeat(4,1fr); }
+  .retro-window { position: absolute; inset: 38px 8px 43px !important; width: auto; height: auto; }
+  .retro-desktop--classic .retro-window { top: 70px !important; bottom: 8px !important; }
+  .retro-session-controls { top: auto; right: 6px; bottom: 43px; }
+  .retro-desktop--classic .retro-session-controls { top: 31px; right: 5px; bottom: auto; }
+  .retro-session-controls button { min-height: 34px; padding: 0 8px; }
+  .retro-files { grid-template-columns: 1fr; }
+  .retro-files aside { display: none; }
+  .retro-paint { grid-template-columns: 42px 1fr; }
+  .retro-classic-menu { gap: 12px; }
+  .retro-classic-menu span { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) { .is-crt .retro-desktop::after, .is-crt .retro-chooser::after { opacity: .28; } }

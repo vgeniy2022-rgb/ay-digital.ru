@@ -220,7 +220,7 @@ export function BriefPage() {
           eyebrow="SITEVL BRIEF"
           title="Соберём основу проекта за несколько минут"
           description="Восемь коротких вопросов без имени, телефона и отправки данных. В конце вы получите структуру и текст, который можно отправить Александру."
-          actions={<Link className="lab-button lab-button--secondary" to="/lab/website-builder">Открыть полный конструктор</Link>}
+          actions={<Link className="lab-button lab-button--secondary" to="/studio">Открыть SITEVL Studio</Link>}
         />
 
         <section className="lab-section">

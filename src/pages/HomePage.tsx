@@ -39,7 +39,7 @@ const websiteDirections = [
     number: '02',
     title: 'Сайты с админкой',
     text: 'Самостоятельно меняйте услуги, цены, фотографии, отзывы и акции без правки кода.',
-    href: '/lab/admin-demo',
+    href: '/website-admin-vladivostok',
     media: editorialMedia.sitevlHomeCapture,
     icon: LayoutDashboard,
   },
@@ -209,14 +209,14 @@ export function HomePage() {
           <Reveal className="home-lab-showcase__intro">
             <p className="home-kicker">SITEVL LAB</p>
             <h2>Не просто рассказываю об интерфейсах. Даю их попробовать.</h2>
-            <p>Откройте демо-админку, измените услуги и цены или соберите свой вариант лендинга в интерактивном конструкторе.</p>
+            <p>Откройте цельную экспериментальную среду с конструктором, играми, физикой, 3D и браузерными интерфейсами.</p>
           </Reveal>
           <div className="home-lab-showcase__grid">
-            <Link to="/lab/admin-demo" className="home-lab-product">
-              <div><span><LayoutDashboard /></span><small>FULLSCREEN ADMIN</small><h3>Управляйте сайтом как владелец</h3><p>Добавляйте услуги и фотографии, меняйте цены, порядок блоков и сразу смотрите результат.</p></div>
+            <Link to="/lab" className="home-lab-product">
+              <div><span><LayoutDashboard /></span><small>SEVEN WEB EXPERIMENTS</small><h3>Исследуйте возможности браузера</h3><p>Игры, 3D-комната, физическая песочница, операционные системы и бесконечный холст в одной среде.</p></div>
               <MoveUpRight aria-hidden="true" />
             </Link>
-            <Link to="/lab/website-builder" className="home-lab-product home-lab-product--blue">
+            <Link to="/lab/builder" className="home-lab-product home-lab-product--blue">
               <div><span><Sparkles /></span><small>LANDING BUILDER</small><h3>Соберите свой первый экран</h3><p>Настройте содержание, стиль и блоки, а затем сохраните снимок получившегося сайта.</p></div>
               <MoveUpRight aria-hidden="true" />
             </Link>

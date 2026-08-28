@@ -1,0 +1,51 @@
+:root { --lab-bg: #0c0e12; --lab-panel: #15181e; --lab-panel-2: #1c2028; --lab-line: rgba(255,255,255,.12); --lab-text: #f5f7fb; --lab-muted: #929aaa; --lab-blue: #75a7ff; --lab-safe-bottom: max(16px, env(safe-area-inset-bottom)); }
+.lab-system { min-height: 100dvh; color: var(--lab-text); background: var(--lab-bg); font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+.lab-system *, .lab-system *::before, .lab-system *::after { box-sizing: border-box; }
+.lab-system button, .lab-system input, .lab-system textarea, .lab-system select { font: inherit; }
+.lab-system button, .lab-system a { -webkit-tap-highlight-color: transparent; }
+.lab-system a:focus-visible, .lab-system button:focus-visible, .lab-system input:focus-visible, .lab-system textarea:focus-visible, .lab-system select:focus-visible { outline: 2px solid var(--lab-blue); outline-offset: 3px; }
+.lab-system-bar { position: sticky; z-index: 100; top: 0; display: grid; min-height: 62px; grid-template-columns: 110px 1fr auto; align-items: center; gap: 18px; border-bottom: 1px solid var(--lab-line); padding: 7px 16px; background: rgba(12,14,18,.92); backdrop-filter: blur(18px); }
+.lab-system-back { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; color: #fff; font-size: 11px; font-weight: 850; text-decoration: none; }
+.lab-system-back svg { width: 16px; }
+.lab-system-identity { display: flex; min-width: 0; align-items: center; justify-content: center; gap: 9px; }
+.lab-system-identity svg { width: 17px; color: var(--lab-blue); }
+.lab-system-identity strong { font-size: 12px; letter-spacing: .08em; }
+.lab-system-identity small { overflow: hidden; color: var(--lab-muted); font-size: 9px; letter-spacing: .1em; text-overflow: ellipsis; white-space: nowrap; }
+.lab-system-meta { display: flex; align-items: center; justify-content: flex-end; gap: 9px; color: var(--lab-muted); font-size: 9px; font-weight: 750; letter-spacing: .08em; }
+.lab-system-meta button { display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid var(--lab-line); border-radius: 7px; color: #fff; background: var(--lab-panel); cursor: pointer; }
+.lab-system-meta svg { width: 16px; }
+.lab-system-main { min-height: calc(100dvh - 62px); }
+.lab-experiment-intro { display: grid; grid-template-columns: 90px minmax(0, 1fr) auto; width: min(calc(100% - 48px), 1420px); align-items: end; gap: 28px; margin: 0 auto; padding: 58px 0 34px; }
+.lab-experiment-number { color: var(--lab-muted); font: 500 56px/1 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.lab-experiment-intro span { color: var(--lab-blue); font-size: 10px; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
+.lab-experiment-intro h1 { max-width: 920px; margin: 8px 0 12px; font-size: clamp(42px, 6vw, 86px); line-height: .93; letter-spacing: -.045em; }
+.lab-experiment-intro p { max-width: 720px; margin: 0; color: var(--lab-muted); font-size: 16px; line-height: 1.55; }
+.lab-experiment-intro aside { display: flex; align-items: center; gap: 8px; }
+.lab-pill, .lab-control-button { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--lab-line); border-radius: 7px; padding: 0 13px; color: #fff; background: var(--lab-panel); font-size: 10px; font-weight: 800; letter-spacing: .07em; text-decoration: none; cursor: pointer; }
+.lab-control-button.is-active { border-color: color-mix(in srgb, var(--lab-blue) 70%, white); color: #fff; background: color-mix(in srgb, var(--lab-blue) 28%, var(--lab-panel)); }
+.lab-stage { position: relative; width: min(calc(100% - 48px), 1420px); min-height: 580px; margin: 0 auto 48px; overflow: hidden; border: 1px solid var(--lab-line); border-radius: 12px; background: var(--lab-panel); box-shadow: 0 30px 100px rgba(0,0,0,.28); }
+.lab-stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.lab-overlay-panel { border: 1px solid var(--lab-line); border-radius: 9px; padding: 12px; background: rgba(13,15,20,.86); backdrop-filter: blur(14px); }
+.lab-mobile-controls { display: none; }
+.lab-toast { position: fixed; z-index: 500; right: 18px; bottom: var(--lab-safe-bottom); max-width: 360px; border: 1px solid #3a5e99; border-radius: 9px; padding: 12px 15px; color: #dce8ff; background: #142039; box-shadow: 0 20px 70px rgba(0,0,0,.4); font-size: 12px; }
+
+@media (max-width: 767px) {
+  .lab-system-bar { min-height: 58px; grid-template-columns: auto 1fr auto; gap: 8px; padding: 5px 10px; }
+  .lab-system-back span, .lab-system-identity small, .lab-system-meta > span { display: none; }
+  .lab-system-identity { justify-content: flex-start; }
+  .lab-system-meta button { width: 44px; height: 44px; }
+  .lab-experiment-intro { grid-template-columns: 1fr; width: calc(100% - 28px); gap: 14px; padding: 40px 0 24px; }
+  .lab-experiment-number { font-size: 34px; }
+  .lab-experiment-intro h1 { font-size: clamp(38px, 13vw, 60px); overflow-wrap: break-word; }
+  .lab-experiment-intro aside { flex-wrap: wrap; }
+  .lab-stage { width: calc(100% - 20px); min-height: 570px; margin-bottom: calc(20px + env(safe-area-inset-bottom)); border-radius: 9px; }
+  .lab-mobile-controls { position: absolute; z-index: 20; right: 12px; bottom: 12px; left: 12px; display: flex; align-items: end; justify-content: space-between; pointer-events: none; }
+  .lab-mobile-controls button { width: 58px; height: 58px; border: 1px solid rgba(255,255,255,.18); border-radius: 50%; color: #fff; background: rgba(13,15,20,.76); backdrop-filter: blur(12px); touch-action: none; pointer-events: auto; }
+  .lab-mobile-controls__dpad { display: grid; grid-template-columns: repeat(3, 54px); gap: 4px; }
+  .lab-mobile-controls__dpad button { width: 54px; height: 54px; }
+  .lab-mobile-controls__dpad button:first-child { grid-column: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-system *, .lab-system *::before, .lab-system *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
