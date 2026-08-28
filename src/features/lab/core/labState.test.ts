@@ -10,10 +10,11 @@ test('LAB catalogue exposes exactly seven unique public experiments', () => {
   assert.deepEqual(labExperiments.map((item) => item.href), ['/lab/builder', '/lab/2d', '/lab/3d', '/lab/physics', '/lab/os', '/lab/retro', '/lab/canvas']);
 });
 
-test('achievement catalogue contains the complete Phase 2 progression', () => {
-  assert.equal(labAchievements.length, 22);
-  assert.equal(new Set(labAchievements.map((item) => item.id)).size, 22);
+test('achievement catalogue contains the complete Phase 4 progression', () => {
+  assert.equal(labAchievements.length, 36);
+  assert.equal(new Set(labAchievements.map((item) => item.id)).size, 36);
   assert.ok(labAchievements.some((item) => item.id === 'LAB_COMPLETE'));
+  for (const id of ['RETRO_MONO_USER', 'RETRO_WEB_PIONEER', 'RETRO_SECRET_FILE', 'RETRO_ARTIST', 'RETRO_DOCUMENT', 'RETRO_GAME_WINNER', 'RETRO_ALL_SYSTEMS']) assert.ok(labAchievements.some((item) => item.id === id));
   assert.ok(labAchievements.every((item) => item.xp > 0));
 });
 
