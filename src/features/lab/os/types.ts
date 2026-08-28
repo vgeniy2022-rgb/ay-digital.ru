@@ -1,4 +1,4 @@
-export type OsAppId = 'files' | 'terminal' | 'notes' | 'browser' | 'settings' | 'about';
+export type OsAppId = 'files' | 'terminal' | 'notes' | 'browser' | 'settings' | 'about' | 'calculator' | 'gallery' | 'tasks' | 'paint';
 
 export type OsWindowState = {
   id: OsAppId;
@@ -9,6 +9,7 @@ export type OsWindowState = {
   height: number;
   z: number;
   minimized: boolean;
+  maximized?: boolean;
 };
 
 export type OsPreferences = {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { LAB_STATE_EVENT, markExperimentExplored, patchLabState, readLabState } from './storage';
+import { LAB_STATE_EVENT, getLabLevel, markExperimentExplored, patchLabState, readLabState } from './storage';
 import type { LabExperimentId } from './types';
 
 export function useLabState(experimentId?: LabExperimentId) {
@@ -22,6 +22,8 @@ export function useLabState(experimentId?: LabExperimentId) {
   return {
     state,
     exploredCount: state.explored.length,
+    completedCount: state.completed.length,
+    level: getLabLevel(state.xp),
     toggleSound: () => patchLabState({ soundEnabled: !state.soundEnabled }),
     toggleHaptics: () => patchLabState({ hapticsEnabled: !state.hapticsEnabled }),
   };

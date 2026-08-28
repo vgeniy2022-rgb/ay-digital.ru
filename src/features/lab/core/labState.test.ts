@@ -10,9 +10,11 @@ test('LAB catalogue exposes exactly seven unique public experiments', () => {
   assert.deepEqual(labExperiments.map((item) => item.href), ['/lab/builder', '/lab/2d', '/lab/3d', '/lab/physics', '/lab/os', '/lab/retro', '/lab/canvas']);
 });
 
-test('achievement catalogue contains the shared seven signals', () => {
-  assert.equal(labAchievements.length, 7);
+test('achievement catalogue contains the complete Phase 2 progression', () => {
+  assert.equal(labAchievements.length, 22);
+  assert.equal(new Set(labAchievements.map((item) => item.id)).size, 22);
   assert.ok(labAchievements.some((item) => item.id === 'LAB_COMPLETE'));
+  assert.ok(labAchievements.every((item) => item.xp > 0));
 });
 
 test('local LAB state removes unknown experiments and achievement values', () => {
@@ -26,4 +28,29 @@ test('local LAB state removes unknown experiments and achievement values', () =>
   assert.deepEqual(normalized.achievements, { FIRST_EXPERIMENT: '2026-08-28T00:00:00.000Z' });
   assert.equal(normalized.soundEnabled, false);
   assert.equal(normalized.hapticsEnabled, false);
+});
+
+test('legacy LAB state migrates to version 2 without losing valid progress', () => {
+  const normalized = normalizeLabState({
+    version: 1,
+    explored: ['game2d', 'retro'],
+    achievements: { BROKE_THE_WEBSITE: '2026-08-28T01:00:00.000Z' },
+    soundEnabled: true,
+  });
+  assert.equal(normalized.version, 2);
+  assert.deepEqual(normalized.explored, ['game2d', 'retro']);
+  assert.equal(normalized.achievements.BROKE_THE_WEBSITE, '2026-08-28T01:00:00.000Z');
+  assert.equal(normalized.soundEnabled, true);
+  assert.deepEqual(normalized.audio, { master: .7, effects: .8, ambient: .35 });
+});
+
+test('LAB state clamps unsafe audio values and filters invalid completion ids', () => {
+  const normalized = normalizeLabState({
+    completed: ['os', 'unknown'],
+    audio: { master: 12, effects: -4, ambient: Number.NaN },
+    stats: { playTimeSeconds: -10, objectsCreated: 4, elementsBroken: 2, roomsVisited: 1 },
+  });
+  assert.deepEqual(normalized.completed, ['os']);
+  assert.deepEqual(normalized.audio, { master: 1, effects: 0, ambient: .35 });
+  assert.equal(normalized.stats.playTimeSeconds, 0);
 });

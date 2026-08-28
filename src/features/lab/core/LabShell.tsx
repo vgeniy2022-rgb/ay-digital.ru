@@ -4,6 +4,7 @@ import type { PropsWithChildren, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { SeoHead } from '../../../components/SeoHead';
 import { labExperiments } from './catalog';
+import { labRu } from '../i18n/ru';
 import type { LabExperimentId } from './types';
 import { useLabState } from './useLabState';
 import '../styles/labCore.css';
@@ -27,9 +28,9 @@ export function LabShell({ experimentId, title, description, canonicalPath, stat
     <div className={`lab-system ${immersive ? 'lab-system--immersive' : ''} ${className}`.trim()}>
       <SeoHead title={`${title} — SITEVL LAB`} description={description} canonicalPath={canonicalPath} noindex />
       <header className="lab-system-bar">
-        <Link className="lab-system-back" to={backTo} aria-label={backTo === '/lab' ? 'Вернуться в SITEVL LAB' : 'Вернуться на сайт SITEVL'}><ArrowLeft /><span>{backLabel}</span></Link>
-        <div className="lab-system-identity"><FlaskConical /><strong>SITEVL LAB</strong><small>{status || 'EXPERIMENTAL WEB ENVIRONMENT'}</small></div>
-        <div className="lab-system-meta"><span>{exploredCount}/{labExperiments.length} EXPLORED</span>{actions}<button type="button" onClick={toggleSound} aria-label={state.soundEnabled ? 'Выключить звук' : 'Включить звук'}>{state.soundEnabled ? <Volume2 /> : <VolumeX />}</button></div>
+        <Link className="lab-system-back" to={backTo} aria-label={backTo === '/lab' ? labRu.backToLab : labRu.backToSite}><ArrowLeft /><span>{backLabel}</span></Link>
+        <div className="lab-system-identity"><FlaskConical /><strong>{labRu.brand}</strong><small>{status || labRu.environment}</small></div>
+        <div className="lab-system-meta"><span>{labRu.explored} {exploredCount}/{labExperiments.length}</span>{actions}<button type="button" onClick={toggleSound} aria-label={state.soundEnabled ? labRu.soundOn : labRu.soundOff}>{state.soundEnabled ? <Volume2 /> : <VolumeX />}</button></div>
       </header>
       <AnimatePresence mode="wait">
         <motion.main key={canonicalPath} className="lab-system-main" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: .3 }}>{children}</motion.main>

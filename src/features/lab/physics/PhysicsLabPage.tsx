@@ -1,14 +1,15 @@
-import { Circle, Cuboid, RotateCcw, Smartphone, Trash2, Vibrate } from 'lucide-react';
+import { Bomb, Circle, Copy, Cuboid, FolderOpen, Pause, Play, RotateCcw, Save, Smartphone, Snowflake, Trash2, Vibrate } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LabExperimentIntro, LabShell } from '../core/LabShell';
-import { unlockLabAchievement } from '../core/storage';
+import { completeLabExperiment, recordLabActivity, saveExperimentState, unlockLabAchievement } from '../core/storage';
 import { useLabState } from '../core/useLabState';
-import { createPhysicsBody, createPhysicsWorld, stepPhysicsWorld, type PhysicsShape, type PhysicsWorld } from './physicsModel';
+import { createPhysicsBody, createPhysicsPreset, createPhysicsWorld, stepPhysicsWorld, type PhysicsPresetId, type PhysicsShape, type PhysicsWorld } from './physicsModel';
 import './physicsLab.css';
 
 const gravityPresets = { ZERO: 0, MOON: 1.62, MARS: 3.71, EARTH: 9.81, JUPITER: 24.79 } as const;
 type GravityPreset = keyof typeof gravityPresets;
 type DragState = { id: string; pointerId: number; lastX: number; lastY: number; lastTime: number } | null;
+const presetLabels: Record<PhysicsPresetId, string> = { free: 'Свободная лаборатория', domino: '100 домино', tower: 'Башня', pendulum: 'Маятники', springs: 'Пружины', zero: 'Нулевая гравитация', moon: 'Лунная гравитация', super: 'Сверхгравитация', explosion: 'Взрыв', rube: 'Машина Руба Голдберга' };
 
 function drawPhysicsWorld(context: CanvasRenderingContext2D, world: PhysicsWorld, width: number, height: number, selectedId?: string) {
   const scale = Math.min(width / world.width, height / world.height);
@@ -41,7 +42,7 @@ function drawPhysicsWorld(context: CanvasRenderingContext2D, world: PhysicsWorld
       context.fillStyle = '#d9e3f4'; context.beginPath(); context.arc(body.anchor.x, body.anchor.y, 5, 0, Math.PI * 2); context.fill();
     }
     context.save(); context.translate(body.x, body.y); context.rotate(body.rotation);
-    context.fillStyle = body.color; context.strokeStyle = selectedId === body.id ? '#fff' : 'rgba(255,255,255,.28)'; context.lineWidth = selectedId === body.id ? 4 : 2;
+    context.fillStyle = body.color; context.strokeStyle = body.frozen ? '#8fe7ff' : selectedId === body.id ? '#fff' : 'rgba(255,255,255,.28)'; context.lineWidth = selectedId === body.id ? 4 : 2;
     if (body.shape === 'ball' || body.shape === 'spring' || body.shape === 'pendulum') {
       context.beginPath(); context.arc(0, 0, body.shape === 'ball' ? body.radius : 26, 0, Math.PI * 2); context.fill(); context.stroke();
     } else if (body.shape === 'ragdoll') {
@@ -69,17 +70,37 @@ export function PhysicsLabPage() {
   const [restitution, setRestitution] = useState(.55);
   const [friction, setFriction] = useState(.25);
   const [sensorState, setSensorState] = useState<'idle' | 'active' | 'unavailable'>('idle');
+  const [paused, setPaused] = useState(false);
+  const [timeScale, setTimeScale] = useState(1);
+  const [activePreset, setActivePreset] = useState<PhysicsPresetId>('free');
+  const [limitNotice, setLimitNotice] = useState(false);
+  const [modesTried, setModesTried] = useState<string[]>(() => {
+    const value = stateSafeRead('modesTried');
+    return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+  });
   const [version, setVersion] = useState(0);
   const { state, toggleHaptics } = useLabState('physics');
 
+  function stateSafeRead(key: string) {
+    try {
+      const raw = window.localStorage.getItem('sitevl-lab-state-v2');
+      const parsed = raw ? JSON.parse(raw) as { experimentState?: { physics?: Record<string, unknown> } } : null;
+      return parsed?.experimentState?.physics?.[key];
+    } catch { return undefined; }
+  }
+
   const addBody = useCallback((shape: PhysicsShape) => {
     const world = worldRef.current;
+    const limit = window.innerWidth < 768 ? 80 : 120;
+    if (world.bodies.length >= limit) { setLimitNotice(true); window.setTimeout(() => setLimitNotice(false), 2200); return; }
     const body = createPhysicsBody(shape, 180 + Math.random() * 640, 80, { mass, restitution, friction });
     world.bodies.push(body);
     setSelectedId(body.id);
     setVersion((value) => value + 1);
     unlockLabAchievement('PHYSICS_ENTHUSIAST');
-  }, [friction, mass, restitution]);
+    recordLabActivity({ objectsCreated: 1 });
+    if (state.stats.objectsCreated + 1 >= 100) unlockLabAchievement('OBJECT_HUNDRED');
+  }, [friction, mass, restitution, state.stats.objectsCreated]);
 
   const reset = useCallback(() => { worldRef.current = createPhysicsWorld(); setSelectedId(undefined); setGravityPreset('EARTH'); setVersion((value) => value + 1); }, []);
   const removeSelected = () => {
@@ -92,6 +113,43 @@ export function PhysicsLabPage() {
     setGravityPreset(preset);
     worldRef.current.gravity = { x: 0, y: gravityPresets[preset] * 70 };
     unlockLabAchievement('PHYSICS_ENTHUSIAST');
+    if (preset === 'ZERO') unlockLabAchievement('ZERO_GRAVITY');
+  };
+
+  const loadPreset = (preset: PhysicsPresetId) => {
+    const world = createPhysicsPreset(preset);
+    world.timeScale = timeScale;
+    worldRef.current = world;
+    setActivePreset(preset);
+    setGravityPreset(preset === 'zero' ? 'ZERO' : preset === 'moon' ? 'MOON' : preset === 'super' ? 'JUPITER' : 'EARTH');
+    setSelectedId(undefined);
+    const nextModes = modesTried.includes(preset) ? modesTried : [...modesTried, preset];
+    setModesTried(nextModes);
+    saveExperimentState('physics', { ...(state.experimentState.physics || {}), modesTried: nextModes });
+    if (preset === 'zero') unlockLabAchievement('ZERO_GRAVITY');
+    if (preset === 'rube' || preset === 'explosion') unlockLabAchievement('CHAIN_REACTION');
+    if (nextModes.length >= 3) completeLabExperiment('physics');
+    recordLabActivity({ objectsCreated: world.bodies.length });
+    setVersion((value) => value + 1);
+  };
+
+  const updateTimeScale = (value: number) => { setTimeScale(value); worldRef.current.timeScale = value; };
+  const freezeSelected = () => { const body = worldRef.current.bodies.find((item) => item.id === selectedId); if (body) { body.frozen = !body.frozen; body.vx = 0; body.vy = 0; setVersion((value) => value + 1); } };
+  const duplicateSelected = () => { const body = worldRef.current.bodies.find((item) => item.id === selectedId); if (!body || worldRef.current.bodies.length >= 120) return; const copy = createPhysicsBody(body.shape, body.x + 40, body.y - 40, body); worldRef.current.bodies.push(copy); setSelectedId(copy.id); recordLabActivity({ objectsCreated: 1 }); setVersion((value) => value + 1); };
+  const explode = () => { const origin = worldRef.current.bodies.find((item) => item.id === selectedId) || { x: 500, y: 320 }; worldRef.current.bodies.forEach((body) => { if (body.frozen) return; const dx = body.x - origin.x; const dy = body.y - origin.y; const distance = Math.max(45, Math.hypot(dx, dy)); body.vx += dx / distance * (28000 / distance); body.vy += dy / distance * (28000 / distance); }); unlockLabAchievement('CHAIN_REACTION'); };
+
+  const saveScene = (slot: number) => {
+    const existing = Array.isArray(state.experimentState.physics?.scenes) ? state.experimentState.physics.scenes : [];
+    const scenes = [...existing] as unknown[];
+    scenes[slot] = JSON.parse(JSON.stringify(worldRef.current));
+    saveExperimentState('physics', { ...(state.experimentState.physics || {}), modesTried, scenes });
+  };
+  const loadScene = (slot: number) => {
+    const scenes = state.experimentState.physics?.scenes;
+    if (!Array.isArray(scenes) || !scenes[slot] || typeof scenes[slot] !== 'object') return;
+    worldRef.current = scenes[slot] as PhysicsWorld;
+    worldRef.current.timeScale = timeScale;
+    setVersion((value) => value + 1);
   };
 
   useEffect(() => {
@@ -128,7 +186,7 @@ export function PhysicsLabPage() {
     document.addEventListener('visibilitychange', visibility);
     const loop = (time: number) => {
       const delta = (time - last) / 1000; last = time;
-      const impact = hidden ? 0 : stepPhysicsWorld(worldRef.current, delta, dragRef.current?.id);
+      const impact = hidden || paused ? 0 : stepPhysicsWorld(worldRef.current, delta, dragRef.current?.id);
       if (impact > 290 && state.hapticsEnabled && time - lastHapticRef.current > 240 && 'vibrate' in navigator) { navigator.vibrate(Math.min(40, Math.round(impact / 18))); lastHapticRef.current = time; }
       const bounds = canvas.getBoundingClientRect();
       transformRef.current = drawPhysicsWorld(context, worldRef.current, bounds.width, bounds.height, selectedId);
@@ -136,7 +194,7 @@ export function PhysicsLabPage() {
     };
     frame = requestAnimationFrame(loop);
     return () => { cancelAnimationFrame(frame); observer.disconnect(); document.removeEventListener('visibilitychange', visibility); };
-  }, [selectedId, state.hapticsEnabled, version]);
+  }, [paused, selectedId, state.hapticsEnabled, version]);
 
   const worldPoint = (event: React.PointerEvent<HTMLCanvasElement>) => {
     const bounds = event.currentTarget.getBoundingClientRect();
@@ -162,15 +220,17 @@ export function PhysicsLabPage() {
   const selected = worldRef.current.bodies.find((body) => body.id === selectedId);
 
   return (
-    <LabShell experimentId="physics" title="Physics Lab" description="Физическая песочница SITEVL LAB с объектами, гравитацией, столкновениями, haptics и device tilt." canonicalPath="/lab/physics" status="PHYSICS · DEVICE FEEDBACK" immersive>
-      <LabExperimentIntro number="04" eyebrow="REAL-TIME PHYSICS SANDBOX" title="PHYSICS LAB" description="Create, drag and throw objects. Tune gravity, mass, restitution and friction without leaving the browser." controls={<button className="lab-control-button" type="button" onClick={reset}><RotateCcw />RESET WORLD</button>} />
+    <LabShell experimentId="physics" title="Лаборатория физики" description="Интерактивная физическая лаборатория SITEVL с режимами, локальными сценами, haptics и device tilt." canonicalPath="/lab/physics" status="ФИЗИКА · ОБРАТНАЯ СВЯЗЬ УСТРОЙСТВА" immersive>
+      <LabExperimentIntro number="04" eyebrow="ФИЗИКА В РЕАЛЬНОМ ВРЕМЕНИ" title="ЛАБОРАТОРИЯ ФИЗИКИ" description="Создавайте, бросайте и замораживайте объекты. Меняйте гравитацию, скорость времени и свойства материалов." controls={<><button className="lab-control-button" type="button" onClick={() => setPaused((value) => !value)}>{paused ? <Play /> : <Pause />}{paused ? 'ЗАПУСТИТЬ ФИЗИКУ' : 'ПАУЗА ФИЗИКИ'}</button><button className="lab-control-button" type="button" onClick={reset}><RotateCcw />ОЧИСТИТЬ СЦЕНУ</button></>} />
       <section className="lab-stage physics-stage" data-version={version}>
         <canvas ref={canvasRef} aria-label="Физическая сцена" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={pointerUp} />
         <aside className="physics-toolbar lab-overlay-panel">
-          <div className="physics-toolbar__create"><button type="button" onClick={() => addBody('cube')}><Cuboid />CUBE</button><button type="button" onClick={() => addBody('ball')}><Circle />BALL</button><button type="button" onClick={() => addBody('domino')}>DOMINO</button><button type="button" onClick={() => addBody('spring')}>SPRING</button><button type="button" onClick={() => addBody('pendulum')}>PENDULUM</button><button type="button" onClick={() => addBody('ragdoll')}>FIGURE</button></div>
+          <div className="physics-toolbar__create"><button type="button" onClick={() => addBody('cube')}><Cuboid />КУБ</button><button type="button" onClick={() => addBody('ball')}><Circle />ШАР</button><button type="button" onClick={() => addBody('cylinder')}>ЦИЛИНДР</button><button type="button" onClick={() => addBody('platform')}>ПЛАТФОРМА</button><button type="button" onClick={() => addBody('domino')}>ДОМИНО</button><button type="button" onClick={() => addBody('spring')}>ПРУЖИНА</button><button type="button" onClick={() => addBody('pendulum')}>МАЯТНИК</button><button type="button" onClick={() => addBody('ragdoll')}>ФИГУРА</button></div>
           <div className="physics-presets">{(Object.keys(gravityPresets) as GravityPreset[]).map((preset) => <button className={gravityPreset === preset && sensorState !== 'active' ? 'is-active' : ''} type="button" onClick={() => { setSensorState('idle'); setGravity(preset); }} key={preset}>{preset}</button>)}</div>
+          <select aria-label="Режим лаборатории" value={activePreset} onChange={(event) => loadPreset(event.target.value as PhysicsPresetId)}>{(Object.keys(presetLabels) as PhysicsPresetId[]).map((id) => <option value={id} key={id}>{presetLabels[id]}</option>)}</select>
         </aside>
-        <aside className="physics-inspector lab-overlay-panel"><header><span>{selected ? selected.shape.toUpperCase() : 'NEW OBJECT'}</span>{selected ? <button type="button" onClick={removeSelected} aria-label="Удалить выбранный объект"><Trash2 /></button> : null}</header><label>MASS <output>{mass.toFixed(1)}</output><input type="range" min="0.2" max="8" step="0.1" value={mass} onChange={(event) => setMass(Number(event.target.value))} /></label><label>RESTITUTION <output>{restitution.toFixed(2)}</output><input type="range" min="0" max="1" step="0.05" value={restitution} onChange={(event) => setRestitution(Number(event.target.value))} /></label><label>FRICTION <output>{friction.toFixed(2)}</output><input type="range" min="0" max="1" step="0.05" value={friction} onChange={(event) => setFriction(Number(event.target.value))} /></label><button className={state.hapticsEnabled ? 'is-active' : ''} type="button" onClick={toggleHaptics}><Vibrate />HAPTICS {state.hapticsEnabled ? 'ON' : 'OFF'}</button><button className={sensorState === 'active' ? 'is-active' : ''} type="button" onClick={() => void enableTilt()}><Smartphone />TILT WORLD</button>{sensorState === 'unavailable' ? <small>DEVICE SENSOR NOT AVAILABLE</small> : sensorState === 'active' ? <small>DEVICE TILT CONTROLS GRAVITY</small> : null}</aside>
+        <aside className="physics-inspector lab-overlay-panel"><header><span>{selected ? selected.shape.toUpperCase() : 'НОВЫЙ ОБЪЕКТ'}</span><div>{selected ? <><button type="button" onClick={duplicateSelected} aria-label="Дублировать"><Copy /></button><button type="button" onClick={freezeSelected} aria-label="Заморозить"><Snowflake /></button><button type="button" onClick={removeSelected} aria-label="Удалить"><Trash2 /></button></> : null}</div></header><label>МАССА <output>{mass.toFixed(1)}</output><input type="range" min="0.2" max="8" step="0.1" value={mass} onChange={(event) => setMass(Number(event.target.value))} /></label><label>УПРУГОСТЬ <output>{restitution.toFixed(2)}</output><input type="range" min="0" max="1" step="0.05" value={restitution} onChange={(event) => setRestitution(Number(event.target.value))} /></label><label>ТРЕНИЕ <output>{friction.toFixed(2)}</output><input type="range" min="0" max="1" step="0.05" value={friction} onChange={(event) => setFriction(Number(event.target.value))} /></label><div className="physics-time">{[1, .5, .25, .1].map((value) => <button className={timeScale === value ? 'is-active' : ''} type="button" onClick={() => updateTimeScale(value)} key={value}>{value}×</button>)}</div><button type="button" onClick={explode}><Bomb />ВЗРЫВНАЯ СИЛА</button><button className={state.hapticsEnabled ? 'is-active' : ''} type="button" onClick={toggleHaptics}><Vibrate />HAPTICS {state.hapticsEnabled ? 'ON' : 'OFF'}</button><button className={sensorState === 'active' ? 'is-active' : ''} type="button" onClick={() => void enableTilt()}><Smartphone />НАКЛОНЯТЬ МИР</button><div className="physics-slots">{[0, 1, 2].map((slot) => <span key={slot}><button type="button" onClick={() => saveScene(slot)} aria-label={`Сохранить сцену ${slot + 1}`}><Save />{slot + 1}</button><button type="button" onClick={() => loadScene(slot)} aria-label={`Загрузить сцену ${slot + 1}`}><FolderOpen /></button></span>)}</div>{sensorState === 'unavailable' ? <small>СЕНСОР УСТРОЙСТВА НЕДОСТУПЕН</small> : sensorState === 'active' ? <small>НАКЛОН УСТРОЙСТВА УПРАВЛЯЕТ ГРАВИТАЦИЕЙ</small> : null}</aside>
+        {limitNotice ? <div className="physics-limit" role="status">Достигнут безопасный лимит объектов для этого экрана.</div> : null}
       </section>
     </LabShell>
   );

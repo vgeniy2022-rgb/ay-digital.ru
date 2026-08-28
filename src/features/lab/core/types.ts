@@ -10,6 +10,12 @@ export type LabExperiment = {
   technologies: string[];
   href: string;
   accent: string;
+  category: string;
+  difficulty: 1 | 2 | 3 | 4 | 5;
+  duration: string;
+  keyboard: boolean;
+  touch: boolean;
+  achievementIds: LabAchievementId[];
 };
 
 export type LabAchievementId =
@@ -19,19 +25,50 @@ export type LabAchievementId =
   | 'PHYSICS_ENTHUSIAST'
   | 'RETRO_USER'
   | 'CANVAS_EXPLORER'
-  | 'LAB_COMPLETE';
+  | 'LAB_COMPLETE'
+  | 'BUILDER_ARCHITECT'
+  | 'DASH_MASTER'
+  | 'FRAGMENT_HUNTER'
+  | 'ROOM_EXPLORER'
+  | 'SIGNAL_SOLVED'
+  | 'ZERO_GRAVITY'
+  | 'OBJECT_HUNDRED'
+  | 'CHAIN_REACTION'
+  | 'SYSTEM_ADMIN'
+  | 'TERMINAL_SECRET'
+  | 'RETRO_GAMER'
+  | 'FLOPPY_SECRET'
+  | 'CANVAS_ARCHITECT'
+  | 'SECRET_FOUND'
+  | 'ALL_SECRETS';
+
+export type LabAchievementCategory = 'EXPLORATION' | 'SKILL' | 'SECRET' | 'COMPLETION' | 'CHAOS';
 
 export type LabAchievement = {
   id: LabAchievementId;
   title: string;
   description: string;
+  category: LabAchievementCategory;
+  xp: number;
   unlockedAt?: string;
 };
 
 export type LabPersistentState = {
-  version: 1;
+  version: 2;
   explored: LabExperimentId[];
+  completed: LabExperimentId[];
   achievements: Partial<Record<LabAchievementId, string>>;
+  xp: number;
+  secrets: string[];
+  lastExperiment?: LabExperimentId;
+  stats: {
+    playTimeSeconds: number;
+    objectsCreated: number;
+    elementsBroken: number;
+    roomsVisited: number;
+  };
+  experimentState: Partial<Record<LabExperimentId, Record<string, unknown>>>;
   soundEnabled: boolean;
   hapticsEnabled: boolean;
+  audio: { master: number; effects: number; ambient: number };
 };

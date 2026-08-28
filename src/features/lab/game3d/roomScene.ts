@@ -50,10 +50,10 @@ export type RoomSceneController = {
 type DisposableObject = Object3D & { geometry?: { dispose: () => void }; material?: Material | Material[] };
 
 const moduleLabels: Record<RoomModuleId, string> = {
-  modern: 'POWER MODERN SYSTEM',
-  physics: 'CAPTURE PHYSICS OBJECT',
-  retro: 'BOOT RETRO TERMINAL',
-  gravity: 'CHANGE GRAVITY CONTROL',
+  modern: 'ВКЛЮЧИТЬ СОВРЕМЕННУЮ СИСТЕМУ',
+  physics: 'ЗАФИКСИРОВАТЬ ФИЗИЧЕСКИЙ ОБЪЕКТ',
+  retro: 'ЗАПУСТИТЬ РЕТРО-ТЕРМИНАЛ',
+  gravity: 'ИЗМЕНИТЬ ПОЛЕ ГРАВИТАЦИИ',
 };
 
 function textTexture(title: string, subtitle: string, accent = '#75a7ff') {
@@ -283,7 +283,7 @@ export function mountTheRoom(mount: HTMLDivElement, options: RoomSceneOptions): 
   const setFocus = (next: RoomModuleId | 'door' | null) => {
     if (focused === next) return;
     focused = next;
-    options.onFocus(next === 'door' ? (doorUnlocked ? 'EXIT UNLOCKED · WALK THROUGH' : 'EXIT LOCKED · FIND 4 MODULES') : next ? `E · ${moduleLabels[next]}` : null);
+    options.onFocus(next === 'door' ? (doorUnlocked ? 'ВЫХОД ОТКРЫТ · ИДИТЕ ВПЕРЁД' : 'ВЫХОД ЗАКРЫТ · НАЙДИТЕ 4 МОДУЛЯ') : next ? `E · ${moduleLabels[next]}` : null);
   };
   const interact = () => {
     if (!focused || focused === 'door') return;

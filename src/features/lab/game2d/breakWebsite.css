@@ -6,6 +6,10 @@
 .break-game-help { position: absolute; z-index: 10; top: 14px; right: 14px; display: flex; gap: 12px; color: #9da7b6; font: 700 8px/1 ui-monospace, monospace; }
 .break-game-help b { margin-left: 4px; color: #e7ecf4; }
 .break-game-complete { position: absolute; z-index: 30; display: grid; place-items: center; text-align: center; background: rgba(10,12,16,.87); backdrop-filter: blur(18px); inset: 0; animation: break-complete .6s ease both; }
+.break-game-pause { position: absolute; z-index: 29; display: grid; place-content: center; justify-items: center; background: rgba(10,12,16,.78); backdrop-filter: blur(12px); inset: 0; }
+.break-game-pause small { color: #75a7ff; font: 800 9px/1 ui-monospace, monospace; letter-spacing: .12em; }
+.break-game-pause h2 { margin: 14px 0 24px; font-size: clamp(54px, 9vw, 110px); line-height: .8; }
+.break-game-pause button { display: inline-flex; min-height: 48px; align-items: center; gap: 8px; border: 1px solid #527fcb; border-radius: 7px; padding: 0 18px; color: #fff; background: #245ebd; font-weight: 800; cursor: pointer; }
 @keyframes break-complete { from { opacity: 0; transform: scale(1.08); } }
 .break-game-complete small { color: #78aaff; font: 800 10px/1 ui-monospace, monospace; letter-spacing: .16em; }
 .break-game-complete h2 { margin: 18px 0; font-size: clamp(54px, 9vw, 120px); line-height: .78; letter-spacing: -.06em; }
@@ -15,7 +19,7 @@
 @media (max-width: 767px) {
   .break-game-stage { height: calc(100svh - 175px); min-height: 560px; touch-action: none; }
   .break-game-help { display: none; }
-  .break-game-hud { right: 10px; left: 10px; justify-content: space-between; gap: 6px; }
+  .break-game-hud { right: 10px; left: 10px; flex-wrap: wrap; justify-content: space-between; gap: 6px; font-size: 7px; }
   .break-game-complete { padding: 24px; }
   .break-game-complete h2 { font-size: clamp(52px, 16vw, 82px); }
 }

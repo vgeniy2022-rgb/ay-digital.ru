@@ -1,4 +1,5 @@
-export type PhysicsShape = 'cube' | 'ball' | 'domino' | 'spring' | 'pendulum' | 'ragdoll';
+export type PhysicsShape = 'cube' | 'ball' | 'cylinder' | 'platform' | 'domino' | 'spring' | 'pendulum' | 'ragdoll';
+export type PhysicsPresetId = 'free' | 'domino' | 'tower' | 'pendulum' | 'springs' | 'zero' | 'moon' | 'super' | 'explosion' | 'rube';
 
 export type PhysicsBody = {
   id: string;
@@ -16,6 +17,7 @@ export type PhysicsBody = {
   rotation: number;
   angularVelocity: number;
   color: string;
+  frozen?: boolean;
   anchor?: { x: number; y: number; length: number };
 };
 
@@ -23,6 +25,8 @@ export type PhysicsWorld = {
   width: number;
   height: number;
   gravity: { x: number; y: number };
+  airResistance?: number;
+  timeScale?: number;
   bodies: PhysicsBody[];
 };
 
@@ -32,8 +36,8 @@ const colors = ['#75a7ff', '#63d6a2', '#ff8c72', '#ffd66b', '#b39cff', '#ff8dc7'
 
 export function createPhysicsBody(shape: PhysicsShape, x = 500, y = 100, settings = { mass: 1, restitution: .55, friction: .25 }): PhysicsBody {
   bodySequence += 1;
-  const size = shape === 'domino' ? { width: 22, height: 88 } : shape === 'ragdoll' ? { width: 58, height: 92 } : { width: 54, height: 54 };
-  const radius = shape === 'ball' ? 28 : Math.max(size.width, size.height) / 2;
+  const size = shape === 'domino' ? { width: 22, height: 88 } : shape === 'ragdoll' ? { width: 58, height: 92 } : shape === 'platform' ? { width: 150, height: 22 } : shape === 'cylinder' ? { width: 42, height: 72 } : { width: 54, height: 54 };
+  const radius = shape === 'ball' ? 28 : Math.min(70, Math.max(size.width, size.height) / 2);
   const body: PhysicsBody = {
     id: `physics-${bodySequence}`,
     shape,
@@ -61,6 +65,8 @@ export function createPhysicsWorld(): PhysicsWorld {
     width: 1000,
     height: 650,
     gravity: { x: 0, y: 686.7 },
+    airResistance: .01,
+    timeScale: 1,
     bodies: [
       createPhysicsBody('cube', 280, 170),
       createPhysicsBody('ball', 390, 90),
@@ -124,12 +130,14 @@ function solvePairs(bodies: PhysicsBody[]) {
 }
 
 export function stepPhysicsWorld(world: PhysicsWorld, delta: number, draggedId?: string) {
-  const dt = Math.max(0, Math.min(delta, 1 / 30));
+  const dt = Math.max(0, Math.min(delta, 1 / 30)) * (world.timeScale ?? 1);
   let impact = 0;
   for (const body of world.bodies) {
-    if (body.id === draggedId) continue;
+    if (body.id === draggedId || body.frozen) continue;
     body.vx += world.gravity.x * dt;
     body.vy += world.gravity.y * dt;
+    body.vx *= Math.max(0, 1 - (world.airResistance ?? .01) * dt * 10);
+    body.vy *= Math.max(0, 1 - (world.airResistance ?? .01) * dt * 10);
     if (body.anchor) {
       const dx = body.x - body.anchor.x;
       const dy = body.y - body.anchor.y;
@@ -153,4 +161,21 @@ export function stepPhysicsWorld(world: PhysicsWorld, delta: number, draggedId?:
   }
   impact = Math.max(impact, solvePairs(world.bodies));
   return impact;
+}
+
+export function createPhysicsPreset(id: PhysicsPresetId): PhysicsWorld {
+  const world = createPhysicsWorld();
+  world.bodies = [];
+  const add = (shape: PhysicsShape, x: number, y: number, settings = { mass: 1, restitution: .35, friction: .35 }) => world.bodies.push(createPhysicsBody(shape, x, y, settings));
+  if (id === 'free') return createPhysicsWorld();
+  if (id === 'domino' || id === 'rube') for (let index = 0; index < (id === 'domino' ? 72 : 36); index += 1) add('domino', 90 + index * 12, 520 - Math.sin(index * .3) * 55);
+  if (id === 'tower' || id === 'rube') for (let row = 0; row < 8; row += 1) for (let column = 0; column < 5; column += 1) add('cube', 650 + column * 55, 560 - row * 56);
+  if (id === 'pendulum') for (let index = 0; index < 5; index += 1) add('pendulum', 340 + index * 80, 250);
+  if (id === 'springs' || id === 'rube') for (let index = 0; index < 6; index += 1) add('spring', 230 + index * 110, 260 + (index % 2) * 90);
+  if (id === 'zero') { world.gravity.y = 0; for (let index = 0; index < 28; index += 1) { add(index % 2 ? 'ball' : 'cube', 100 + (index % 9) * 95, 100 + Math.floor(index / 9) * 130); const body = world.bodies[world.bodies.length - 1]; body.vx = (index % 3 - 1) * 45; body.vy = (index % 4 - 1.5) * 35; } }
+  if (id === 'moon') { world.gravity.y = 113.4; for (let index = 0; index < 18; index += 1) add(index % 3 ? 'ball' : 'cylinder', 100 + index * 45, 90 + (index % 4) * 60); }
+  if (id === 'super') { world.gravity.y = 1735; for (let index = 0; index < 22; index += 1) add(index % 2 ? 'cube' : 'ball', 100 + index * 38, 80); }
+  if (id === 'explosion') { for (let index = 0; index < 48; index += 1) { add(index % 2 ? 'cube' : 'ball', 500 + (Math.random() - .5) * 130, 330 + (Math.random() - .5) * 130); const body = world.bodies[world.bodies.length - 1]; const angle = Math.random() * Math.PI * 2; body.vx = Math.cos(angle) * 520; body.vy = Math.sin(angle) * 520; } }
+  if (id === 'rube') { add('ball', 60, 120); add('platform', 210, 240); add('platform', 520, 360); }
+  return world;
 }

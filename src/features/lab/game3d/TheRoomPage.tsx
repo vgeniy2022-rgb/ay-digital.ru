@@ -2,12 +2,12 @@ import { Check, Expand, Gamepad2, RotateCcw, ScanLine, X } from 'lucide-react';
 import { useEffect, useRef, useState, type PointerEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { LabShell } from '../core/LabShell';
-import { unlockLabAchievement } from '../core/storage';
+import { completeLabExperiment, recordLabActivity, recordLabSecret, unlockLabAchievement } from '../core/storage';
 import { useLabState } from '../core/useLabState';
 import { mountTheRoom, type ResolvedRoomQuality, type RoomModuleId, type RoomQuality, type RoomSceneController } from './roomScene';
 import './theRoom.css';
 
-const moduleNames: Record<RoomModuleId, string> = { modern: 'MODERN SYSTEM', physics: 'PHYSICS OBJECT', retro: 'RETRO TERMINAL', gravity: 'GRAVITY CONTROL' };
+const moduleNames: Record<RoomModuleId, string> = { modern: 'Современная система', physics: 'Физический объект', retro: 'Ретро-терминал', gravity: 'Управление гравитацией' };
 
 function RoomJoystick({ onMove }: { onMove: (forward: number, right: number) => void }) {
   const [knob, setKnob] = useState({ x: 0, y: 0 });
@@ -74,9 +74,9 @@ export function TheRoomPage() {
         quality,
         onReady: () => setReady(true),
         onFocus: setFocus,
-        onModule: (id) => { setModules((current) => current.includes(id) ? current : [...current, id]); signal(); },
-        onDoorUnlocked: () => { setDoorUnlocked(true); unlockLabAchievement('ENTERED_THE_ROOM'); signal(); },
-        onExit: () => setEnding(true),
+        onModule: (id) => { setModules((current) => current.includes(id) ? current : [...current, id]); if (id === 'gravity') unlockLabAchievement('SIGNAL_SOLVED'); signal(); },
+        onDoorUnlocked: () => { setDoorUnlocked(true); unlockLabAchievement('ROOM_EXPLORER'); signal(); },
+        onExit: () => { setEnding(true); unlockLabAchievement('ENTERED_THE_ROOM'); completeLabExperiment('game3d'); recordLabSecret('room:boundary'); recordLabActivity({ roomsVisited: 1 }); },
         onQualityResolved: (next, fps) => { setResolvedQuality(next); setGuardFps(fps || null); },
       });
     } catch (cause) {
@@ -135,13 +135,13 @@ export function TheRoomPage() {
   };
   const fullscreen = () => { const element = mountRef.current?.closest('.the-room-app') as HTMLElement | null; void element?.requestFullscreen?.().catch(() => undefined); };
 
-  return <LabShell experimentId="game3d" title="The Room" description="Компактная интерактивная 3D-комната SITEVL LAB с четырьмя модулями, адаптивным WebGL и сюрреалистическим выходом." canonicalPath="/lab/3d" status="3D · WEBGL SHOWCASE" immersive actions={<select value={quality} onChange={(event) => setQuality(event.target.value as RoomQuality)} aria-label="Качество 3D"><option value="auto">AUTO</option><option value="low">LOW</option><option value="medium">MEDIUM</option><option value="high">HIGH</option></select>} className="the-room-host">
+  return <LabShell experimentId="game3d" title="Комната" description="Интерактивная 3D-комната SITEVL LAB с четырьмя модулями, адаптивным WebGL и скрытым выходом." canonicalPath="/lab/3d" status="3D · WEBGL-ЭКСПЕРИМЕНТ" immersive actions={<select value={quality} onChange={(event) => setQuality(event.target.value as RoomQuality)} aria-label="Качество 3D"><option value="auto">АВТО</option><option value="low">НИЗКОЕ</option><option value="medium">СРЕДНЕЕ</option><option value="high">ВЫСОКОЕ</option></select>} className="the-room-host">
     <section className="the-room-app">
       <div ref={mountRef} className="the-room-renderer" onPointerDown={startLook} onPointerMove={moveLook} onPointerUp={endLook} onPointerCancel={() => { lookRef.current = null; }} />
-      {error ? <div className="room-error"><X /><h1>WEBGL NOT AVAILABLE ON THIS DEVICE</h1><p>THE ROOM needs a browser with WebGL support. The rest of SITEVL LAB remains available.</p><Link to="/lab">BACK TO LAB</Link></div> : null}
-      {!error && !started ? <div className="room-entry"><span>EXPERIMENT 03 / MAIN SHOWCASE</span><h1>THE<br />ROOM</h1><p>Find four experimental modules. Look around by dragging, move with WASD or the joystick, press E to interact.</p><div><button type="button" disabled={!ready} onClick={() => setStarted(true)}><Gamepad2 /> {ready ? 'ENTER ROOM' : 'LOADING ROOM'}</button><button type="button" onClick={fullscreen}><Expand /> FULLSCREEN</button></div><small>NO WEAPONS · EXPLORATION / INTERACTION / TECHNOLOGY</small></div> : null}
-      {!error && started ? <><div className="room-crosshair" aria-hidden="true"><i /><i /></div><aside className="room-objective"><header><span>MODULES</span><strong>{modules.length}/4</strong></header>{(Object.keys(moduleNames) as RoomModuleId[]).map((id) => <div className={modules.includes(id) ? 'is-complete' : ''} key={id}>{modules.includes(id) ? <Check /> : <i />}{moduleNames[id]}</div>)}<footer className={doorUnlocked ? 'is-open' : ''}>{doorUnlocked ? 'EXIT OPEN · WALK THROUGH' : 'EXIT LOCKED'}</footer></aside><div className="room-quality"><ScanLine /><span>AUTO GUARD</span><strong>{resolvedQuality.toUpperCase()}</strong>{guardFps ? <small>{guardFps} FPS · QUALITY REDUCED</small> : null}</div>{focus ? <button className="room-interact" type="button" onClick={() => controllerRef.current?.interact()}>{focus}</button> : null}<button className="room-reset" type="button" onClick={() => controllerRef.current?.reset()} aria-label="Вернуться в начало комнаты"><RotateCcw /></button><div className="room-mobile-controls"><RoomJoystick onMove={(forward, right) => controllerRef.current?.setMovement(forward, right)} /><button type="button" onClick={() => controllerRef.current?.interact()}>E<small>INTERACT</small></button></div><div className="room-landscape-prompt">BEST EXPERIENCED IN LANDSCAPE</div></> : null}
-      {ending ? <div className="room-ending"><span>BOUNDARY / 07</span><h2>YOU ARE INSIDE<br />THE WEBSITE</h2><p>The interface is no longer a page. It is the architecture around you.</p><Link to="/lab">EXIT LAB</Link></div> : null}
+      {error ? <div className="room-error"><X /><h1>WEBGL НЕДОСТУПЕН НА ЭТОМ УСТРОЙСТВЕ</h1><p>Для комнаты нужен браузер с поддержкой WebGL. Остальные эксперименты SITEVL LAB продолжат работать.</p><Link to="/lab">ВЕРНУТЬСЯ В LAB</Link></div> : null}
+      {!error && !started ? <div className="room-entry"><span>ЭКСПЕРИМЕНТ 03 / ГЛАВНАЯ 3D-СЦЕНА</span><h1>КОМ<br />НАТА</h1><p>Найдите четыре модуля. Осматривайтесь перетаскиванием, двигайтесь клавишами WASD или джойстиком и нажимайте E для взаимодействия.</p><div><button type="button" disabled={!ready} onClick={() => setStarted(true)}><Gamepad2 /> {ready ? 'ВОЙТИ В КОМНАТУ' : 'КОМНАТА ЗАГРУЖАЕТСЯ'}</button><button type="button" onClick={fullscreen}><Expand /> НА ВЕСЬ ЭКРАН</button></div><small>ИССЛЕДОВАНИЕ · ВЗАИМОДЕЙСТВИЕ · ТЕХНОЛОГИИ</small></div> : null}
+      {!error && started ? <><div className="room-crosshair" aria-hidden="true"><i /><i /></div><aside className="room-objective"><header><span>МОДУЛИ</span><strong>{modules.length}/4</strong></header>{(Object.keys(moduleNames) as RoomModuleId[]).map((id) => <div className={modules.includes(id) ? 'is-complete' : ''} key={id}>{modules.includes(id) ? <Check /> : <i />}{moduleNames[id]}</div>)}<footer className={doorUnlocked ? 'is-open' : ''}>{doorUnlocked ? 'ВЫХОД ОТКРЫТ · ИДИТЕ ВПЕРЁД' : 'ВЫХОД ЗАКРЫТ'}</footer></aside><div className="room-quality"><ScanLine /><span>ЗАЩИТА FPS</span><strong>{resolvedQuality === 'low' ? 'НИЗКОЕ' : resolvedQuality === 'medium' ? 'СРЕДНЕЕ' : 'ВЫСОКОЕ'}</strong>{guardFps ? <small>{guardFps} FPS · КАЧЕСТВО СНИЖЕНО</small> : null}</div>{focus ? <button className="room-interact" type="button" onClick={() => controllerRef.current?.interact()}>{focus}</button> : null}<button className="room-reset" type="button" onClick={() => controllerRef.current?.reset()} aria-label="Вернуться в начало комнаты"><RotateCcw /></button><div className="room-mobile-controls"><RoomJoystick onMove={(forward, right) => controllerRef.current?.setMovement(forward, right)} /><button type="button" onClick={() => controllerRef.current?.interact()}>E<small>ДЕЙСТВИЕ</small></button></div><div className="room-landscape-prompt">ПОВЕРНИТЕ УСТРОЙСТВО ГОРИЗОНТАЛЬНО</div></> : null}
+      {ending ? <div className="room-ending"><span>ГРАНИЦА / 07</span><h2>ВЫ ВНУТРИ<br />ВЕБ-САЙТА</h2><p>Интерфейс больше не страница. Теперь это архитектура вокруг вас.</p><Link to="/lab">ВЫЙТИ В LAB</Link></div> : null}
     </section>
   </LabShell>;
 }

@@ -6,5 +6,5 @@ import './labBuilder.css';
 
 export function LabBuilderPage() {
   useEffect(() => markExperimentExplored('builder'), []);
-  return <div className="lab-builder-host"><Link to="/lab" className="lab-builder-badge"><span>01</span><strong>SITEVL LAB</strong><small>WEBSITE BUILDER</small></Link><StudioProjectsPage /></div>;
+  return <div className="lab-builder-host"><Link to="/lab" className="lab-builder-badge"><span>01</span><strong>SITEVL LAB</strong><small>КОНСТРУКТОР САЙТОВ</small></Link><StudioProjectsPage /></div>;
 }
