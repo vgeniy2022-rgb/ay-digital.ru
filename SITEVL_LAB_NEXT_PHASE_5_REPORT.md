@@ -1,6 +1,6 @@
 # SITEVL LAB NEXT — Phase 5/5
 
-Статус: **PRE-RELEASE**  
+Статус: **RELEASED**  
 Дата: 30 августа 2026 года.
 
 ## Release gates
@@ -80,8 +80,26 @@
 
 ## Production
 
-- Commit: **PENDING**.
+- Release commit: `5cf718d64a0acb0fb220a8ee68434b3e2bf035c8` (`Release SITEVL LAB NEXT`).
 - Branch: `main`.
-- Push: **PENDING**.
-- Deployment: **PENDING**.
-- Production interaction QA: **PENDING**.
+- Push: **PASS**, local release commit и `origin/main` совпали перед deploy.
+- Deployment ID: `dpl_Ab8yHAzJiJoef8JtWUJjvwJBNWoz`.
+- Deployment URL: `https://ay-digital-hfeeq73v3-vgeniy.vercel.app`.
+- Основной production alias: `https://sitevl-ru.vercel.app`.
+- Дополнительные aliases: `https://ay-digital-ru.vercel.app`, `https://ay-digital-ru-vgeniy.vercel.app`.
+- Vercel target/state: `production` / `READY`.
+
+## Production QA
+
+- **PASS:** `/`, `/lab`, `/lab/modern-os`, `/lab/retro`, `/lab/physics`, `/lab/canvas`, `/studio`, `/sitemap.xml` и `/robots.txt` отвечают HTTP 200.
+- **PASS:** основной alias содержит Google verification meta, production canonical и актуальный SITEVL title.
+- **PASS:** Modern OS Window Manager: focus, minimize, Dock restore, maximize 1420×702, restore 900×610, close и повторный запуск.
+- **PASS:** production Browser открыл `sitevl://farm`; URL validator и executable-scheme rejection дополнительно покрыты unit/runtime local QA.
+- **PASS:** Games Hub содержит пять игр; Farm загрузила процедурный Canvas, показала release timings и приняла посадку пшеницы.
+- **PASS:** production 390×844 не имеет document overflow; Farm primary CTA имеет высоту 46 px и `100dvh` вычисляется как 844 px.
+- **PASS:** Retro Browser открыл `sitevl://home` и страницу `SITEVL Web Directory`.
+- **PASS:** Studio загрузил проекты, сохранил `noindex`/canonical и не записал warnings/errors в console.
+- **PASS:** representative production console не содержит project errors/warnings.
+- **NOT CONFIGURED:** `GET /api/ai` возвращает `{ configured: false, provider: "gemini", model: "gemini-3.7-flash" }`; live cloud request не выполнялся.
+- **RECOVERED:** первая CLI-загрузка оборвалась сетевой ошибкой `fetch failed`; повтор с `--archive=tgz` успешно создал READY deployment.
+- **NOT RUN:** физический iPhone/iPad Safari, camera/microphone permissions и полный codec matrix.
