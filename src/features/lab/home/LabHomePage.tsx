@@ -17,6 +17,7 @@ function LabPreview({ experiment }: { experiment: LabExperiment }) {
   if (experiment.id === 'physics') return <div className="lab-preview-physics"><i /><i /><i /><span /></div>;
   if (experiment.id === 'os') return <div className="lab-preview-os"><div><span>ФАЙЛЫ</span><span>ТЕРМИНАЛ</span></div><i /><b /><small /></div>;
   if (experiment.id === 'retro') return <div className="lab-preview-retro"><div>ФАЙЛ&nbsp;&nbsp;ПРАВКА&nbsp;&nbsp;ВИД</div><span>ПРОЧТИ.МЕНЯ</span><i>_</i></div>;
+  if (experiment.id === 'modern-os') return <div className="lab-preview-modern"><div><i /><i /><i /></div><span /><b /><small>NOVA</small></div>;
   return <div className="lab-preview-canvas"><span /><span /><span /><i /><b /></div>;
 }
 

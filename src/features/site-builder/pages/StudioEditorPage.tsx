@@ -1,8 +1,8 @@
 import '@puckeditor/core/puck.css';
 import { Puck, type Data, type PuckAction } from '@puckeditor/core';
 import { toBlob } from 'html-to-image';
-import { ArrowLeft, Download, ExternalLink, FileArchive, Monitor, Save, Send, Share2, Smartphone, Tablet, UploadCloud, X } from 'lucide-react';
-import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
+import { ArrowLeft, Download, ExternalLink, FileArchive, Monitor, Save, Send, Share2, Sparkles, Smartphone, Tablet, UploadCloud, X } from 'lucide-react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { StudioAssetProvider } from '../assets/AssetContext';
 import { useProjectAssets } from '../assets/useProjectAssets';
@@ -13,6 +13,8 @@ import { studioProjectRepository } from '../persistence/projectRepository';
 import type { SiteBuilderProject } from '../schema/types';
 import { puckRussianDictionary, studioRu } from '../i18n/ru';
 import '../styles/studio.css';
+
+const AiStudioDialog = lazy(() => import('../ai/AiStudioDialog'));
 
 type SaveStatus = 'loading' | 'saving' | 'saved' | 'error';
 type SendForm = { name: string; contact: string; email: string; comment: string; consent: boolean };
@@ -31,6 +33,7 @@ export function StudioEditorPage() {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('loading');
   const [notice, setNotice] = useState('');
   const [sendOpen, setSendOpen] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(1440);
   const dispatchRef = useRef<((action: PuckAction) => void) | null>(null);
   const loadedIdRef = useRef('');
@@ -133,7 +136,7 @@ export function StudioEditorPage() {
               const safeWidth = Math.max(320, Math.min(1920, width));
               setViewportWidth(safeWidth);
               dispatch({ type: 'setUi', ui: (current) => ({ viewports: { ...current.viewports, current: { width: safeWidth, height: 'auto' } } }) });
-            }} onProjectName={(name) => setCurrentProject({ ...project, name })} onBack={() => navigate('/studio/projects')} onPreview={() => window.open(`/studio/preview/${project.id}`, '_blank')} onShare={async () => {
+            }} onProjectName={(name) => setCurrentProject({ ...project, name })} onBack={() => navigate('/studio/projects')} onAi={() => setAiOpen(true)} onPreview={() => window.open(`/studio/preview/${project.id}`, '_blank')} onShare={async () => {
               const url = `${window.location.origin}/studio/preview/${project.id}`;
               if (navigator.share) await navigator.share({ title: project.name, url });
               else { await navigator.clipboard.writeText(url); setNotice('Локальная ссылка предпросмотра скопирована. Она работает только в этом браузере.'); }
@@ -143,10 +146,11 @@ export function StudioEditorPage() {
 
         <div className="studio-statusbar"><span><i className={`is-${saveStatus}`} />{saveStatus === 'saving' ? studioRu.status.saving : saveStatus === 'saved' ? 'Сохранено в IndexedDB' : saveStatus === 'error' ? studioRu.status.error : studioRu.status.loading}</span><span>{page.name} · /{page.slug}</span><span>{page.data.content.length} блоков · схема v{project.schemaVersion}</span><span>Холст {viewportWidth} px</span></div>
 
-        <nav className="studio-mobile-nav" aria-label="Инструменты конструктора"><button type="button" onClick={() => setMobilePlugin('blocks')}><UploadCloud />Блоки</button><button type="button" onClick={() => setMobilePlugin('outline')}><FileArchive />Структура</button><button type="button" onClick={() => setMobilePlugin('fields')}><Save />Изменить</button><button type="button" onClick={() => setMobilePlugin('theme')}><Monitor />Стиль</button><button type="button" onClick={() => setMobilePlugin('pages')}><ExternalLink />Ещё</button></nav>
+        <nav className="studio-mobile-nav" aria-label="Инструменты конструктора"><button type="button" onClick={() => setMobilePlugin('blocks')}><UploadCloud />Блоки</button><button type="button" onClick={() => setMobilePlugin('outline')}><FileArchive />Структура</button><button type="button" onClick={() => setMobilePlugin('fields')}><Save />Изменить</button><button type="button" onClick={() => setMobilePlugin('theme')}><Monitor />Стиль</button><button type="button" onClick={() => setAiOpen(true)}><Sparkles />AI</button><button type="button" onClick={() => setMobilePlugin('pages')}><ExternalLink />Ещё</button></nav>
 
         {notice ? <div className="studio-toast" role="status"><span>{notice}</span><button type="button" onClick={() => setNotice('')} aria-label="Закрыть"><X /></button></div> : null}
         {assets.error ? <div className="studio-toast is-error" role="alert"><span>{assets.error}</span></div> : null}
+        {aiOpen ? <Suspense fallback={<div className="studio-dialog-backdrop"><div className="studio-ai-loading">Загружаем SITEVL AI…</div></div>}><AiStudioDialog project={project} onClose={() => setAiOpen(false)} onApply={(next, label) => { setCurrentProject(next); setNotice(`AI-изменение применено: ${label}`); setAiOpen(false); }} /></Suspense> : null}
         {sendOpen ? <SendProjectDialog project={project} onClose={() => setSendOpen(false)} onDownload={async (form) => {
           const canvas = document.querySelector<HTMLIFrameElement>('.studio-editor-shell iframe')?.contentDocument?.querySelector<HTMLElement>('.sv-site');
           let thumbnail: Blob | undefined;
@@ -159,8 +163,8 @@ export function StudioEditorPage() {
   );
 }
 
-function StudioTopBar({ children, saveStatus, project, viewportWidth, onViewportWidth, onProjectName, onBack, onPreview, onShare, onJson, onZip, onSend }: { children: ReactNode; saveStatus: SaveStatus; project: SiteBuilderProject; viewportWidth: number; onViewportWidth: (width: number) => void; onProjectName: (name: string) => void; onBack: () => void; onPreview: () => void; onShare: () => void; onJson: () => void; onZip: () => void; onSend: () => void }) {
-  return <header className="studio-topbar"><div className="studio-topbar__project"><button type="button" onClick={onBack} aria-label="К проектам"><ArrowLeft /></button><span className="studio-topbar__mark">SV</span><input value={project.name} onChange={(event) => onProjectName(event.target.value)} aria-label="Название проекта" /><small className={`is-${saveStatus}`}>{saveStatus === 'saving' ? 'Сохранение' : saveStatus === 'saved' ? 'Сохранено' : saveStatus === 'error' ? 'Ошибка' : 'Загрузка'}</small></div><div className="studio-topbar__native">{children}</div><label className="studio-topbar__width"><span>Ш</span><input type="number" min="320" max="1920" value={viewportWidth} onChange={(event) => onViewportWidth(Number(event.target.value))} aria-label="Ширина холста" /></label><div className="studio-topbar__actions"><button type="button" onClick={onPreview}><ExternalLink /> Предпросмотр</button><button type="button" onClick={onShare}><Share2 /> Поделиться</button><div className="studio-topbar__export"><button type="button"><Download /> Экспорт</button><div><button type="button" onClick={onJson}>Проект JSON</button><button type="button" onClick={onZip}>Статический сайт ZIP</button></div></div><button className="is-send" type="button" onClick={onSend}><Send /> Отправить Александру</button></div></header>;
+function StudioTopBar({ children, saveStatus, project, viewportWidth, onViewportWidth, onProjectName, onBack, onAi, onPreview, onShare, onJson, onZip, onSend }: { children: ReactNode; saveStatus: SaveStatus; project: SiteBuilderProject; viewportWidth: number; onViewportWidth: (width: number) => void; onProjectName: (name: string) => void; onBack: () => void; onAi: () => void; onPreview: () => void; onShare: () => void; onJson: () => void; onZip: () => void; onSend: () => void }) {
+  return <header className="studio-topbar"><div className="studio-topbar__project"><button type="button" onClick={onBack} aria-label="К проектам"><ArrowLeft /></button><span className="studio-topbar__mark">SV</span><input value={project.name} onChange={(event) => onProjectName(event.target.value)} aria-label="Название проекта" /><small className={`is-${saveStatus}`}>{saveStatus === 'saving' ? 'Сохранение' : saveStatus === 'saved' ? 'Сохранено' : saveStatus === 'error' ? 'Ошибка' : 'Загрузка'}</small></div><div className="studio-topbar__native">{children}</div><label className="studio-topbar__width"><span>Ш</span><input type="number" min="320" max="1920" value={viewportWidth} onChange={(event) => onViewportWidth(Number(event.target.value))} aria-label="Ширина холста" /></label><div className="studio-topbar__actions"><button className="is-ai" type="button" onClick={onAi}><Sparkles /> AI</button><button type="button" onClick={onPreview}><ExternalLink /> Предпросмотр</button><button type="button" onClick={onShare}><Share2 /> Поделиться</button><div className="studio-topbar__export"><button type="button"><Download /> Экспорт</button><div><button type="button" onClick={onJson}>Проект JSON</button><button type="button" onClick={onZip}>Статический сайт ZIP</button></div></div><button className="is-send" type="button" onClick={onSend}><Send /> Отправить Александру</button></div></header>;
 }
 
 function SendProjectDialog({ project, onClose, onDownload }: { project: SiteBuilderProject; onClose: () => void; onDownload: (form: Record<string, string>) => Promise<void> }) {

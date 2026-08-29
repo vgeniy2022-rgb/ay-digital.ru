@@ -16,7 +16,7 @@ export const labRu = {
   soundOn: 'Выключить звук',
   soundOff: 'Включить звук',
   random: 'СЛУЧАЙНЫЙ ЭКСПЕРИМЕНТ',
-  localProgress: 'БЕЗ РЕГИСТРАЦИИ · ЛОКАЛЬНЫЙ ПРОГРЕСС · 7 ЭКСПЕРИМЕНТОВ',
+  localProgress: 'БЕЗ РЕГИСТРАЦИИ · ЛОКАЛЬНЫЙ ПРОГРЕСС · 8 ЭКСПЕРИМЕНТОВ',
   achievementSystem: 'ЛОКАЛЬНАЯ СИСТЕМА ДОСТИЖЕНИЙ',
   achievementSignals: 'Сигналы, собранные в этом браузере',
   resetConfirm: 'Сбросить прогресс, статистику и достижения SITEVL LAB?',
@@ -54,6 +54,7 @@ export const labExperimentCopy = {
   os: { title: 'SITEVL OS', shortTitle: 'SITEVL OS', category: 'ОПЕРАЦИОННАЯ СИСТЕМА', description: 'Рабочая браузерная ОС с окнами, файлами, терминалом, заметками и приложениями.' },
   retro: { title: 'РЕТРО-КОМПЬЮТЕР', shortTitle: 'Ретро', category: 'РЕТРО-СИСТЕМА', description: 'Три оригинальные системы разных эпох с приложениями, интернетом, играми и общим виртуальным диском.' },
   canvas: { title: 'БЕСКОНЕЧНЫЙ ХОЛСТ', shortTitle: 'Холст', category: 'ДОСКА ИДЕЙ', description: 'Размещайте заметки и схемы в большом пространстве, связывайте и сохраняйте документы.' },
+  'modern-os': { title: 'СОВРЕМЕННАЯ ОС', shortTitle: 'Modern OS', category: 'ПРЕМИАЛЬНАЯ DESKTOP-СРЕДА', description: 'Полноценная виртуальная desktop-система SITEVL с окнами, файлами, браузером, приложениями и системными функциями.' },
 } as const;
 
 export const labAchievementCopy = {
@@ -90,6 +91,13 @@ export const labAchievementCopy = {
   RETRO_PROGRAMMER: ['ПРОГРАММИСТ', 'Безопасная программа выполнена в SITEVL BASIC.'],
   RETRO_WEBMASTER: ['ВЕБ-МАСТЕР 1998', 'HTML/CSS-проект сохранён в WEB LAB.'],
   RETRO_INSTALLER: ['УСТАНОВКА ЗАВЕРШЕНА', 'Установлен первый виртуальный пакет SVP.'],
+  MODERN_OS_USER: ['НОВАЯ ЭРА', 'Запущена современная виртуальная система SITEVL NOVA.'],
+  MODERN_MULTITASKER: ['МНОГОЗАДАЧНОСТЬ', 'Одновременно открыты три приложения SITEVL NOVA.'],
+  MODERN_EXPLORER: ['СЕТЕВОЙ ИССЛЕДОВАТЕЛЬ', 'Открыто сетевое окружение с компьютерами SITEVL Retro.'],
+  MODERN_FIRST_GAME: ['ПЕРВАЯ ИГРА', 'Завершена первая игровая сессия в SITEVL NOVA.'],
+  MODERN_CORE_COMPLETE: ['СИГНАЛ ЗАВЕРШЁН', 'Завершена сессия CORE SHOOTER.'],
+  MODERN_BLOCKS_100: ['БЛОК ЗА БЛОКОМ', 'Набрано не менее 100 очков в BLOCKS.'],
+  MODERN_BEST_LAP: ['БЫСТРЫЙ КРУГ', 'Трасса NOVA CIRCUIT пройдена быстрее 45 секунд.'],
   CANVAS_ARCHITECT: ['АРХИТЕКТОР ХОЛСТА', 'На одной доске создана связанная структура.'],
   SECRET_FOUND: ['НАЙДЕН СЕКРЕТ', 'Обнаружен первый скрытый сигнал LAB.'],
   ALL_SECRETS: ['ВСЕ СЕКРЕТЫ', 'Найдены все основные секреты SITEVL LAB.'],

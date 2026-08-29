@@ -233,6 +233,13 @@ const technicalRoutes = [
     schemaType: 'WebPage',
   },
   {
+    path: '/lab/modern-os',
+    title: 'SITEVL Modern OS — SITEVL LAB',
+    description: 'Современная виртуальная desktop-система SITEVL с окнами, файлами, браузером, приложениями и локальным сохранением.',
+    noindex: true,
+    schemaType: 'WebPage',
+  },
+  {
     path: '/lab/canvas',
     title: 'Infinite Canvas — SITEVL LAB',
     description: 'Бесконечный Canvas 2D для заметок, текста, фигур и связей с pan, zoom, touch, pinch и локальным сохранением.',

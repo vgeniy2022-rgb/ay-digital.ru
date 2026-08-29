@@ -23,6 +23,7 @@ const staticRouteLabels: Record<string, string> = {
   '/lab/physics': 'Physics Lab',
   '/lab/os': 'OS Simulator',
   '/lab/retro': 'Retro Computing',
+  '/lab/modern-os': 'SITEVL Modern OS',
   '/lab/canvas': 'Infinite Canvas',
   '/lab/builder-legacy': 'Legacy Website Builder',
   '/brief': 'Мини-бриф',

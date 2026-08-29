@@ -27,6 +27,7 @@ const TheRoomPage = lazy(() => import('./features/lab/game3d/TheRoomPage').then(
 const PhysicsLabPage = lazy(() => import('./features/lab/physics/PhysicsLabPage').then((module) => ({ default: module.PhysicsLabPage })));
 const OsSimulatorPage = lazy(() => import('./features/lab/os/OsSimulatorPage').then((module) => ({ default: module.OsSimulatorPage })));
 const RetroOsPage = lazy(() => import('./features/lab/retro/RetroOsPage').then((module) => ({ default: module.RetroOsPage })));
+const ModernOsPage = lazy(() => import('./features/lab/modernOs/ModernOsPage').then((module) => ({ default: module.ModernOsPage })));
 const InfiniteCanvasPage = lazy(() => import('./features/lab/infiniteCanvas/InfiniteCanvasPage').then((module) => ({ default: module.InfiniteCanvasPage })));
 const WebsiteBuilderPage = lazy(() => import('./pages/WebsiteBuilderPage').then((module) => ({ default: module.WebsiteBuilderPage })));
 const BriefPage = lazy(() => import('./pages/BriefPage').then((module) => ({ default: module.BriefPage })));
@@ -65,6 +66,7 @@ export default function App() {
           <Route path="/lab/physics" element={<PhysicsLabPage />} />
           <Route path="/lab/os" element={<OsSimulatorPage />} />
           <Route path="/lab/retro" element={<RetroOsPage />} />
+          <Route path="/lab/modern-os" element={<ModernOsPage />} />
           <Route path="/lab/canvas" element={<InfiniteCanvasPage />} />
           <Route path="/lab/website-builder" element={<Navigate to="/lab/builder" replace />} />
           <Route path="/lab/builder-legacy" element={<WebsiteBuilderPage />} />

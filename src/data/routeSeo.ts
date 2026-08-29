@@ -154,6 +154,12 @@ export const routeSeo: Record<string, RouteSeo> = {
     canonicalPath: '/lab/retro',
     noindex: true,
   },
+  '/lab/modern-os': {
+    title: 'SITEVL Modern OS — SITEVL LAB',
+    description: 'Современная виртуальная desktop-система SITEVL с окнами, файлами, браузером, приложениями и локальным сохранением.',
+    canonicalPath: '/lab/modern-os',
+    noindex: true,
+  },
   '/lab/canvas': {
     title: 'Infinite Canvas — SITEVL LAB',
     description: 'Бесконечный Canvas 2D для заметок, текста, фигур и связей с pan, zoom, touch, pinch и локальным сохранением.',

@@ -1,4 +1,4 @@
-export type LabExperimentId = 'builder' | 'game2d' | 'game3d' | 'physics' | 'os' | 'retro' | 'canvas';
+export type LabExperimentId = 'builder' | 'game2d' | 'game3d' | 'physics' | 'os' | 'retro' | 'canvas' | 'modern-os';
 
 export type LabExperiment = {
   id: LabExperimentId;
@@ -52,6 +52,13 @@ export type LabAchievementId =
   | 'RETRO_PROGRAMMER'
   | 'RETRO_WEBMASTER'
   | 'RETRO_INSTALLER'
+  | 'MODERN_OS_USER'
+  | 'MODERN_MULTITASKER'
+  | 'MODERN_EXPLORER'
+  | 'MODERN_FIRST_GAME'
+  | 'MODERN_CORE_COMPLETE'
+  | 'MODERN_BLOCKS_100'
+  | 'MODERN_BEST_LAP'
   | 'CANVAS_ARCHITECT'
   | 'SECRET_FOUND'
   | 'ALL_SECRETS';

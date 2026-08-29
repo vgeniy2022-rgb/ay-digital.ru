@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
-import { ArrowRight, Copy, FileJson, FolderOpen, Import, LayoutTemplate, Plus, Trash2 } from 'lucide-react';
+import { lazy, Suspense, useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { ArrowRight, Copy, FileJson, FolderOpen, Import, LayoutTemplate, Plus, Sparkles, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { convertLegacyDraftToProject } from '../schema/migrations';
 import { studioProjectRepository } from '../persistence/projectRepository';
@@ -8,12 +8,15 @@ import { createProjectFromTemplate, studioTemplates } from '../templates/templat
 import { importProjectFile } from '../export/projectExport';
 import '../styles/studio.css';
 
+const AiCreateProjectDialog = lazy(() => import('../ai/AiCreateProjectDialog'));
+
 export function StudioProjectsPage() {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState('');
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showAi, setShowAi] = useState(false);
   const importRef = useRef<HTMLInputElement>(null);
   const legacyAvailable = typeof window !== 'undefined' && Boolean(window.localStorage.getItem('sitevl-landing-builder-v2'));
 
@@ -67,7 +70,8 @@ export function StudioProjectsPage() {
         <a href="/" className="studio-wordmark">SITEVL <span>Studio</span></a>
         <div className="studio-projects-header__actions">
           <input ref={importRef} type="file" accept="application/json,.json" hidden onChange={importJson} />
-          <button type="button" onClick={() => importRef.current?.click()}><Import /> Импорт JSON</button>
+          <button className="is-import" type="button" onClick={() => importRef.current?.click()}><Import /> Импорт JSON</button>
+          <button className="is-ai" type="button" onClick={() => setShowAi(true)}><Sparkles /> Создать с ИИ</button>
           <button className="is-primary" type="button" onClick={() => setShowTemplates(true)}><Plus /> Новый проект</button>
         </div>
       </header>
@@ -91,6 +95,7 @@ export function StudioProjectsPage() {
       </section>
 
       {showTemplates ? <div className="studio-dialog-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setShowTemplates(false); }}><section className="studio-template-dialog" role="dialog" aria-modal="true" aria-labelledby="studio-template-title"><header><div><small>Новый проект</small><h2 id="studio-template-title">Выберите основу</h2></div><button type="button" onClick={() => setShowTemplates(false)} aria-label="Закрыть">×</button></header><div className="studio-template-grid">{studioTemplates.map((template) => <button type="button" onClick={() => void create(template.id)} key={template.id}><div style={{ '--template-accent': template.accent } as React.CSSProperties}><i /><i /><i /></div><small>{template.category}</small><strong>{template.name}</strong><span>{template.description}</span></button>)}</div></section></div> : null}
+      {showAi ? <Suspense fallback={<div className="studio-dialog-backdrop"><div className="studio-ai-loading">Загружаем SITEVL AI…</div></div>}><AiCreateProjectDialog onClose={() => setShowAi(false)} onCreate={async (result) => { const project = await studioProjectRepository.create(result.project); navigate(`/studio/project/${project.id}`); }} /></Suspense> : null}
     </main>
   );
 }

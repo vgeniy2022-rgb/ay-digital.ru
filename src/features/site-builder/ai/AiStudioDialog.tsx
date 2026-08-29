@@ -1,0 +1,13 @@
+import { Sparkles, X } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import type { SiteBuilderProject } from '../schema/types';
+import { auditStudioProject, proposeTheme } from './audit';
+import type { AiThemeProposal } from './types';
+
+export default function AiStudioDialog({ project, onApply, onClose }: { project: SiteBuilderProject; onApply: (project: SiteBuilderProject, label: string) => void; onClose: () => void }) {
+  const audit = useMemo(() => auditStudioProject(project), [project]);
+  const [intent, setIntent] = useState('Сделать сайт более премиальным и спокойным');
+  const [proposal, setProposal] = useState<AiThemeProposal | null>(null);
+  return <div className="studio-dialog-backdrop"><section className="studio-ai-dialog studio-ai-dialog--editor" role="dialog" aria-modal="true" aria-labelledby="ai-studio-title"><header><div><small>SITEVL AI</small><h2 id="ai-studio-title">Помощник проекта</h2></div><button type="button" onClick={onClose} aria-label="Закрыть"><X /></button></header><div className="studio-ai-editor-grid"><section><h3>Аудит структуры</h3><div className="studio-ai-metrics"><span><strong>{audit.metrics.pages}</strong>Страниц</span><span><strong>{audit.metrics.sections}</strong>Секций</span><span><strong>{audit.metrics.cta}</strong>CTA</span><span><strong>{audit.metrics.missingAlt}</strong>Без alt</span></div><div className="studio-ai-findings">{audit.findings.map((finding) => <article className={`is-${finding.severity}`} key={`${finding.category}-${finding.title}`}><small>{finding.category}</small><strong>{finding.title}</strong><p>{finding.detail}</p></article>)}</div></section><section><h3>Улучшить дизайн</h3><p>Помощник меняет только существующие ThemeTokens, без произвольного CSS.</p><textarea value={intent} onChange={(event) => setIntent(event.target.value)} />{proposal ? <div className="studio-ai-theme-preview"><strong>{proposal.label}</strong><p>{proposal.description}</p><ul>{proposal.changes.map((change) => <li key={change}>{change}</li>)}</ul><div className="studio-ai-swatches">{[proposal.theme.colors.primary, proposal.theme.colors.accent, proposal.theme.colors.background, proposal.theme.colors.surface].map((color) => <i key={color} style={{ background: color }} />)}</div></div> : null}<footer>{proposal ? <button type="button" onClick={() => setProposal(null)}>Отмена</button> : null}<button className="is-primary" type="button" onClick={() => proposal ? onApply({ ...project, theme: proposal.theme }, `Тема: ${proposal.label}`) : setProposal(proposeTheme(project, intent))}><Sparkles /> {proposal ? 'Применить изменения' : 'Подготовить предложение'}</button></footer></section></div></section></div>;
+}
+
