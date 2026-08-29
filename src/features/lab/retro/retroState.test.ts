@@ -6,6 +6,7 @@ import { addRetroVisit, createRetroFile, defaultRetroState, emptyRetroTrash, nor
 test('Retro URL validator accepts web and known SITEVL pages', () => {
   assert.deepEqual(normalizeRetroUrl('example.com'), { ok: true, url: 'https://example.com/', internal: false });
   assert.deepEqual(normalizeRetroUrl('sitevl://museum'), { ok: true, url: 'sitevl://museum', internal: true });
+  assert.deepEqual(normalizeRetroUrl('sitevl://farm'), { ok: true, url: 'sitevl://farm', internal: true });
 });
 
 test('Retro URL validator blocks executable and local schemes', () => {

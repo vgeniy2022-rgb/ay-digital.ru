@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { LAB_STATE_EVENT, getLabLevel, markExperimentExplored, patchLabState, readLabState } from './storage';
+import { labPublicExperimentIds } from './catalog';
 import type { LabExperimentId } from './types';
 
 export function useLabState(experimentId?: LabExperimentId) {
@@ -21,8 +22,8 @@ export function useLabState(experimentId?: LabExperimentId) {
 
   return {
     state,
-    exploredCount: state.explored.length,
-    completedCount: state.completed.length,
+    exploredCount: labPublicExperimentIds.filter((id) => state.explored.includes(id)).length,
+    completedCount: labPublicExperimentIds.filter((id) => state.completed.includes(id)).length,
     level: getLabLevel(state.xp),
     toggleSound: () => patchLabState({ soundEnabled: !state.soundEnabled }),
     toggleHaptics: () => patchLabState({ hapticsEnabled: !state.hapticsEnabled }),

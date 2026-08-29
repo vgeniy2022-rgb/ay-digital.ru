@@ -109,7 +109,7 @@ export const navItems: NavItem[] = [
   { label: 'Цены', href: '/prices' },
   { label: 'Кейсы', href: '/cases' },
   { label: 'Полезное', href: '/useful' },
-  { label: 'LAB', href: '/lab' },
+  { label: 'LAB (Мои эксперименты)', href: '/lab' },
   { label: 'Порядок работы', href: '/process' },
   { label: 'Контакты', href: '/contacts' },
 ];

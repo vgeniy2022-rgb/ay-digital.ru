@@ -1,6 +1,7 @@
 import { AnimatePresence } from 'framer-motion';
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { SeoHead } from './components/SeoHead';
 import { AppLayout } from './layouts/AppLayout';
 import { privacyContent, termsContent } from './data/legal';
 
@@ -10,8 +11,6 @@ const UsefulIndexPage = lazy(() => import('./pages/UsefulIndexPage').then((modul
 const UsefulArticlePage = lazy(() => import('./pages/UsefulArticlePage').then((module) => ({ default: module.UsefulArticlePage })));
 const PricesPage = lazy(() => import('./pages/PricesPage').then((module) => ({ default: module.PricesPage })));
 const PriceDirectionPage = lazy(() => import('./pages/PriceDirectionPage').then((module) => ({ default: module.PriceDirectionPage })));
-const CartPage = lazy(() => import('./pages/CartPage').then((module) => ({ default: module.CartPage })));
-const CheckoutPage = lazy(() => import('./pages/CheckoutPage').then((module) => ({ default: module.CheckoutPage })));
 const ProcessPage = lazy(() => import('./pages/ProcessPage').then((module) => ({ default: module.ProcessPage })));
 const CasesPage = lazy(() => import('./pages/CasesPage').then((module) => ({ default: module.CasesPage })));
 const CasePage = lazy(() => import('./pages/CasePage').then((module) => ({ default: module.CasePage })));
@@ -25,7 +24,6 @@ const LabBuilderPage = lazy(() => import('./features/lab/builder/LabBuilderPage'
 const BreakWebsitePage = lazy(() => import('./features/lab/game2d/BreakWebsitePage').then((module) => ({ default: module.BreakWebsitePage })));
 const TheRoomPage = lazy(() => import('./features/lab/game3d/TheRoomPage').then((module) => ({ default: module.TheRoomPage })));
 const PhysicsLabPage = lazy(() => import('./features/lab/physics/PhysicsLabPage').then((module) => ({ default: module.PhysicsLabPage })));
-const OsSimulatorPage = lazy(() => import('./features/lab/os/OsSimulatorPage').then((module) => ({ default: module.OsSimulatorPage })));
 const RetroOsPage = lazy(() => import('./features/lab/retro/RetroOsPage').then((module) => ({ default: module.RetroOsPage })));
 const ModernOsPage = lazy(() => import('./features/lab/modernOs/ModernOsPage').then((module) => ({ default: module.ModernOsPage })));
 const InfiniteCanvasPage = lazy(() => import('./features/lab/infiniteCanvas/InfiniteCanvasPage').then((module) => ({ default: module.InfiniteCanvasPage })));
@@ -42,16 +40,25 @@ export default function App() {
   const location = useLocation();
 
   if (location.pathname === '/studio' || location.pathname.startsWith('/studio/')) {
+    const isProjectsRoute = location.pathname === '/studio/projects';
     return (
-      <Suspense fallback={<div className="min-h-screen bg-[#0f1115]" />}>
-        <Routes>
-          <Route path="/studio" element={<StudioProjectsPage />} />
-          <Route path="/studio/projects" element={<StudioProjectsPage />} />
-          <Route path="/studio/project/:projectId" element={<StudioEditorPage />} />
-          <Route path="/studio/preview/:projectId" element={<StudioPreviewPage />} />
-          <Route path="*" element={<Navigate to="/studio/projects" replace />} />
-        </Routes>
-      </Suspense>
+      <>
+        <SeoHead
+          title={isProjectsRoute ? 'Проекты SITEVL Studio' : 'SITEVL Studio — визуальный конструктор сайтов'}
+          description={isProjectsRoute ? 'Локальное рабочее пространство проектов SITEVL Studio.' : 'Техническое рабочее пространство SITEVL Studio для создания, редактирования и локального сохранения проектов.'}
+          canonicalPath={isProjectsRoute ? '/studio/projects' : '/studio'}
+          noindex
+        />
+        <Suspense fallback={<div className="min-h-screen bg-[#0f1115]" />}>
+          <Routes>
+            <Route path="/studio" element={<StudioProjectsPage />} />
+            <Route path="/studio/projects" element={<StudioProjectsPage />} />
+            <Route path="/studio/project/:projectId" element={<StudioEditorPage />} />
+            <Route path="/studio/preview/:projectId" element={<StudioPreviewPage />} />
+            <Route path="*" element={<Navigate to="/studio/projects" replace />} />
+          </Routes>
+        </Suspense>
+      </>
     );
   }
 
@@ -64,7 +71,7 @@ export default function App() {
           <Route path="/lab/2d" element={<BreakWebsitePage />} />
           <Route path="/lab/3d" element={<TheRoomPage />} />
           <Route path="/lab/physics" element={<PhysicsLabPage />} />
-          <Route path="/lab/os" element={<OsSimulatorPage />} />
+          <Route path="/lab/os" element={<Navigate to="/lab/modern-os" replace />} />
           <Route path="/lab/retro" element={<RetroOsPage />} />
           <Route path="/lab/modern-os" element={<ModernOsPage />} />
           <Route path="/lab/canvas" element={<InfiniteCanvasPage />} />
@@ -92,8 +99,8 @@ export default function App() {
             <Route path="/useful/:slug" element={<UsefulArticlePage />} />
             <Route path="/prices" element={<PricesPage />} />
             <Route path="/prices/:slug" element={<PriceDirectionPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/cart" element={<Navigate to="/services" replace />} />
+            <Route path="/checkout" element={<Navigate to="/contacts" replace />} />
             <Route path="/order-success" element={<Navigate to="/contacts" replace />} />
             <Route path="/process" element={<ProcessPage />} />
             <Route path="/cases" element={<CasesPage />} />

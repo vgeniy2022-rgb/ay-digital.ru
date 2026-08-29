@@ -100,21 +100,9 @@ export const routeSeo: Record<string, RouteSeo> = {
     description: 'Условия обращения, ориентировочные цены, порядок согласования задач и ограничения услуг SITEVL.',
     canonicalPath: '/terms',
   },
-  '/cart': {
-    title: 'Корзина услуг — SITEVL',
-    description: 'Корзина выбранных услуг SITEVL.',
-    canonicalPath: '/cart',
-    noindex: true,
-  },
-  '/checkout': {
-    title: 'Обсудить выбранные услуги — SITEVL',
-    description: 'Список выбранных услуг SITEVL для обсуждения в Telegram или WhatsApp.',
-    canonicalPath: '/checkout',
-    noindex: true,
-  },
   '/lab': {
     title: 'SITEVL LAB — интерактивная лаборатория',
-    description: 'SITEVL LAB — семь интерактивных браузерных экспериментов: конструктор, 2D и 3D игры, физика, OS, Retro Computing и Infinite Canvas.',
+    description: 'SITEVL LAB — каталог сильных браузерных экспериментов: SITEVL Studio, Infinite Canvas, Physics Lab, Modern OS и Retro Computer.',
     canonicalPath: '/lab',
     noindex: true,
   },
@@ -150,7 +138,7 @@ export const routeSeo: Record<string, RouteSeo> = {
   },
   '/lab/retro': {
     title: 'Retro Computing — SITEVL LAB',
-    description: 'Две оригинальные ретро-системы с рабочими Files, Notes, Paint, Calculator, Control Panel и управляемым CRT-режимом.',
+    description: 'Интерактивный компьютер середины 90-х с файлами, терминалом, браузером, Paint, Notes, играми, сетью, секретами и CRT-режимом.',
     canonicalPath: '/lab/retro',
     noindex: true,
   },
@@ -182,6 +170,18 @@ export const routeSeo: Record<string, RouteSeo> = {
     title: 'Changelog — SITEVL',
     description: 'Фактические изменения интерактивного интерфейса SITEVL.',
     canonicalPath: '/changelog',
+    noindex: true,
+  },
+  '/studio': {
+    title: 'SITEVL Studio — визуальный конструктор сайтов',
+    description: 'Техническое рабочее пространство SITEVL Studio для создания, редактирования и локального сохранения проектов.',
+    canonicalPath: '/studio',
+    noindex: true,
+  },
+  '/studio/projects': {
+    title: 'Проекты SITEVL Studio',
+    description: 'Локальное рабочее пространство проектов SITEVL Studio.',
+    canonicalPath: '/studio/projects',
     noindex: true,
   },
 };

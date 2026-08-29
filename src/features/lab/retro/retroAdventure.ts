@@ -8,7 +8,7 @@ export const retroComputers = [
 ] as const;
 
 export const retroMail = [
-  { id: 'mail-welcome', from: 'sysop@sitevl.local', subject: 'Добро пожаловать в сеть', body: 'Три станции используют общий диск. Сетевое окружение покажет, кто сейчас доступен.', attachment: { name: 'NETWORK.TXT', content: 'LAB-SERVER отвечает только после авторизации. Начните с OLD_LOG.TXT.' } },
+  { id: 'mail-welcome', from: 'sysop@sitevl.local', subject: 'Добро пожаловать в сеть', body: 'DESK95-PC видит архивные станции и общий виртуальный диск. Сетевое окружение покажет, какие узлы отвечают.', attachment: { name: 'NETWORK.TXT', content: 'LAB-SERVER отвечает только после авторизации. Начните с OLD_LOG.TXT.' } },
   { id: 'mail-core', from: 'admin@lab.local', subject: 'Не открывай CORE', body: 'Если вы это читаете, сервер снова доступен. Код разделён между MONO-STATION и дискетой.', attachment: { name: 'ARCHIVE.SVA', content: 'VIRTUAL ARCHIVE\nPASSWORD HINT: YEAR OF THE WEB' } },
   { id: 'mail-null', from: 'null@irc.local', subject: 'канал #core', body: 'В чате спросите NULL о сервере. Не ждите прямого ответа.', attachment: null },
 ];

@@ -38,7 +38,7 @@ export function TerminalApp({ onOpen }: { onOpen: (id: OsAppId) => void }) {
     const replies: Record<string, string> = {
       help: 'help · ls · cd · pwd · clear · echo · cat · date · whoami · history · lab · open · theme · reboot',
       ls: 'Documents/  Pictures/  LAB/  System/  ПРОЧТИ.txt', pwd: cwd, whoami: 'visitor@sitevl-lab', date: new Date().toLocaleString('ru-RU'),
-      lab: 'Доступно семь связанных экспериментов SITEVL LAB.', history: history.join(' · ') || 'История пуста.',
+      lab: `В актуальном каталоге ${labExperiments.length} связанных экспериментов SITEVL LAB.`, history: history.join(' · ') || 'История пуста.',
       cat: args[0] === 'ПРОЧТИ.txt' ? 'Система активна. Ищите скрытые сигналы.' : `Файл не найден: ${args[0] || ''}`,
       echo: args.join(' '), theme: 'Тема меняется в приложении «Настройки».', reboot: 'Перезагрузка интерфейса не требуется.',
     };
@@ -62,7 +62,7 @@ export function NotesApp() {
 
 export function BrowserApp() {
   const [url, setUrl] = useState('sitevl://home');
-  const pages: Record<string, { title: string; text: string }> = { 'sitevl://home': { title: 'SITEVL OS', text: 'Внутренняя сеть экспериментальной среды.' }, 'sitevl://lab': { title: 'Каталог LAB', text: 'Семь интерактивных систем работают прямо в браузере.' }, 'sitevl://about': { title: 'О системе', text: 'SITEVL OS является вымышленной локальной веб-средой.' }, 'sitevl://files': { title: 'Локальные файлы', text: 'Файлы находятся только в этом браузере.' }, 'sitevl://system': { title: 'Состояние', text: 'Web runtime активен. Серверные команды недоступны.' } };
+  const pages: Record<string, { title: string; text: string }> = { 'sitevl://home': { title: 'SITEVL OS', text: 'Внутренняя сеть экспериментальной среды.' }, 'sitevl://lab': { title: 'Каталог LAB', text: `${labExperiments.length} актуальных интерактивных модулей работают прямо в браузере.` }, 'sitevl://about': { title: 'О системе', text: 'SITEVL OS является вымышленной локальной веб-средой.' }, 'sitevl://files': { title: 'Локальные файлы', text: 'Файлы находятся только в этом браузере.' }, 'sitevl://system': { title: 'Состояние', text: 'Web runtime активен. Серверные команды недоступны.' } };
   const page = pages[url] || { title: 'Адрес недоступен', text: 'SITEVL Browser открывает только внутренние адреса sitevl://.' };
   return <div className="os-browser"><header><select value={url} onChange={(event) => setUrl(event.target.value)} aria-label="Адрес SITEVL Browser">{Object.keys(pages).map((item) => <option key={item}>{item}</option>)}</select></header><div><small>ВНУТРЕННЯЯ СЕТЬ SITEVL</small><h2>{page.title}</h2><p>{page.text}</p>{url === 'sitevl://lab' ? labExperiments.map((experiment) => <Link to={experiment.href} key={experiment.id}><span>{experiment.number}</span><strong>{experiment.shortTitle}</strong><small>{experiment.category}</small></Link>) : null}</div></div>;
 }
@@ -89,6 +89,6 @@ export function SettingsApp({ preferences, onChange, soundEnabled, onSoundChange
 }
 
 export function AboutApp({ labState }: { labState: LabPersistentState }) {
-  const stats = useMemo(() => ({ experiments: labState.completed.length, achievements: Object.keys(labState.achievements).length }), [labState]);
-  return <div className="os-about"><div>SV</div><small>ВЕРСИЯ 2.0 · БРАУЗЕРНОЕ ИЗДАНИЕ</small><h2>SITEVL OS</h2><p>Оригинальная экспериментальная рабочая среда, в которой веб-страница ведёт себя как компактная операционная система.</p><section><span><strong>{stats.experiments}/7</strong>Завершено</span><span><strong>{stats.achievements}/{labAchievements.length}</strong>Сигналы</span></section></div>;
+  const stats = useMemo(() => ({ experiments: labExperiments.filter((experiment) => labState.completed.includes(experiment.id)).length, achievements: Object.keys(labState.achievements).length }), [labState]);
+  return <div className="os-about"><div>SV</div><small>ВЕРСИЯ 2.0 · БРАУЗЕРНОЕ ИЗДАНИЕ</small><h2>SITEVL OS</h2><p>Оригинальная экспериментальная рабочая среда, в которой веб-страница ведёт себя как компактная операционная система.</p><section><span><strong>{stats.experiments}/{labExperiments.length}</strong>Завершено</span><span><strong>{stats.achievements}/{labAchievements.length}</strong>Сигналы</span></section></div>;
 }

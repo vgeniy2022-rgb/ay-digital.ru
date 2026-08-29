@@ -75,24 +75,27 @@ export class LocalAIProvider implements AIProvider {
   async generateText(request: AiGenerateRequest) { return request.prompt.trim().replace(/\s+/g, ' '); }
 }
 
-export class CloudflareAIProvider implements AIProvider {
-  readonly id = 'cloudflare' as const;
-  readonly label = 'Облачный ИИ';
+export class GeminiAIProvider implements AIProvider {
+  readonly id = 'gemini' as const;
+  readonly label = 'Google Gemini';
   constructor(private readonly endpoint = import.meta.env?.VITE_SITEVL_AI_ENDPOINT || '') {}
   async isAvailable() { return Boolean(this.endpoint); }
   async generateStructured<T>(request: AiGenerateRequest): Promise<T> {
-    if (!this.endpoint) throw new Error('Облачный ИИ не настроен.');
+    if (!this.endpoint) throw new Error('Gemini endpoint не настроен.');
     const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 30000);
+    const timeout = globalThis.setTimeout(() => controller.abort(), 45000);
     try {
       const response = await fetch(this.endpoint, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ kind: request.kind, prompt: request.prompt, context: request.context }),
         signal: request.signal || controller.signal,
       });
-      if (!response.ok) throw new Error(`AI endpoint returned ${response.status}`);
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({})) as { error?: string };
+        throw new Error(payload.error || `Gemini endpoint вернул код ${response.status}.`);
+      }
       return await response.json() as T;
-    } finally { window.clearTimeout(timeout); }
+    } finally { globalThis.clearTimeout(timeout); }
   }
   async generateText(request: AiGenerateRequest) {
     const result = await this.generateStructured<{ text?: string }>(request);
@@ -100,9 +103,12 @@ export class CloudflareAIProvider implements AIProvider {
   }
 }
 
+/** @deprecated Use GeminiAIProvider. Kept as a source-compatible alias for older imports. */
+export const CloudflareAIProvider = GeminiAIProvider;
+
 export function getAiProvider(mode: 'auto' | 'local' | 'cloud' = 'auto') {
-  const cloud = new CloudflareAIProvider();
-  if (mode === 'cloud') return cloud;
+  const cloud = new GeminiAIProvider();
+  if (mode === 'cloud' || (mode === 'auto' && import.meta.env?.VITE_SITEVL_AI_ENDPOINT)) return cloud;
   return new LocalAIProvider();
 }
 

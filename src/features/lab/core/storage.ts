@@ -1,4 +1,4 @@
-import { getLabLevel, labAchievements, labExperiments } from './catalog';
+import { getLabLevel, isKnownLabExperimentId, labAchievements, labPublicExperimentIds } from './catalog';
 import type { LabAchievementId, LabExperimentId, LabPersistentState } from './types';
 
 export const LAB_STORAGE_KEY = 'sitevl-lab-state-v2';
@@ -19,10 +19,6 @@ export const defaultLabState: LabPersistentState = {
   audio: { master: .7, effects: .8, ambient: .35 },
 };
 
-function isExperimentId(value: unknown): value is LabExperimentId {
-  return typeof value === 'string' && labExperiments.some((experiment) => experiment.id === value);
-}
-
 function finite(value: unknown, fallback = 0) {
   return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, value) : fallback;
 }
@@ -36,8 +32,8 @@ function normalizeAchievements(value: unknown): LabPersistentState['achievements
 export function normalizeLabState(value: unknown): LabPersistentState {
   if (!value || typeof value !== 'object') return { ...defaultLabState };
   const candidate = value as Partial<LabPersistentState> & { version?: number };
-  const explored = Array.isArray(candidate.explored) ? [...new Set(candidate.explored.filter(isExperimentId))] : [];
-  const completed = Array.isArray(candidate.completed) ? [...new Set(candidate.completed.filter(isExperimentId))] : [];
+  const explored = Array.isArray(candidate.explored) ? [...new Set(candidate.explored.filter(isKnownLabExperimentId))] : [];
+  const completed = Array.isArray(candidate.completed) ? [...new Set(candidate.completed.filter(isKnownLabExperimentId))] : [];
   const achievements = normalizeAchievements(candidate.achievements);
   const migratedXp = Object.keys(achievements).reduce((sum, id) => sum + (labAchievements.find((item) => item.id === id)?.xp || 0), explored.length * 25);
   const stats = candidate.stats && typeof candidate.stats === 'object' ? candidate.stats : defaultLabState.stats;
@@ -49,7 +45,7 @@ export function normalizeLabState(value: unknown): LabPersistentState {
     achievements,
     xp: Math.round(finite(candidate.xp, migratedXp)),
     secrets: Array.isArray(candidate.secrets) ? [...new Set(candidate.secrets.filter((item): item is string => typeof item === 'string'))].slice(0, 100) : [],
-    lastExperiment: isExperimentId(candidate.lastExperiment) ? candidate.lastExperiment : explored[explored.length - 1],
+    lastExperiment: isKnownLabExperimentId(candidate.lastExperiment) ? candidate.lastExperiment : explored[explored.length - 1],
     stats: {
       playTimeSeconds: finite(stats.playTimeSeconds),
       objectsCreated: finite(stats.objectsCreated),
@@ -116,7 +112,7 @@ export function completeLabExperiment(id: LabExperimentId) {
   let current = readLabState();
   if (!current.explored.includes(id)) current = { ...current, explored: [...current.explored, id] };
   if (!current.completed.includes(id)) current = { ...current, completed: [...current.completed, id], xp: current.xp + 100 };
-  if (current.completed.length === labExperiments.length) current = achievementReward(current, 'LAB_COMPLETE', new Date().toISOString());
+  if (labPublicExperimentIds.every((experimentId) => current.completed.includes(experimentId))) current = achievementReward(current, 'LAB_COMPLETE', new Date().toISOString());
   writeLabState({ ...current, lastExperiment: id });
 }
 

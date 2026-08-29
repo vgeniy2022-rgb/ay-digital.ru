@@ -1,16 +1,14 @@
-import { Menu, Search, ShoppingCart, X } from 'lucide-react';
+import { Menu, Search, X } from 'lucide-react';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { navItems } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
-import { useCart } from '../hooks/useCart';
 import { ButtonLink } from './ButtonLink';
 import { Container } from './Container';
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const { data } = useSiteData();
-  const { totalQuantity } = useCart();
   const { site } = data;
 
   const close = () => setIsOpen(false);
@@ -60,18 +58,6 @@ export function Header() {
             >
               <Search className="h-5 w-5" />
             </button>
-            <NavLink
-              className="relative grid h-11 w-11 place-items-center rounded-xl border border-line bg-white transition hover:-translate-y-0.5 hover:border-slate-300"
-              to="/cart"
-              aria-label={`Открыть корзину, товаров: ${totalQuantity}`}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {totalQuantity > 0 ? (
-                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[11px] font-extrabold text-white">
-                  {totalQuantity}
-                </span>
-              ) : null}
-            </NavLink>
             <ButtonLink href={site.telegramUrl} variant="secondary" showArrow={false}>
               Telegram
             </ButtonLink>
@@ -86,19 +72,6 @@ export function Header() {
             >
               <Search className="h-5 w-5" />
             </button>
-            <NavLink
-              className="relative grid h-11 w-11 place-items-center rounded-xl border border-line bg-white"
-              to="/cart"
-              onClick={close}
-              aria-label={`Открыть корзину, товаров: ${totalQuantity}`}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {totalQuantity > 0 ? (
-                <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-accent px-1 text-[11px] font-extrabold text-white">
-                  {totalQuantity}
-                </span>
-              ) : null}
-            </NavLink>
             <button
               className="grid h-11 w-11 place-items-center rounded-xl border border-line bg-white"
               type="button"
@@ -119,7 +92,7 @@ export function Header() {
                 onClick={close}
                 className="block rounded-2xl px-4 py-3 text-base font-semibold text-ink hover:bg-slate-100"
               >
-                {item.label}
+                {item.href === '/lab' ? 'Мои эксперименты' : item.label}
               </NavLink>
             ))}
             <ButtonLink href={site.telegramUrl} variant="primary" className="mt-2 w-full" showArrow={false}>

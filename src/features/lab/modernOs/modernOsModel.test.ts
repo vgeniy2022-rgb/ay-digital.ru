@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { addModernBrowserTab, clampModernWindowBounds, clampModernWindowsToViewport, clearModernBrowserHistory, closeModernBrowserTab, closeModernWindow, createModernFile, defaultModernOsState, deleteModernFilePermanently, duplicateModernBrowserTab, emptyModernTrash, focusModernWindow, getModernMediaKind, isModernCompactViewport, launchModernGame, minimizeModernWindow, moveModernBrowserHistory, moveModernDockItem, moveModernFile, navigateModernTab, normalizeModernAiAction, normalizeModernOsState, openModernWindow, parseModernLocalAiAction, readModernOsState, recordModernGame, renameModernFile, reorderModernDock, reopenModernBrowserTab, resolveModernFullscreenMode, restoreModernFile, restoreModernWindow, searchModernOs, toggleMaximizeModernWindow, toggleModernBookmark, trashModernFile, validateModernBrowserUrl } from './modernOsModel';
+import { addModernBrowserTab, clampModernWindowBounds, clampModernWindowsToViewport, clearModernBrowserHistory, closeModernBrowserTab, closeModernWindow, createModernFile, defaultModernOsState, deleteModernFilePermanently, duplicateModernBrowserTab, emptyModernTrash, focusModernWindow, getModernMediaKind, importModernFile, isModernCompactViewport, launchModernGame, minimizeModernWindow, MODERN_OS_STORAGE_KEY, moveModernBrowserHistory, moveModernDockItem, moveModernFile, navigateModernTab, normalizeModernAiAction, normalizeModernOsState, openModernWindow, parseModernLocalAiAction, readModernOsState, recordModernGame, renameModernFile, reorderModernDock, reopenModernBrowserTab, resolveModernFullscreenMode, restoreModernFile, restoreModernWindow, searchModernOs, toggleMaximizeModernWindow, toggleModernBookmark, trashModernFile, validateModernBrowserUrl } from './modernOsModel';
 
 test('Modern OS normalizes unsafe persistence and preserves valid user data', () => {
   const state = normalizeModernOsState({ ...defaultModernOsState, brightness: 900, sound: -5, activeSpace: 9, dock: ['files', 'files', 'hacked'], files: [...defaultModernOsState.files, { id: 'user', parentId: 'documents', name: 'Мой файл.txt', kind: 'text', tags: [], favorite: false, createdAt: 'x', modifiedAt: 'x' }] });
@@ -102,7 +102,23 @@ test('Modern OS trash can be emptied without deleting active virtual files', () 
 });
 
 test('Modern browser URL validator blocks executable schemes', () => {
-  assert.equal(validateModernBrowserUrl('sitevl://home').ok, true); assert.equal(validateModernBrowserUrl('example.com').ok, true); assert.equal(validateModernBrowserUrl('javascript:alert(1)').ok, false); assert.equal(validateModernBrowserUrl('data:text/html,x').ok, false); assert.equal(validateModernBrowserUrl('file:///tmp/a').ok, false);
+  assert.equal(validateModernBrowserUrl('sitevl://home').ok, true); assert.equal(validateModernBrowserUrl('sitevl://farm').ok, true); assert.equal(validateModernBrowserUrl('example.com').ok, true); assert.equal(validateModernBrowserUrl('javascript:alert(1)').ok, false); assert.equal(validateModernBrowserUrl('data:text/html,x').ok, false); assert.equal(validateModernBrowserUrl('file:///tmp/a').ok, false);
+});
+
+test('Modern OS Phase 2 migration adds required folders without losing user files', () => {
+  const legacyFiles = defaultModernOsState.files.filter((item) => !['videos', 'games-folder', 'applications'].includes(item.id));
+  legacyFiles.push({ id: 'client-work', parentId: 'documents', name: 'Работа.txt', kind: 'text', content: 'Важно', tags: [], favorite: false, createdAt: 'x', modifiedAt: 'x' });
+  const state = normalizeModernOsState({ ...defaultModernOsState, files: legacyFiles });
+  assert.ok(state.files.some((item) => item.id === 'videos'));
+  assert.ok(state.files.some((item) => item.id === 'games-folder'));
+  assert.ok(state.files.some((item) => item.id === 'applications'));
+  assert.equal(state.files.find((item) => item.id === 'client-work')?.content, 'Важно');
+});
+
+test('Modern OS imports selected media into the virtual filesystem only', () => {
+  const state = importModernFile(defaultModernOsState, { parentId: 'pictures', name: 'photo.jpg', kind: 'image', content: 'data:image/jpeg;base64,AA==', mimeType: 'image/jpeg', size: 1 });
+  const imported = state.files[state.files.length - 1];
+  assert.equal(imported.parentId, 'pictures'); assert.equal(imported.mimeType, 'image/jpeg'); assert.equal(imported.size, 1);
 });
 
 test('Modern browser manages tabs and bounded local history', () => {
@@ -166,8 +182,18 @@ test('Modern local AI parses only explicit allowlisted Russian commands', () => 
   assert.equal(parseModernLocalAiAction('удали все файлы'), null);
 });
 
-test('Modern game progress keeps launch count, high score and best time', () => {
-  let state = launchModernGame(defaultModernOsState, 'racing'); state = launchModernGame(state, 'racing'); state = recordModernGame(state, 'racing', 550, 24.8); state = recordModernGame(state, 'racing', 420, 26.1); assert.equal(state.games.racing.launches, 2); assert.equal(state.games.racing.highScore, 550); assert.equal(state.games.racing.bestTime, 24.8);
+test('Modern game progress keeps launch count, score, time, play time and achievements', () => {
+  let state = launchModernGame(defaultModernOsState, 'racing'); state = launchModernGame(state, 'racing'); state = recordModernGame(state, 'racing', 550, 24.8, 31, 'Чистый круг', 55); state = recordModernGame(state, 'racing', 420, 26.1, 28); assert.equal(state.games.racing.launches, 2); assert.equal(state.games.racing.highScore, 550); assert.equal(state.games.racing.bestTime, 24.8); assert.equal(state.games.racing.playTime, 59); assert.deepEqual(state.games.racing.achievements, ['Чистый круг']); assert.equal(state.games.racing.progress, 55);
+});
+
+test('Modern game migration adds MATCH and safe progress defaults', () => {
+  const state = normalizeModernOsState({ ...defaultModernOsState, games: { 'core-shooter': { launches: 4, highScore: 20 }, blocks: { launches: 1, highScore: 10 }, racing: { launches: 2, highScore: 30 } } });
+  assert.equal(state.games['core-shooter'].launches, 4); assert.equal(state.games.match.progress, 1); assert.equal(state.games.match.playTime, 0);
+});
+
+test('Modern game migration adds SITEVL FARM without changing the storage key', () => {
+  const state = normalizeModernOsState({ ...defaultModernOsState, farm: undefined, games: { ...defaultModernOsState.games, farm: undefined } });
+  assert.equal(state.farm.plots.length, 12); assert.equal(state.farm.coins, 350); assert.equal(state.games.farm.highScore, 0); assert.equal(MODERN_OS_STORAGE_KEY, 'sitevl-lab-modern-os-v1');
 });
 
 test('Modern browser supports history navigation, duplication and reopening', () => {

@@ -170,23 +170,23 @@ const landingRoutes = [
 
 const technicalRoutes = [
   {
-    path: '/cart',
-    title: 'Корзина услуг — SITEVL',
-    description: 'Корзина выбранных услуг SITEVL.',
+    path: '/studio',
+    title: 'SITEVL Studio — визуальный конструктор сайтов',
+    description: 'Техническое рабочее пространство SITEVL Studio для создания, редактирования и локального сохранения проектов.',
     noindex: true,
     schemaType: 'WebPage',
   },
   {
-    path: '/checkout',
-    title: 'Обсудить выбранные услуги — SITEVL',
-    description: 'Список выбранных услуг SITEVL для обсуждения в Telegram или WhatsApp.',
+    path: '/studio/projects',
+    title: 'Проекты SITEVL Studio',
+    description: 'Локальное рабочее пространство проектов SITEVL Studio.',
     noindex: true,
     schemaType: 'WebPage',
   },
   {
     path: '/lab',
     title: 'SITEVL LAB — интерактивная лаборатория',
-    description: 'SITEVL LAB — семь интерактивных браузерных экспериментов: конструктор, 2D и 3D игры, физика, OS, Retro Computing и Infinite Canvas.',
+    description: 'SITEVL LAB — каталог сильных браузерных экспериментов: SITEVL Studio, Infinite Canvas, Physics Lab, Modern OS и Retro Computer.',
     noindex: true,
     schemaType: 'WebPage',
   },
@@ -228,7 +228,7 @@ const technicalRoutes = [
   {
     path: '/lab/retro',
     title: 'Retro Computing — SITEVL LAB',
-    description: 'Две оригинальные ретро-системы с рабочими Files, Notes, Paint, Calculator, Control Panel и управляемым CRT-режимом.',
+    description: 'Интерактивный компьютер середины 90-х с файлами, терминалом, браузером, Paint, Notes, играми, сетью, секретами и CRT-режимом.',
     noindex: true,
     schemaType: 'WebPage',
   },
@@ -270,7 +270,7 @@ const technicalRoutes = [
 ];
 
 const routes = [...baseRoutes, ...priceRoutes, ...usefulRoutes, ...caseRoutes, ...localRoutes, ...landingRoutes, ...technicalRoutes];
-const sitemapRoutes = routes.filter((route) => !route.noindex && !['/cart', '/checkout', '/admin'].includes(route.path));
+const sitemapRoutes = routes.filter((route) => !route.noindex && route.path !== '/admin');
 
 function escapeHtml(value) {
   return String(value)
@@ -711,8 +711,6 @@ ${rows}
 function renderRobots() {
   return `User-agent: *
 Allow: /
-Disallow: /cart
-Disallow: /checkout
 Disallow: /admin
 
 Sitemap: ${siteUrl}/sitemap.xml

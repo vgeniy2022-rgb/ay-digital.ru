@@ -1,5 +1,5 @@
 import '@puckeditor/core/puck.css';
-import { Puck, type Data, type PuckAction } from '@puckeditor/core';
+import { createUsePuck, Puck, type Data, type PuckAction } from '@puckeditor/core';
 import { toBlob } from 'html-to-image';
 import { ArrowLeft, Download, ExternalLink, FileArchive, Monitor, Save, Send, Share2, Sparkles, Smartphone, Tablet, UploadCloud, X } from 'lucide-react';
 import { lazy, Suspense, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
@@ -15,6 +15,7 @@ import { puckRussianDictionary, studioRu } from '../i18n/ru';
 import '../styles/studio.css';
 
 const AiStudioDialog = lazy(() => import('../ai/AiStudioDialog'));
+const useStudioPuck = createUsePuck();
 
 type SaveStatus = 'loading' | 'saving' | 'saved' | 'error';
 type SendForm = { name: string; contact: string; email: string; comment: string; consent: boolean };
@@ -130,18 +131,11 @@ export function StudioEditorPage() {
             void saveNow();
             setNotice('Проект сохранён локально. Облачная публикация пока не подключена — используйте экспорт.');
           }}
-          renderHeader={({ children, dispatch }) => {
-            dispatchRef.current = dispatch;
-            return <StudioTopBar saveStatus={saveStatus} project={project} viewportWidth={viewportWidth} onViewportWidth={(width) => {
-              const safeWidth = Math.max(320, Math.min(1920, width));
-              setViewportWidth(safeWidth);
-              dispatch({ type: 'setUi', ui: (current) => ({ viewports: { ...current.viewports, current: { width: safeWidth, height: 'auto' } } }) });
-            }} onProjectName={(name) => setCurrentProject({ ...project, name })} onBack={() => navigate('/studio/projects')} onAi={() => setAiOpen(true)} onPreview={() => window.open(`/studio/preview/${project.id}`, '_blank')} onShare={async () => {
+          overrides={{ header: ({ children }) => <StudioTopBar dispatchRef={dispatchRef} saveStatus={saveStatus} project={project} viewportWidth={viewportWidth} onViewportWidth={setViewportWidth} onProjectName={(name) => setCurrentProject({ ...project, name })} onBack={() => navigate('/studio/projects')} onAi={() => setAiOpen(true)} onPreview={() => window.open(`/studio/preview/${project.id}`, '_blank')} onShare={async () => {
               const url = `${window.location.origin}/studio/preview/${project.id}`;
               if (navigator.share) await navigator.share({ title: project.name, url });
               else { await navigator.clipboard.writeText(url); setNotice('Локальная ссылка предпросмотра скопирована. Она работает только в этом браузере.'); }
-            }} onJson={() => exportProjectJson(project)} onZip={() => void exportZip()} onSend={() => setSendOpen(true)}>{children}</StudioTopBar>;
-          }}
+            }} onJson={() => exportProjectJson(project)} onZip={() => void exportZip()} onSend={() => setSendOpen(true)}>{children}</StudioTopBar> }}
         />
 
         <div className="studio-statusbar"><span><i className={`is-${saveStatus}`} />{saveStatus === 'saving' ? studioRu.status.saving : saveStatus === 'saved' ? 'Сохранено в IndexedDB' : saveStatus === 'error' ? studioRu.status.error : studioRu.status.loading}</span><span>{page.name} · /{page.slug}</span><span>{page.data.content.length} блоков · схема v{project.schemaVersion}</span><span>Холст {viewportWidth} px</span></div>
@@ -163,8 +157,15 @@ export function StudioEditorPage() {
   );
 }
 
-function StudioTopBar({ children, saveStatus, project, viewportWidth, onViewportWidth, onProjectName, onBack, onAi, onPreview, onShare, onJson, onZip, onSend }: { children: ReactNode; saveStatus: SaveStatus; project: SiteBuilderProject; viewportWidth: number; onViewportWidth: (width: number) => void; onProjectName: (name: string) => void; onBack: () => void; onAi: () => void; onPreview: () => void; onShare: () => void; onJson: () => void; onZip: () => void; onSend: () => void }) {
-  return <header className="studio-topbar"><div className="studio-topbar__project"><button type="button" onClick={onBack} aria-label="К проектам"><ArrowLeft /></button><span className="studio-topbar__mark">SV</span><input value={project.name} onChange={(event) => onProjectName(event.target.value)} aria-label="Название проекта" /><small className={`is-${saveStatus}`}>{saveStatus === 'saving' ? 'Сохранение' : saveStatus === 'saved' ? 'Сохранено' : saveStatus === 'error' ? 'Ошибка' : 'Загрузка'}</small></div><div className="studio-topbar__native">{children}</div><label className="studio-topbar__width"><span>Ш</span><input type="number" min="320" max="1920" value={viewportWidth} onChange={(event) => onViewportWidth(Number(event.target.value))} aria-label="Ширина холста" /></label><div className="studio-topbar__actions"><button className="is-ai" type="button" onClick={onAi}><Sparkles /> AI</button><button type="button" onClick={onPreview}><ExternalLink /> Предпросмотр</button><button type="button" onClick={onShare}><Share2 /> Поделиться</button><div className="studio-topbar__export"><button type="button"><Download /> Экспорт</button><div><button type="button" onClick={onJson}>Проект JSON</button><button type="button" onClick={onZip}>Статический сайт ZIP</button></div></div><button className="is-send" type="button" onClick={onSend}><Send /> Отправить Александру</button></div></header>;
+function StudioTopBar({ children, dispatchRef, saveStatus, project, viewportWidth, onViewportWidth, onProjectName, onBack, onAi, onPreview, onShare, onJson, onZip, onSend }: { children: ReactNode; dispatchRef: React.MutableRefObject<((action: PuckAction) => void) | null>; saveStatus: SaveStatus; project: SiteBuilderProject; viewportWidth: number; onViewportWidth: (width: number) => void; onProjectName: (name: string) => void; onBack: () => void; onAi: () => void; onPreview: () => void; onShare: () => void; onJson: () => void; onZip: () => void; onSend: () => void }) {
+  const dispatch = useStudioPuck((state) => state.dispatch);
+  dispatchRef.current = dispatch;
+  const updateViewport = (width: number) => {
+    const safeWidth = Math.max(320, Math.min(1920, width));
+    onViewportWidth(safeWidth);
+    dispatch({ type: 'setUi', ui: (current) => ({ viewports: { ...current.viewports, current: { width: safeWidth, height: 'auto' } } }) });
+  };
+  return <header className="studio-topbar"><div className="studio-topbar__project"><button type="button" onClick={onBack} aria-label="К проектам"><ArrowLeft /></button><span className="studio-topbar__mark">SV</span><input value={project.name} onChange={(event) => onProjectName(event.target.value)} aria-label="Название проекта" /><small className={`is-${saveStatus}`}>{saveStatus === 'saving' ? 'Сохранение' : saveStatus === 'saved' ? 'Сохранено' : saveStatus === 'error' ? 'Ошибка' : 'Загрузка'}</small></div><div className="studio-topbar__native">{children}</div><label className="studio-topbar__width"><span>Ш</span><input type="number" min="320" max="1920" value={viewportWidth} onChange={(event) => updateViewport(Number(event.target.value))} aria-label="Ширина холста" /></label><div className="studio-topbar__actions"><button className="is-ai" type="button" onClick={onAi}><Sparkles /> AI</button><button type="button" onClick={onPreview}><ExternalLink /> Предпросмотр</button><button type="button" onClick={onShare}><Share2 /> Поделиться</button><div className="studio-topbar__export"><button type="button"><Download /> Экспорт</button><div><button type="button" onClick={onJson}>Проект JSON</button><button type="button" onClick={onZip}>Статический сайт ZIP</button></div></div><button className="is-send" type="button" onClick={onSend}><Send /> Отправить Александру</button></div></header>;
 }
 
 function SendProjectDialog({ project, onClose, onDownload }: { project: SiteBuilderProject; onClose: () => void; onDownload: (form: Record<string, string>) => Promise<void> }) {

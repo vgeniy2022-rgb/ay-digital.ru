@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { aiAllowedComponentNames } from './componentCatalog';
 import { sitePlanToProject } from './generator';
-import { LocalAIProvider, CloudflareAIProvider } from './providers';
+import { GeminiAIProvider, LocalAIProvider } from './providers';
 import { createProjectWithAi } from './service';
 import { validateSitePlan } from './validation';
 import { auditStudioProject, proposeTheme } from './audit';
@@ -29,10 +29,10 @@ test('unknown components and malicious markup never enter the project', () => {
   assert.deepEqual(project.pages[0].data.content.map((block) => block.type), ['Hero', 'Footer']);
 });
 
-test('local provider is available and cloud provider is honest when unset', async () => {
+test('local provider is available and Gemini provider is honest when unset', async () => {
   assert.equal(await new LocalAIProvider().isAvailable(), true);
-  assert.equal(await new CloudflareAIProvider('').isAvailable(), false);
-  await assert.rejects(() => new CloudflareAIProvider('').generateStructured({ kind: 'site-plan', prompt: 'test' }), /не настроен/);
+  assert.equal(await new GeminiAIProvider('').isAvailable(), false);
+  await assert.rejects(() => new GeminiAIProvider('').generateStructured({ kind: 'site-plan', prompt: 'test' }), /не настроен/);
 });
 
 test('deterministic audit reports missing SEO and theme proposal only changes tokens', async () => {

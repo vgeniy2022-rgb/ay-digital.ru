@@ -6,8 +6,8 @@ import { completeLabExperiment, recordLabSecret, unlockLabAchievement } from '..
 const RETRO_NOTE_KEY = 'sitevl-retro-note-v1';
 
 function readRetroNote() {
-  try { return window.localStorage.getItem(RETRO_NOTE_KEY) || 'ЗАМЕТКИ SITEVL LAB\n\nБраузер и есть компьютер.\nВас ждут семь экспериментов.'; }
-  catch { return 'ЗАМЕТКИ SITEVL LAB\n\nБраузер и есть компьютер.\nВас ждут семь экспериментов.'; }
+  try { return window.localStorage.getItem(RETRO_NOTE_KEY) || 'ЗАМЕТКИ SITEVL LAB\n\nБраузер и есть компьютер.\nКаталог LAB обновляется и не привязан к фиксированному числу экспериментов.'; }
+  catch { return 'ЗАМЕТКИ SITEVL LAB\n\nБраузер и есть компьютер.\nКаталог LAB обновляется и не привязан к фиксированному числу экспериментов.'; }
 }
 
 function writeRetroNote(value: string) {

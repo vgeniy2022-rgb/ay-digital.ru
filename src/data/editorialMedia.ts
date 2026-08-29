@@ -131,7 +131,6 @@ export function getRouteHeroMedia(pathname: string): EditorialMedia | undefined 
   if (pathname === '/cases') return editorialMedia.laptopOffice;
   if (pathname === '/contacts') return editorialMedia.phoneLaptop;
   if (pathname === '/process') return editorialMedia.homeCollaboration;
-  if (pathname === '/cart' || pathname === '/checkout') return editorialMedia.phoneLaptop;
   if (pathname.startsWith('/prices/')) return editorialMedia.laptopOffice;
   return undefined;
 }

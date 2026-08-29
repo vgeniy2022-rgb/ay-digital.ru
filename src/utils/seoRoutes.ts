@@ -14,8 +14,6 @@ const staticRouteLabels: Record<string, string> = {
   '/process': 'Порядок работы',
   '/privacy': 'Политика обработки данных',
   '/terms': 'Условия обращения',
-  '/cart': 'Корзина',
-  '/checkout': 'Выбранные услуги',
   '/lab': 'SITEVL LAB',
   '/lab/builder': 'Website Builder',
   '/lab/2d': 'Break the Website',

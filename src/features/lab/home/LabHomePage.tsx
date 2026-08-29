@@ -6,9 +6,15 @@ import { labAchievements, labExperiments } from '../core/catalog';
 import { LabShell } from '../core/LabShell';
 import { resetLabProgress } from '../core/storage';
 import { useLabState } from '../core/useLabState';
-import type { LabExperiment } from '../core/types';
+import type { LabExperiment, LabExperimentGroup } from '../core/types';
 import { labRu } from '../i18n/ru';
 import './labHome.css';
+
+const labGroups: Array<{ id: LabExperimentGroup; eyebrow: string; title: string; description: string }> = [
+  { id: 'CREATE', eyebrow: 'СОЗДАВАТЬ', title: 'Инструменты для собственных идей', description: 'Собирайте сайты и свободные визуальные структуры, сохраняйте результат и возвращайтесь к нему позже.' },
+  { id: 'EXPERIMENT', eyebrow: 'ЭКСПЕРИМЕНТИРОВАТЬ', title: 'Среда для проверки поведения', description: 'Меняйте параметры, наблюдайте результат и исследуйте возможности браузера без готового сценария.' },
+  { id: 'SYSTEM', eyebrow: 'СИСТЕМЫ', title: 'Две разные компьютерные эпохи', description: 'Современная виртуальная среда и цельный компьютер середины 90-х с разными интерфейсами и механиками.' },
+];
 
 function LabPreview({ experiment }: { experiment: LabExperiment }) {
   if (experiment.id === 'builder') return <div className="lab-preview-builder"><i /><div><span /><span /><span /></div><b /></div>;
@@ -65,7 +71,7 @@ export function LabHomePage() {
     window.setTimeout(() => setResetNotice(false), 2200);
   };
   const nextLevelXp = level === 10 ? state.xp : level * 250;
-  return <LabShell title="Экспериментальная веб-среда" description="SITEVL LAB: интерактивные эксперименты с интерфейсами, играми, физикой, 3D и технологиями браузера." canonicalPath="/lab" backTo="/" backLabel="SITEVL">
+  return <LabShell title="Экспериментальная веб-среда" description="SITEVL LAB: актуальные интерактивные среды для создания, физических экспериментов и исследования виртуальных систем." canonicalPath="/lab" backTo="/" backLabel="SITEVL">
     <section className="lab-home-hero">
       <div className="lab-home-hero__label"><FlaskConical /><span>{labRu.brand}</span><i /></div>
       <h1>ЭКСПЕРИМЕНТАЛЬНАЯ<br />ВЕБ-СРЕДА</h1>
@@ -91,7 +97,16 @@ export function LabHomePage() {
 
     <section className="lab-progress-panel" aria-label="Прогресс LAB"><div><small>ЭКСПЕРИМЕНТЫ LAB</small><strong>{labRu.explored} {exploredCount}/{labExperiments.length}</strong></div><div className="lab-progress-track"><i style={{ width: `${(completedCount / labExperiments.length) * 100}%` }} /></div><div><small>{labRu.achievements}</small><strong>{unlocked.length}/{labAchievements.length}</strong></div><button type="button" onClick={reset} aria-label="Сбросить прогресс"><RotateCcw /></button></section>
 
-    <section className="lab-modules" aria-label="Каталог экспериментов SITEVL LAB">{labExperiments.map((experiment, index) => <ExperimentModule key={experiment.id} experiment={experiment} explored={state.explored.includes(experiment.id)} completed={state.completed.includes(experiment.id)} index={index} />)}</section>
+    <section className="lab-catalog" aria-label="Каталог экспериментов SITEVL LAB">
+      {labGroups.map((group) => {
+        const experiments = labExperiments.filter((experiment) => experiment.group === group.id);
+        if (!experiments.length) return null;
+        return <section className="lab-catalog-section" key={group.id}>
+          <header className="lab-catalog-section__heading"><small>{group.eyebrow}</small><h2>{group.title}</h2><p>{group.description}</p></header>
+          <div className="lab-modules">{experiments.map((experiment, index) => <ExperimentModule key={experiment.id} experiment={experiment} explored={state.explored.includes(experiment.id)} completed={state.completed.includes(experiment.id)} index={index} />)}</div>
+        </section>;
+      })}
+    </section>
 
     <section className="lab-achievements-panel"><div><small>{labRu.achievementSystem}</small><h2>{labRu.achievementSignals}</h2></div><div>{labAchievements.map((achievement) => <article className={state.achievements[achievement.id] ? 'is-unlocked' : ''} key={achievement.id}><i>{state.achievements[achievement.id] ? <Check /> : null}</i><span><em>{achievement.category} · {achievement.xp} XP</em><strong>{achievement.title}</strong><small>{achievement.description}</small></span></article>)}</div></section>
     {resetNotice ? <div className="lab-toast" role="status">{labRu.resetDone}</div> : null}

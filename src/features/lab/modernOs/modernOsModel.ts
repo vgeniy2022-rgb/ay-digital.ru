@@ -1,6 +1,9 @@
-export type ModernAppId = 'files' | 'browser' | 'mail' | 'notes' | 'calendar' | 'photos' | 'music' | 'terminal' | 'settings' | 'studio' | 'network' | 'about' | 'games' | 'media' | 'ai';
+import { createDefaultFarmState, normalizeFarmState, type ModernFarmState } from './modernFarmModel';
+
+export type ModernAppId = 'files' | 'browser' | 'mail' | 'notes' | 'calendar' | 'photos' | 'music' | 'terminal' | 'settings' | 'studio' | 'network' | 'about' | 'games' | 'media' | 'ai' | 'code' | 'weblab' | 'documents' | 'archive' | 'monitor' | 'camera' | 'recorder';
 export type ModernTheme = 'light' | 'dark' | 'auto';
 export type ModernAccent = 'blue' | 'graphite' | 'violet' | 'green' | 'orange';
+export type ModernWallpaper = 'aurora' | 'ocean' | 'midnight' | 'glass' | 'vladivostok' | 'sunset-drive' | 'neon-coast' | 'desert-highway' | 'west-coast-night' | 'pacific-drive' | 'custom';
 export type ModernSpace = 1 | 2 | 3;
 export type ModernFullscreenMode = 'windowed' | 'system' | 'app';
 
@@ -17,6 +20,8 @@ export type ModernFile = {
   name: string;
   kind: 'folder' | 'text' | 'image' | 'audio' | 'video' | 'json';
   content?: string;
+  mimeType?: string;
+  size?: number;
   tags: string[];
   favorite: boolean;
   deletedAt?: string;
@@ -49,6 +54,16 @@ export type ModernWindow = {
 export type BrowserTab = { id: string; url: string; title: string; history: string[]; historyIndex: number };
 export type ModernNotification = { id: string; title: string; text: string; createdAt: string; kind: 'mail' | 'calendar' | 'system' | 'download' };
 export type ModernAiMessage = { id: string; role: 'user' | 'assistant'; text: string };
+export type ModernGameId = 'core-shooter' | 'blocks' | 'racing' | 'match' | 'farm';
+export type ModernGameProgress = {
+  launches: number;
+  highScore: number;
+  bestTime?: number;
+  playTime: number;
+  achievements: string[];
+  progress: number;
+  lastPlayedAt?: string;
+};
 
 export type ModernOsState = {
   version: 2;
@@ -57,7 +72,8 @@ export type ModernOsState = {
   profileName: string;
   theme: ModernTheme;
   accent: ModernAccent;
-  wallpaper: 'aurora' | 'ocean' | 'midnight' | 'glass' | 'vladivostok';
+  wallpaper: ModernWallpaper;
+  customWallpaper?: string;
   transparency: 'low' | 'medium' | 'high';
   reducedTransparency: boolean;
   brightness: number;
@@ -79,7 +95,8 @@ export type ModernOsState = {
   aiMessages: ModernAiMessage[];
   recentApps: ModernAppId[];
   lowPowerMode: boolean;
-  games: Record<'core-shooter' | 'blocks' | 'racing', { launches: number; highScore: number; bestTime?: number }>;
+  games: Record<ModernGameId, ModernGameProgress>;
+  farm: ModernFarmState;
 };
 
 export const MODERN_OS_STORAGE_KEY = 'sitevl-lab-modern-os-v1';
@@ -95,7 +112,7 @@ export const defaultModernOsState: ModernOsState = {
   networkEnabled: true, bluetoothEnabled: false, focusMode: false, notificationsEnabled: true, dockMagnification: true, dockAutoHide: false,
   dock: ['files', 'browser', 'mail', 'notes', 'games', 'media', 'ai', 'terminal', 'settings'], windows: [], activeWindowId: null, activeSpace: 1,
   files: [
-    file('drive', null, 'SITEVL Drive', 'folder'), file('desktop', 'drive', 'Рабочий стол', 'folder'), file('documents', 'drive', 'Документы', 'folder'), file('downloads', 'drive', 'Загрузки', 'folder'), file('pictures', 'drive', 'Изображения', 'folder'), file('music', 'drive', 'Музыка', 'folder'),
+    file('drive', null, 'SITEVL Drive', 'folder'), file('desktop', 'drive', 'Рабочий стол', 'folder'), file('documents', 'drive', 'Документы', 'folder'), file('downloads', 'drive', 'Загрузки', 'folder'), file('pictures', 'drive', 'Фото', 'folder'), file('videos', 'drive', 'Видео', 'folder'), file('music', 'drive', 'Музыка', 'folder'), file('games-folder', 'drive', 'Игры', 'folder'), file('applications', 'drive', 'Приложения', 'folder'),
     file('welcome', 'documents', 'Добро пожаловать.txt', 'text', 'SITEVL NOVA — самостоятельная виртуальная desktop-среда.\n\nФайлы хранятся только в этом браузере.'),
     file('project', 'documents', 'project.txt', 'text', 'Откройте SITEVL Studio, чтобы собрать настоящий сайт.'),
     file('nova-json', 'documents', 'nova-system.json', 'json', '{\n  "system": "SITEVL NOVA",\n  "version": 1\n}'),
@@ -108,12 +125,30 @@ export const defaultModernOsState: ModernOsState = {
   ],
   aiMessages: [],
   recentApps: [], lowPowerMode: false,
-  games: { 'core-shooter': { launches: 0, highScore: 0 }, blocks: { launches: 0, highScore: 0 }, racing: { launches: 0, highScore: 0 } },
+  games: {
+    'core-shooter': { launches: 0, highScore: 0, playTime: 0, achievements: [], progress: 0 },
+    blocks: { launches: 0, highScore: 0, playTime: 0, achievements: [], progress: 0 },
+    racing: { launches: 0, highScore: 0, playTime: 0, achievements: [], progress: 0 },
+    match: { launches: 0, highScore: 0, playTime: 0, achievements: [], progress: 1 },
+    farm: { launches: 0, highScore: 0, playTime: 0, achievements: [], progress: 1 },
+  },
+  farm: createDefaultFarmState(),
 };
 
-const appIds: ModernAppId[] = ['files', 'browser', 'mail', 'notes', 'calendar', 'photos', 'music', 'terminal', 'settings', 'studio', 'network', 'about', 'games', 'media', 'ai'];
+const appIds: ModernAppId[] = ['files', 'browser', 'mail', 'notes', 'calendar', 'photos', 'music', 'terminal', 'settings', 'studio', 'network', 'about', 'games', 'media', 'ai', 'code', 'weblab', 'documents', 'archive', 'monitor', 'camera', 'recorder'];
 const isAppId = (value: unknown): value is ModernAppId => typeof value === 'string' && appIds.includes(value as ModernAppId);
 const clamp = (value: unknown, fallback: number, min = 0, max = 100) => typeof value === 'number' && Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+const wallpapers: ModernWallpaper[] = ['aurora', 'ocean', 'midnight', 'glass', 'vladivostok', 'sunset-drive', 'neon-coast', 'desert-highway', 'west-coast-night', 'pacific-drive', 'custom'];
+
+const normalizeGameProgress = (value: Partial<ModernGameProgress> | undefined, fallback: ModernGameProgress): ModernGameProgress => ({
+  launches: clamp(value?.launches, fallback.launches, 0, 100000),
+  highScore: clamp(value?.highScore, fallback.highScore, 0, 100000000),
+  bestTime: typeof value?.bestTime === 'number' && value.bestTime > 0 ? value.bestTime : fallback.bestTime,
+  playTime: clamp(value?.playTime, fallback.playTime, 0, 100000000),
+  achievements: Array.isArray(value?.achievements) ? [...new Set(value.achievements.filter((item): item is string => typeof item === 'string'))].slice(0, 24) : fallback.achievements,
+  progress: clamp(value?.progress, fallback.progress, 0, 100),
+  lastPlayedAt: typeof value?.lastPlayedAt === 'string' ? value.lastPlayedAt : fallback.lastPlayedAt,
+});
 
 const normalizeBounds = (value: Partial<ModernWindowBounds> | undefined, fallback: ModernWindowBounds): ModernWindowBounds => ({
   x: clamp(value?.x, fallback.x, 0, 1800),
@@ -144,7 +179,9 @@ function topVisibleWindowId(windows: ModernWindow[], space: ModernSpace, excludi
 export function normalizeModernOsState(value: unknown): ModernOsState {
   if (!value || typeof value !== 'object') return structuredClone(defaultModernOsState);
   const raw = value as Partial<ModernOsState>;
-  const files = Array.isArray(raw.files) ? raw.files.filter((item): item is ModernFile => Boolean(item && typeof item.id === 'string' && typeof item.name === 'string' && typeof item.kind === 'string')) : defaultModernOsState.files;
+  const persistedFiles = Array.isArray(raw.files) ? raw.files.filter((item): item is ModernFile => Boolean(item && typeof item.id === 'string' && typeof item.name === 'string' && typeof item.kind === 'string')) : defaultModernOsState.files;
+  const requiredFolders = defaultModernOsState.files.filter((item) => item.kind === 'folder');
+  const files = requiredFolders.reduce((items, folder) => items.some((item) => item.id === folder.id) ? items : [...items, folder], persistedFiles).map((item) => item.id === 'pictures' && item.name === 'Изображения' ? { ...item, name: 'Фото' } : item);
   const activeSpace: ModernSpace = raw.activeSpace === 2 || raw.activeSpace === 3 ? raw.activeSpace : 1;
   const windows: ModernWindow[] = compactWindowStack(Array.isArray(raw.windows) ? raw.windows.filter((item): item is ModernWindow => Boolean(item && typeof item.id === 'string' && isAppId(item.appId))).slice(-12).map((item, index) => {
     const bounds = normalizeBounds(item, { x: 80, y: 70, width: 720, height: 520 });
@@ -163,6 +200,8 @@ export function normalizeModernOsState(value: unknown): ModernOsState {
     ...defaultModernOsState, ...raw, version: 2,
     theme: raw.theme === 'light' || raw.theme === 'dark' ? raw.theme : 'auto',
     accent: ['blue', 'graphite', 'violet', 'green', 'orange'].includes(raw.accent || '') ? raw.accent! : 'blue',
+    wallpaper: wallpapers.includes(raw.wallpaper as ModernWallpaper) ? raw.wallpaper as ModernWallpaper : 'aurora',
+    customWallpaper: typeof raw.customWallpaper === 'string' && raw.customWallpaper.startsWith('data:image/') ? raw.customWallpaper : undefined,
     brightness: clamp(raw.brightness, 100), sound: clamp(raw.sound, 65),
     networkEnabled: raw.networkEnabled !== false,
     bluetoothEnabled: raw.bluetoothEnabled === true,
@@ -180,10 +219,13 @@ export function normalizeModernOsState(value: unknown): ModernOsState {
     recentApps: Array.isArray(raw.recentApps) ? [...new Set(raw.recentApps.filter(isAppId))].slice(-5) : [],
     lowPowerMode: raw.lowPowerMode === true,
     games: {
-      'core-shooter': { ...defaultModernOsState.games['core-shooter'], ...(raw.games?.['core-shooter'] || {}) },
-      blocks: { ...defaultModernOsState.games.blocks, ...(raw.games?.blocks || {}) },
-      racing: { ...defaultModernOsState.games.racing, ...(raw.games?.racing || {}) },
+      'core-shooter': normalizeGameProgress(raw.games?.['core-shooter'], defaultModernOsState.games['core-shooter']),
+      blocks: normalizeGameProgress(raw.games?.blocks, defaultModernOsState.games.blocks),
+      racing: normalizeGameProgress(raw.games?.racing, defaultModernOsState.games.racing),
+      match: normalizeGameProgress(raw.games?.match, defaultModernOsState.games.match),
+      farm: normalizeGameProgress(raw.games?.farm, defaultModernOsState.games.farm),
     },
+    farm: normalizeFarmState(raw.farm),
   };
 }
 
@@ -259,6 +301,16 @@ export function clampModernWindowsToViewport(state: ModernOsState, viewport: { w
 }
 
 export function createModernFile(state: ModernOsState, parentId: string, name: string, kind: 'folder' | 'text' = 'text'): ModernOsState { const now = new Date().toISOString(); return { ...state, files: [...state.files, { id: createLocalId('file'), parentId, name: name.trim() || (kind === 'folder' ? 'Новая папка' : 'Новый документ.txt'), kind, content: kind === 'text' ? '' : undefined, tags: [], favorite: false, createdAt: now, modifiedAt: now }] }; }
+export function importModernFile(state: ModernOsState, input: { parentId: string; name: string; kind: ModernFile['kind']; content: string; mimeType?: string; size?: number }): ModernOsState {
+  const now = new Date().toISOString();
+  return { ...state, files: [...state.files, { id: createLocalId('file'), ...input, name: input.name.trim() || 'Новый файл', tags: [], favorite: false, createdAt: now, modifiedAt: now }] };
+}
+export function updateModernFileContent(state: ModernOsState, id: string, content: string): ModernOsState {
+  return { ...state, files: state.files.map((item) => item.id === id && item.kind !== 'folder' ? { ...item, content, size: new Blob([content]).size, modifiedAt: new Date().toISOString() } : item) };
+}
+export function toggleModernFileFavorite(state: ModernOsState, id: string): ModernOsState {
+  return { ...state, files: state.files.map((item) => item.id === id ? { ...item, favorite: !item.favorite, modifiedAt: new Date().toISOString() } : item) };
+}
 export function trashModernFile(state: ModernOsState, id: string): ModernOsState { return { ...state, files: state.files.map((item) => item.id === id && item.id !== 'drive' ? { ...item, deletedAt: new Date().toISOString() } : item) }; }
 export function restoreModernFile(state: ModernOsState, id: string): ModernOsState { return { ...state, files: state.files.map((item) => item.id === id ? { ...item, deletedAt: undefined } : item) }; }
 export function renameModernFile(state: ModernOsState, id: string, name: string): ModernOsState {
@@ -285,7 +337,7 @@ export function moveModernFile(state: ModernOsState, id: string, parentId: strin
 
 export function validateModernBrowserUrl(input: string) {
   const value = input.trim();
-  if (/^sitevl:\/\/(home|lab|studio|ai|games|about|help)$/i.test(value)) return { ok: true as const, url: value.toLowerCase() };
+  if (/^sitevl:\/\/(home|lab|studio|ai|games|farm|about|help)$/i.test(value)) return { ok: true as const, url: value.toLowerCase() };
   const candidate = /^[a-z][a-z\d+.-]*:/i.test(value) ? value : `https://${value}`;
   try { const url = new URL(candidate); return url.protocol === 'http:' || url.protocol === 'https:' ? { ok: true as const, url: url.toString() } : { ok: false as const, error: 'Разрешены только http, https и внутренние страницы sitevl.' }; } catch { return { ok: false as const, error: 'Введите корректный адрес сайта.' }; }
 }
@@ -342,13 +394,13 @@ export function moveModernDockItem(state: ModernOsState, id: ModernAppId, delta:
   const dock = [...state.dock]; [dock[index], dock[target]] = [dock[target], dock[index]]; return { ...state, dock };
 }
 
-export type ModernGameId = keyof ModernOsState['games'];
 export function launchModernGame(state: ModernOsState, id: ModernGameId): ModernOsState {
   const current = state.games[id]; return { ...state, games: { ...state.games, [id]: { ...current, launches: current.launches + 1 } } };
 }
-export function recordModernGame(state: ModernOsState, id: ModernGameId, score: number, time?: number): ModernOsState {
+export function recordModernGame(state: ModernOsState, id: ModernGameId, score: number, time?: number, playTime = 0, achievement?: string, progress?: number): ModernOsState {
   const current = state.games[id];
-  return { ...state, games: { ...state.games, [id]: { ...current, highScore: Math.max(current.highScore, Math.max(0, Math.round(score))), bestTime: time && time > 0 ? current.bestTime ? Math.min(current.bestTime, time) : time : current.bestTime } } };
+  const achievements = achievement ? [...new Set([...current.achievements, achievement])] : current.achievements;
+  return { ...state, games: { ...state.games, [id]: { ...current, highScore: Math.max(current.highScore, Math.max(0, Math.round(score))), bestTime: time && time > 0 ? current.bestTime ? Math.min(current.bestTime, time) : time : current.bestTime, playTime: current.playTime + Math.max(0, Math.round(playTime)), achievements, progress: progress === undefined ? current.progress : clamp(progress, current.progress, 0, 100), lastPlayedAt: new Date().toISOString() } } };
 }
 
 export type ModernMediaKind = 'audio' | 'video' | 'unsupported';
@@ -366,6 +418,8 @@ export type ModernAiAction =
   | { type: 'SET_THEME'; value: ModernTheme }
   | { type: 'SET_VOLUME'; value: number }
   | { type: 'OPEN_GAME'; gameId: ModernGameId }
+  | { type: 'OPEN_FARM' }
+  | { type: 'SHOW_FARM_STATUS' }
   | { type: 'ENTER_FULLSCREEN' }
   | { type: 'EXIT_FULLSCREEN' };
 
@@ -376,17 +430,25 @@ export function normalizeModernAiAction(value: unknown): ModernAiAction | null {
   if (action.type === 'OPEN_SETTINGS') return { type: 'OPEN_SETTINGS' };
   if (action.type === 'SET_THEME' && (action.value === 'light' || action.value === 'dark' || action.value === 'auto')) return { type: 'SET_THEME', value: action.value };
   if (action.type === 'SET_VOLUME' && typeof action.value === 'number' && Number.isFinite(action.value)) return { type: 'SET_VOLUME', value: clamp(action.value, 65) };
-  if (action.type === 'OPEN_GAME' && (action.gameId === 'core-shooter' || action.gameId === 'blocks' || action.gameId === 'racing')) return { type: 'OPEN_GAME', gameId: action.gameId };
+  if (action.type === 'OPEN_GAME' && (action.gameId === 'core-shooter' || action.gameId === 'blocks' || action.gameId === 'racing' || action.gameId === 'match' || action.gameId === 'farm')) return { type: 'OPEN_GAME', gameId: action.gameId };
+  if (action.type === 'OPEN_FARM' || action.type === 'SHOW_FARM_STATUS') return { type: action.type };
   if (action.type === 'ENTER_FULLSCREEN' || action.type === 'EXIT_FULLSCREEN') return { type: action.type };
   return null;
 }
 
-export function parseModernLocalAiAction(input: string): { action: ModernAiAction; response: string } | null {
+export function parseModernLocalAiAction(input: string, farm?: ModernFarmState): { action: ModernAiAction; response: string } | null {
   const value = input.trim().toLocaleLowerCase('ru').replace(/[!?.,]+$/g, '');
   if (/^(открой|запусти)\s+(браузер|интернет)$/.test(value)) return { action: { type: 'OPEN_APP', appId: 'browser' }, response: 'Открываю браузер.' };
   if (/^(открой|покажи)\s+настройки$/.test(value)) return { action: { type: 'OPEN_SETTINGS' }, response: 'Открываю настройки.' };
   if (/^(открой|запусти)\s+игры$/.test(value)) return { action: { type: 'OPEN_APP', appId: 'games' }, response: 'Открываю игры.' };
+  if (/^(открой|запусти|покажи)\s+(ферму|sitevl farm)$/.test(value)) return { action: { type: 'OPEN_FARM' }, response: 'Открываю игровой центр с SITEVL FARM.' };
+  if (/^(покажи|какой|что)\s+.*(статус|ферм)/.test(value) && farm) { const now = Date.now(); const ready = farm.plots.filter((plot) => plot.readyAt && plot.readyAt <= now).length + farm.processes.filter((process) => process.readyAt <= now).length + farm.animals.filter((animal) => animal.readyAt && animal.readyAt <= now).length; return { action: { type: 'SHOW_FARM_STATUS' }, response: `${farm.farmName}: уровень ${farm.level}, ${farm.coins} монет, амбар ${Object.values(farm.inventory).reduce((sum, amount) => sum + amount, 0)} предметов. Готово к сбору: ${ready}.` }; }
+  if (/^(открой|запусти)\s+(редактор кода|код)$/.test(value)) return { action: { type: 'OPEN_APP', appId: 'code' }, response: 'Открываю редактор кода.' };
+  if (/^(открой|запусти)\s+(html lab|web lab|веб-лабораторию)$/.test(value)) return { action: { type: 'OPEN_APP', appId: 'weblab' }, response: 'Открываю WEB LAB.' };
   if (/^(сделай|включи)\s+((тему\s+)?т[её]мную|т[её]мную\s+тему)$/.test(value)) return { action: { type: 'SET_THEME', value: 'dark' }, response: 'Тёмная тема включена.' };
   if (/^(сделай|включи)\s+((тему\s+)?светлую|светлую\s+тему)$/.test(value)) return { action: { type: 'SET_THEME', value: 'light' }, response: 'Светлая тема включена.' };
+  const volume = value.match(/^(?:установи|поставь|сделай)\s+громкость\s+(\d{1,3})\s*%?$/);
+  if (volume) return { action: { type: 'SET_VOLUME', value: Number(volume[1]) }, response: `Устанавливаю громкость ${Math.min(100, Number(volume[1]))}%.` };
+  if (/^(?:включи|открой)\s+полноэкранный режим$/.test(value)) return { action: { type: 'ENTER_FULLSCREEN' }, response: 'Включаю полноэкранный режим.' };
   return null;
 }

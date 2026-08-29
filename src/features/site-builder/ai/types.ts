@@ -2,7 +2,7 @@ import type { SiteBuilderProject, StudioThemeTokens } from '../schema/types';
 
 export type AiProjectType = 'auto' | 'landing' | 'multipage' | 'portfolio' | 'catalog' | 'services';
 export type AiVisualStyle = 'auto' | 'minimal' | 'technology' | 'premium' | 'bright' | 'dark' | 'editorial' | 'brutalist';
-export type AiProviderKind = 'local' | 'cloudflare';
+export type AiProviderKind = 'local' | 'gemini';
 
 export type AiGenerateRequest = {
   kind: 'site-plan' | 'rewrite' | 'site-action';
@@ -78,4 +78,3 @@ export type AiThemeProposal = {
   changes: string[];
   theme: StudioThemeTokens;
 };
-

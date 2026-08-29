@@ -1,4 +1,5 @@
 export type LabExperimentId = 'builder' | 'game2d' | 'game3d' | 'physics' | 'os' | 'retro' | 'canvas' | 'modern-os';
+export type LabExperimentGroup = 'CREATE' | 'EXPERIMENT' | 'SYSTEM' | 'PLAY';
 
 export type LabExperiment = {
   id: LabExperimentId;
@@ -10,6 +11,7 @@ export type LabExperiment = {
   technologies: string[];
   href: string;
   accent: string;
+  group: LabExperimentGroup;
   category: string;
   difficulty: 1 | 2 | 3 | 4 | 5;
   duration: string;
@@ -59,6 +61,9 @@ export type LabAchievementId =
   | 'MODERN_CORE_COMPLETE'
   | 'MODERN_BLOCKS_100'
   | 'MODERN_BEST_LAP'
+  | 'MODERN_FARM_HARVEST'
+  | 'MODERN_FARM_SUPPLIER'
+  | 'MODERN_FARMER'
   | 'CANVAS_ARCHITECT'
   | 'SECRET_FOUND'
   | 'ALL_SECRETS';

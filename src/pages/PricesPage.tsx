@@ -2,7 +2,6 @@ import { ArrowUpRight, MessageCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CallToAction } from '../components/CallToAction';
-import { AddToCartButton } from '../components/AddToCartButton';
 import { Container } from '../components/Container';
 import { PageHero } from '../components/PageHero';
 import { PageTransition } from '../components/PageTransition';
@@ -15,7 +14,6 @@ import { localSeoLinks } from '../data/localSeoLinks';
 import { priceDirections } from '../data/priceDirections';
 import { PriceGroup } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
-import { createCartKey, parseExactPrice } from '../utils/cart';
 
 const tabs = [
   { label: 'Все', key: 'all' },
@@ -157,26 +155,13 @@ export function PricesPage() {
                       {group.items.map((item, index) => (
                         <Reveal delay={index * 0.035} key={`${group.title}-${item.name}`}>
                           <article className="flex h-full flex-col rounded-premium border border-line bg-white/84 p-6 shadow-glass transition duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-soft">
-                            <div className="flex min-w-0 items-start justify-between gap-4">
+                            <div className="min-w-0">
                               <div className="min-w-0">
                                 <h3 className="min-w-0 text-2xl font-extrabold leading-tight">{item.name}</h3>
                                 <p className="mt-3 max-w-full overflow-wrap-anywhere whitespace-normal text-lg font-extrabold leading-7 text-accent">
                                   {item.price}
                                 </p>
                               </div>
-                              <AddToCartButton
-                                item={{
-                                  key: createCartKey('package', `${group.title}-${item.name}`),
-                                  id: `${group.title}-${item.name}`,
-                                  type: 'package',
-                                  title: item.name,
-                                  category: group.title,
-                                  priceText: item.price,
-                                  unitPrice: parseExactPrice(item.price),
-                                  quantity: 1,
-                                  description: item.description,
-                                }}
-                              />
                             </div>
                             {item.description ? (
                               <p className="mt-4 line-clamp-2 text-sm leading-6 text-muted">{item.description}</p>

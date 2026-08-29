@@ -1,7 +1,5 @@
 import { ArrowUpRight } from 'lucide-react';
 import { siteAdminPromo } from '../data/site';
-import { createCartKey, parseExactPrice } from '../utils/cart';
-import { AddToCartButton } from './AddToCartButton';
 
 type SiteAdminPromoCardProps = {
   compact?: boolean;
@@ -22,25 +20,12 @@ export function SiteAdminPromoCard({ compact = false }: SiteAdminPromoCardProps)
           <p className="mt-4 max-w-3xl text-sm leading-6 text-muted">{siteAdminPromo.description}</p>
           <p className="mt-3 text-sm font-semibold leading-6 text-graphite">{siteAdminPromo.note}</p>
         </div>
-        <div className="flex shrink-0 items-start gap-3 rounded-3xl bg-white p-5 shadow-glass sm:min-w-44">
+        <div className="shrink-0 rounded-3xl bg-white p-5 shadow-glass sm:min-w-44">
           <div>
             <div className="text-sm font-bold text-muted line-through">{siteAdminPromo.oldPrice}</div>
             <div className="mt-1 text-3xl font-extrabold text-accent">{siteAdminPromo.newPrice}</div>
             <div className="mt-1 text-xs font-bold uppercase tracking-[0.12em] text-muted">вместо 35 000 ₽</div>
           </div>
-          <AddToCartButton
-            item={{
-              key: createCartKey('package', siteAdminPromo.type),
-              id: siteAdminPromo.type,
-              type: 'package',
-              title: siteAdminPromo.title,
-              category: 'Сайты',
-              priceText: siteAdminPromo.newPrice,
-              unitPrice: parseExactPrice(siteAdminPromo.newPrice),
-              quantity: 1,
-              description: siteAdminPromo.description,
-            }}
-          />
         </div>
       </div>
       <div className="mt-6">

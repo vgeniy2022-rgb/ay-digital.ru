@@ -1,8 +1,6 @@
 import { ArrowUpRight } from 'lucide-react';
 import { Service } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
-import { createCartKey, parseExactPrice } from '../utils/cart';
-import { AddToCartButton } from './AddToCartButton';
 
 type ServiceCardProps = {
   service: Service;
@@ -11,24 +9,12 @@ type ServiceCardProps = {
 export function ServiceCard({ service }: ServiceCardProps) {
   const Icon = service.icon;
   const { data } = useSiteData();
-  const priceText = service.priceText || 'Цена уточняется после обсуждения';
-  const cartItem = {
-    key: createCartKey('service', service.slug),
-    id: service.slug,
-    type: 'service' as const,
-    title: service.title,
-    category: service.category,
-    priceText,
-    unitPrice: parseExactPrice(priceText),
-    quantity: 1,
-    description: service.lead,
-  };
 
   return (
     <article
       className="group block rounded-premium border border-line bg-white/78 p-6 shadow-glass transition duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-soft"
     >
-      <div className="flex min-w-0 items-start justify-between gap-4">
+      <div className="flex min-w-0 items-start gap-4">
         <div className="flex min-w-0 items-start gap-3">
           <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-slate-100 text-ink transition group-hover:bg-ink group-hover:text-white">
             <Icon className="h-5 w-5" />
@@ -49,7 +35,6 @@ export function ServiceCard({ service }: ServiceCardProps) {
             </div>
           </div>
         </div>
-        <AddToCartButton item={cartItem} />
       </div>
       <h3 className="mt-7 text-2xl font-extrabold leading-tight">{service.title}</h3>
       <p className="mt-4 text-base leading-7 text-muted">{service.lead}</p>

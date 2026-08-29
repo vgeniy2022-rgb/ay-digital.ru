@@ -9,7 +9,7 @@ export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['scripts/**/*.mjs'],
+    files: ['scripts/**/*.mjs', 'api/**/*.mjs'],
     languageOptions: {
       ecmaVersion: 'latest',
       globals: globals.node,

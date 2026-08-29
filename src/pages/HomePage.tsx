@@ -209,11 +209,11 @@ export function HomePage() {
           <Reveal className="home-lab-showcase__intro">
             <p className="home-kicker">SITEVL LAB</p>
             <h2>Не просто рассказываю об интерфейсах. Даю их попробовать.</h2>
-            <p>Откройте цельную экспериментальную среду с конструктором, играми, физикой, 3D и браузерными интерфейсами.</p>
+            <p>Откройте цельную экспериментальную среду с конструктором, физикой, виртуальными системами и бесконечным холстом.</p>
           </Reveal>
           <div className="home-lab-showcase__grid">
             <Link to="/lab" className="home-lab-product">
-              <div><span><LayoutDashboard /></span><small>SEVEN WEB EXPERIMENTS</small><h3>Исследуйте возможности браузера</h3><p>Игры, 3D-комната, физическая песочница, операционные системы и бесконечный холст в одной среде.</p></div>
+              <div><span><LayoutDashboard /></span><small>ОТОБРАННЫЕ ВЕБ-ЭКСПЕРИМЕНТЫ</small><h3>Исследуйте возможности браузера</h3><p>SITEVL Studio, физическая песочница, Modern OS, Retro Computer и бесконечный холст в одной среде.</p></div>
               <MoveUpRight aria-hidden="true" />
             </Link>
             <Link to="/lab/builder" className="home-lab-product home-lab-product--blue">
