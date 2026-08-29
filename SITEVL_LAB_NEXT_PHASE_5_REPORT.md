@@ -1,6 +1,6 @@
 # SITEVL LAB NEXT — Phase 5/5
 
-Статус: **RELEASED**  
+Статус: **RELEASED**
 Дата: 30 августа 2026 года.
 
 ## Release gates
