@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build && node scripts/generate-seo.mjs && node scripts/seo-audit.mjs",
     "lint": "eslint .",
-    "test": "tsx --test src/features/site-builder/**/*.test.ts src/features/lab/**/*.test.ts",
+    "test": "tsx --test src/features/site-builder/**/*.test.ts src/features/lab/**/*.test.ts src/features/xray/**/*.test.ts",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {

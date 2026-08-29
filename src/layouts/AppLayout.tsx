@@ -7,6 +7,7 @@ import { MobileStickyCta } from '../components/MobileStickyCta';
 import { SeoHead } from '../components/SeoHead';
 import { CommandPalette } from '../components/lab/CommandPalette';
 import { DeveloperOverlay } from '../components/lab/DeveloperOverlay';
+import { XRayController } from '../features/xray/XRayController';
 
 export function AppLayout({ children }: PropsWithChildren) {
   return (
@@ -20,6 +21,7 @@ export function AppLayout({ children }: PropsWithChildren) {
       <CookieBanner />
       <CommandPalette />
       <DeveloperOverlay />
+      <XRayController />
     </div>
   );
 }
