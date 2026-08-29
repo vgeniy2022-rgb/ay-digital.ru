@@ -3,7 +3,8 @@
 Дата релиза: 2026-08-29  
 Ветка: `main`  
 Проект Vercel: `ay-digital-ru`  
-Production alias: `https://ay-digital-ru.vercel.app`  
+Production alias: `https://sitevl-ru.vercel.app`
+Дополнительный рабочий alias: `https://ay-digital-ru.vercel.app`
 
 Статусы: `PASS`, `FAIL`, `BLOCKED`, `NOT RUN`.
 
@@ -87,8 +88,13 @@ Production alias: `https://ay-digital-ru.vercel.app`
 
 ## Deployment
 
-- Release commit: будет зафиксирован после добавления этого отчёта.
-- `PENDING` `git push origin main`.
-- `PENDING` Vercel production deploy.
-- `PENDING` Production smoke test и проверка alias.
-
+- Release commit: `a3a457a9eee618b105df1f45f388b56aaed4eb99` (`Harden Modern OS and Studio release`).
+- `PASS` `git push origin main`; локальный `main` и `origin/main` указывали на один release commit перед обновлением итогового отчёта.
+- `PASS` Vercel production deployment: `https://ay-digital-bdhc3qbn0-vgeniy.vercel.app`.
+- `PASS` Основной production alias назначен на `https://sitevl-ru.vercel.app`.
+- `PASS` Дополнительный alias `https://ay-digital-ru.vercel.app` отвечает и отдаёт те же release assets.
+- `PASS` HTTP 200: `/`, `/studio`, `/lab`, `/lab/retro`, `/lab/modern-os`, `/robots.txt`, `/sitemap.xml`.
+- `PASS` Production Modern OS: шесть окон, rear-window focus, close, minimize, restore, maximize, Dock, App Switcher, Game Hub и начало CORE SHOOTER gameplay.
+- `PASS` Production Files, Browser, Settings, SITEVL AI и Media открываются; девять Settings sections доступны; runtime console чистая.
+- `PASS` Production Studio и Retro подтверждены после загрузки lazy chunks: Studio показывает список проектов, Retro показывает экран выбора системы.
+- `PASS` Production `robots.txt` и `sitemap.xml` используют основной alias `sitevl-ru.vercel.app`.
