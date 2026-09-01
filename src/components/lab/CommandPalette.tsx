@@ -16,6 +16,7 @@ type PaletteEntry = {
 
 const entries: PaletteEntry[] = [
   { id: 'websites', label: 'Создать сайт', hint: 'Студия разработки', keywords: 'сайт разработка лендинг владивосток', path: '/website-development-vladivostok', icon: Sparkles },
+  { id: 'mobile-apps', label: 'Создать приложение', hint: 'iOS и Android', keywords: 'мобильное приложение ios android разработка', path: '/mobile-apps', icon: Gauge },
   { id: 'prices', label: 'Посмотреть цены', hint: 'Услуги и ориентиры', keywords: 'стоимость прайс бюджет', path: '/prices', icon: Gauge },
   { id: 'cases', label: 'Открыть портфолио', hint: 'Кейсы SITEVL', keywords: 'работы проекты портфолио', path: '/cases', icon: Sparkles },
   { id: 'contacts', label: 'Связаться', hint: 'Telegram, WhatsApp, телефон', keywords: 'контакты написать позвонить', path: '/contacts', icon: CornerDownLeft },

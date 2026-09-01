@@ -6,12 +6,17 @@ const staticRoutes: Record<string, StaticRoute> = {
   '/': {
     title: 'Главная SITEVL',
     componentName: 'HomePage',
-    sections: ['Hero', 'WebsiteDirections', 'Capabilities', 'Projects', 'Process', 'LabShowcase', 'Promo', 'Reviews', 'FAQ', 'CTA'],
+    sections: ['Hero', 'CommercialDirections', 'Capabilities', 'Projects', 'Process', 'LabShowcase', 'Reviews', 'FAQ', 'CTA'],
+  },
+  '/mobile-apps': {
+    title: 'Разработка мобильных приложений',
+    componentName: 'MobileAppsPage',
+    sections: ['AppsHero', 'ProductTypes', 'Platforms', 'Capabilities', 'DevelopmentStages', 'Pricing', 'SitevlCare', 'FAQ', 'CTA'],
   },
   '/services': {
     title: 'Услуги',
     componentName: 'ServicesPage',
-    sections: ['PageHero', 'LocalServices', 'ServiceGroups', 'AdminPromo', 'ServiceCards', 'Trust', 'CTA'],
+    sections: ['PageHero', 'LocalServices', 'ServiceGroups', 'ServiceCards', 'Trust', 'CTA'],
   },
   '/useful': {
     title: 'Полезные материалы',
@@ -21,7 +26,7 @@ const staticRoutes: Record<string, StaticRoute> = {
   '/prices': {
     title: 'Цены',
     componentName: 'PricesPage',
-    sections: ['PageHero', 'DirectionCards', 'PriceGroups', 'AdminPromo', 'Disclaimers', 'CTA'],
+    sections: ['PageHero', 'CommercialDirections', 'PriceGroups', 'SitevlCare', 'Disclaimers', 'CTA'],
   },
   '/process': {
     title: 'Порядок работы',
@@ -112,7 +117,7 @@ export const xrayArticleSlugs = [
   'diy-or-developer-website',
 ] as const;
 
-export const xrayPriceSlugs = ['websites', 'programs', 'devices', 'phones', 'pc'] as const;
+export const xrayPriceSlugs = ['websites', 'mobile-apps', 'programs', 'devices', 'phones', 'pc'] as const;
 export const xrayCaseSlugs = ['ay-digital-personal-website', 'marine-equipment-catalog'] as const;
 export const xrayLocalSlugs = [
   'computer-help-artem',
@@ -174,7 +179,7 @@ export function matchXRayRoute(pathname: string): XRayRouteMatch | null {
       slug: priceSlug,
       title: 'Направление цен',
       componentName: 'PriceDirectionPage',
-      sections: ['DirectionHero', 'Packages', 'Includes', 'Disclaimer', 'RelatedDirections', 'CTA'],
+      sections: ['DirectionHero', 'Packages', 'Includes', 'Disclaimer', 'SitevlCare', 'RelatedDirections', 'CTA'],
     };
   }
 

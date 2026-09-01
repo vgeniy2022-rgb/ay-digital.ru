@@ -1,6 +1,7 @@
 import { Check, Cloud, FileText, Shield } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PriceDirection } from '../data/priceDirections';
+import { MobileAppVisual } from './CommercialVisuals';
 
 type PriceVisualProps = {
   variant: PriceDirection['visual'];
@@ -75,6 +76,10 @@ function ChecklistPanel({ items }: { items: string[] }) {
 }
 
 export function PriceVisual({ variant }: PriceVisualProps) {
+  if (variant === 'mobile-apps') {
+    return <MobileAppVisual compact />;
+  }
+
   if (variant === 'phones') {
     return (
       <motion.div className="relative min-h-[340px]" animate={{ y: [0, -8, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}>
@@ -144,7 +149,7 @@ export function PriceVisual({ variant }: PriceVisualProps) {
       <div className="absolute left-2 right-12 top-8"><BrowserWindow /></div>
       <div className="absolute bottom-6 right-4 w-36"><PhoneMockup /></div>
       <div className="absolute bottom-10 left-6 rounded-3xl border border-line bg-white/88 p-4 shadow-glass">
-        <div className="text-xs font-extrabold text-accent">Админка</div>
+        <div className="text-xs font-extrabold text-accent">Управление</div>
         <div className="mt-3 h-3 w-24 rounded-full bg-slate-200" />
         <div className="mt-2 h-3 w-16 rounded-full bg-emerald-200" />
       </div>

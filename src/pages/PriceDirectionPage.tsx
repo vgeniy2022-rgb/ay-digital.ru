@@ -6,9 +6,15 @@ import { PageTransition } from '../components/PageTransition';
 import { PriceVisual } from '../components/PriceVisuals';
 import { Reveal } from '../components/Reveal';
 import { SeoHead } from '../components/SeoHead';
+import { SitevlCare } from '../components/SitevlCare';
 import { absoluteUrl, siteConfig } from '../config/site';
 import { getPriceDirection } from '../data/priceDirections';
 import { useSiteData } from '../hooks/useSiteData';
+
+function numericStartingPrice(value: string) {
+  const match = value.match(/\d[\d\s]*/);
+  return match ? Number(match[0].replace(/\s/g, '')) : undefined;
+}
 
 function createDirectionSchema(direction: NonNullable<ReturnType<typeof getPriceDirection>>) {
   return [
@@ -34,6 +40,7 @@ function createDirectionSchema(direction: NonNullable<ReturnType<typeof getPrice
         name: item.name,
         description: item.fit,
         priceCurrency: 'RUB',
+        ...(numericStartingPrice(item.price) ? { price: numericStartingPrice(item.price) } : {}),
         availability: 'https://schema.org/InStock',
       })),
     },
@@ -47,6 +54,7 @@ function createDirectionSchema(direction: NonNullable<ReturnType<typeof getPrice
         name: item.name,
         description: item.fit,
         priceCurrency: 'RUB',
+        ...(numericStartingPrice(item.price) ? { price: numericStartingPrice(item.price) } : {}),
         availability: 'https://schema.org/InStock',
       })),
     },
@@ -106,10 +114,11 @@ export function PriceDirectionPage() {
           <div className="mt-8 grid gap-5 lg:grid-cols-3">
             {direction.packages.map((item, index) => (
               <Reveal delay={index * 0.04} key={item.name}>
-                <article className="h-full rounded-premium border border-line bg-white/84 p-6 shadow-glass">
+                <article className={`relative flex h-full flex-col rounded-premium border bg-white/84 p-6 shadow-glass ${item.featured ? 'border-accent ring-1 ring-accent/20' : 'border-line'}`}>
+                  {item.featured ? <span className="absolute right-5 top-5 rounded-full bg-accent px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-white">Популярный</span> : null}
                   <div className="min-w-0">
                     <div className="min-w-0">
-                      <h3 className="min-w-0 text-2xl font-extrabold leading-tight">{item.name}</h3>
+                      <h3 className={`min-w-0 text-2xl font-extrabold leading-tight [overflow-wrap:anywhere] ${item.featured ? 'max-w-[80%]' : 'max-w-full'}`}>{item.name}</h3>
                       <p className="mt-3 max-w-full overflow-wrap-anywhere whitespace-normal text-lg font-extrabold leading-7 text-accent">
                         {item.price}
                       </p>
@@ -124,6 +133,12 @@ export function PriceDirectionPage() {
                       </div>
                     ))}
                   </div>
+                  <Link
+                    className={`mt-auto inline-flex min-h-12 items-center justify-center rounded-full px-5 text-sm font-extrabold transition ${item.featured ? 'bg-ink text-white' : 'border border-line text-ink hover:border-slate-300'}`}
+                    to={`/brief?projectType=${direction.slug === 'mobile-apps' ? 'mobile-app' : 'website'}&package=${item.id || encodeURIComponent(item.name)}&startingPrice=${encodeURIComponent(item.price)}`}
+                  >
+                    Обсудить проект
+                  </Link>
                 </article>
               </Reveal>
             ))}
@@ -181,12 +196,17 @@ export function PriceDirectionPage() {
                       Подробнее о создании сайтов
                     </ButtonLink>
                   </div>
-                ) : null}
+                ) : (
+                  <div className="mt-3">
+                    <ButtonLink to="/mobile-apps" variant="secondary">Подробнее о мобильных приложениях</ButtonLink>
+                  </div>
+                )}
               </div>
             </div>
           </Reveal>
         </Container>
       </section>
+      <SitevlCare initialDirection={direction.slug === 'mobile-apps' ? 'apps' : 'websites'} />
     </PageTransition>
   );
 }

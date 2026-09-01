@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { fetchPublicSiteData } from '../api/siteApi';
+import { priceDirections } from '../data/priceDirections';
 import {
   CaseItem as CmsCaseItem,
   FaqItem,
@@ -212,7 +213,7 @@ function normalizeServices(items: ServiceItem[] | undefined, hasApiData: boolean
         format: item.format || fallback?.format,
         badge: item.badge || fallback?.badge,
         buttonText: usePolishedPresentation ? fallback!.buttonText : item.buttonText || fallback?.buttonText,
-        priceText: isAdminWebsite ? '35 000 ₽' : item.priceText || fallback?.priceText,
+        priceText: isAdminWebsite ? 'от 34 900 ₽' : item.priceText || fallback?.priceText,
         isPopular: isActiveValue(item.isPopular) || fallback?.isPopular,
         showOnHome: isActiveValue(item.showOnHome) || fallback?.showOnHome,
         icon: getIcon(item.icon || item.category, slug, fallback?.icon),
@@ -222,12 +223,12 @@ function normalizeServices(items: ServiceItem[] | undefined, hasApiData: boolean
 
 function normalizePriceGroups(items: PackageItem[] | undefined, hasApiData: boolean): PriceGroup[] {
   if (!hasApiData) {
-    return localPriceGroups;
+    return applyWebsitePriceOverrides(localPriceGroups);
   }
 
   const activeItems = onlyActive(items);
   if (!activeItems.length) {
-    return localPriceGroups;
+    return applyWebsitePriceOverrides(localPriceGroups);
   }
 
   const groups = new Map<
@@ -287,64 +288,33 @@ function normalizePriceGroups(items: PackageItem[] | undefined, hasApiData: bool
       items: group.items,
     }));
 
-  return normalizedGroups.length ? applyWebsitePriceOverrides(normalizedGroups) : localPriceGroups;
+  return applyWebsitePriceOverrides(normalizedGroups.length ? normalizedGroups : localPriceGroups);
 }
 
 function applyWebsitePriceOverrides(groups: PriceGroup[]): PriceGroup[] {
-  return groups.map((group) => {
-    if (group.title !== 'Сайты') return group;
+  const websiteDirection = priceDirections.find((direction) => direction.slug === 'websites');
+  const mobileDirection = priceDirections.find((direction) => direction.slug === 'mobile-apps');
+  if (!websiteDirection || !mobileDirection) return groups;
 
-    const overrides: Record<string, PriceGroup['items'][number]> = {
-      Старт: {
-        name: 'Старт',
-        price: 'от 20 000 ₽',
-        description: 'Сайт для специалиста, услуги или небольшого бизнеса: основные блоки, адаптация под телефон, контакты и кнопки связи.',
-      },
-      Лендинг: {
-        name: 'Лендинг',
-        price: 'от 25 000 ₽',
-        description: 'Одностраничный сайт под услугу, акцию, рекламу или конкретное предложение.',
-      },
-      'Сайт с админкой': {
-        name: 'Сайт с системой управления',
-        price: '35 000 ₽',
-        description: 'Сайт, где владелец самостоятельно обновляет услуги, цены, отзывы, акции и фотографии через понятную панель управления.',
-      },
-      'Сайт с системой управления': {
-        name: 'Сайт с системой управления',
-        price: '35 000 ₽',
-        description: 'Сайт, где владелец самостоятельно обновляет услуги, цены, отзывы, акции и фотографии через понятную панель управления.',
-      },
-      Бизнес: {
-        name: 'Бизнес-сайт',
-        price: '45 000–65 000 ₽',
-        description: 'Расширенный сайт для бизнеса: больше страниц, кейсы, отзывы, FAQ, акции, служебные разделы и управление контентом.',
-      },
-      'Бизнес-сайт': {
-        name: 'Бизнес-сайт',
-        price: '45 000–65 000 ₽',
-        description: 'Расширенный сайт для бизнеса: больше страниц, кейсы, отзывы, FAQ, акции, служебные разделы и управление контентом.',
-      },
-    };
+  const legacyWebsiteNames = new Set(['Старт', 'Сайт для старта', 'Лендинг', 'Сайт с админкой', 'Сайт с системой управления', 'Бизнес', 'Бизнес-сайт', 'Сайт-каталог', 'Интернет-магазин', 'Индивидуальный веб-сервис']);
+  const websiteGroup = groups.find((group) => group.title === 'Сайты');
+  const websiteExtras = websiteGroup?.items.filter((item) => !legacyWebsiteNames.has(item.name)) ?? [];
+  const commercialWebsites: PriceGroup = {
+    title: 'Сайты',
+    note: 'Указана стартовая стоимость. Точная цена фиксируется после обсуждения структуры и функционала.',
+    items: [
+      ...websiteDirection.packages.map((item) => ({ name: item.name, price: item.price, description: item.fit, includes: item.includes })),
+      ...websiteExtras,
+    ],
+  };
+  const commercialApps: PriceGroup = {
+    title: 'Мобильные приложения',
+    note: 'Стартовая цена зависит от платформы, экранов, серверной части и интеграций.',
+    items: mobileDirection.packages.map((item) => ({ name: item.name, price: item.price, description: item.fit, includes: item.includes })),
+  };
 
-    const seen = new Set<string>();
-    const items = group.items.map((item) => {
-      const override = overrides[item.name];
-      if (!override) return item;
-      seen.add(override.name);
-      return { ...item, ...override, includes: item.includes };
-    });
-
-    if (!seen.has('Лендинг')) {
-      items.splice(1, 0, {
-        name: 'Лендинг',
-        price: 'от 25 000 ₽',
-        description: 'Одностраничный сайт под услугу, акцию, рекламу или конкретное предложение.',
-      });
-    }
-
-    return { ...group, items };
-  });
+  const withoutCommercial = groups.filter((group) => group.title !== 'Сайты' && group.title !== 'Мобильные приложения');
+  return [commercialWebsites, commercialApps, ...withoutCommercial];
 }
 
 function normalizeCases(items: CmsCaseItem[] | undefined, hasApiData: boolean): CaseItem[] {

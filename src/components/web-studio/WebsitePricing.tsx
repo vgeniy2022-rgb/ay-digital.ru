@@ -52,7 +52,7 @@ export function PriceComplexityStory() {
             <p>Каждая дополнительная функция решает рабочую задачу и добавляет проектирование, разработку и проверку.</p>
             <div className="studio-cost-story__range">
               <span>ориентир проекта</span>
-              <strong data-cost-label>от 3 000 ₽</strong>
+              <strong data-cost-label>от 19 900 ₽</strong>
               <i><b data-cost-meter /></i>
             </div>
           </div>

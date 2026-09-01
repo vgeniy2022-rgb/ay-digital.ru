@@ -7,7 +7,6 @@ import { Reveal } from '../components/Reveal';
 import { AdminWebsiteSection, AgreementSection, LegalPreparationSection } from '../components/SalesSections';
 import { ServiceCard } from '../components/ServiceCard';
 import { SeoHead } from '../components/SeoHead';
-import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
 import { absoluteUrl, siteConfig } from '../config/site';
 import { pageMeta } from '../data/pageMeta';
 import { localSeoLinks } from '../data/localSeoLinks';
@@ -27,7 +26,7 @@ const categoryOrder = [
 
 const categoryLabels: Record<string, string> = {
   'Сайты и админки': 'Сайты и управление контентом',
-  'Приложения и прототипы': 'Онлайн-сервисы и прототипы',
+  'Приложения и прототипы': 'Мобильные приложения и цифровые продукты',
 };
 
 function createServicesSchema(services: ReturnType<typeof useSiteData>['data']['services']) {
@@ -111,13 +110,6 @@ export function ServicesPage() {
                       />
                     </div>
                   </Reveal>
-                  {group.category === 'Сайты и админки' ? (
-                    <Reveal>
-                      <div className="mb-5">
-                        <SiteAdminPromoCard compact />
-                      </div>
-                    </Reveal>
-                  ) : null}
                   <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                     {group.items.map((service, index) => (
                       <Reveal delay={index * 0.04} key={`${group.category}-${service.slug}`}>

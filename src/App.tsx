@@ -6,6 +6,7 @@ import { AppLayout } from './layouts/AppLayout';
 import { privacyContent, termsContent } from './data/legal';
 
 const HomePage = lazy(() => import('./pages/HomePage').then((module) => ({ default: module.HomePage })));
+const MobileAppsPage = lazy(() => import('./pages/MobileAppsPage').then((module) => ({ default: module.MobileAppsPage })));
 const ServicesPage = lazy(() => import('./pages/ServicesPage').then((module) => ({ default: module.ServicesPage })));
 const UsefulIndexPage = lazy(() => import('./pages/UsefulIndexPage').then((module) => ({ default: module.UsefulIndexPage })));
 const UsefulArticlePage = lazy(() => import('./pages/UsefulArticlePage').then((module) => ({ default: module.UsefulArticlePage })));
@@ -93,6 +94,7 @@ export default function App() {
         <Suspense fallback={<div className="min-h-[50vh]" />}>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/mobile-apps" element={<MobileAppsPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/services/:slug" element={<Navigate to="/services" replace />} />
             <Route path="/useful" element={<UsefulIndexPage />} />

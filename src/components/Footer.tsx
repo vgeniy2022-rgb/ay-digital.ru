@@ -27,7 +27,7 @@ export function Footer() {
           <div>
             <div className="text-2xl font-extrabold">{site.name}</div>
             <p className="mt-3 max-w-md text-sm leading-6 text-slate-400">{site.tagline}. {site.location}.</p>
-            <p className="mt-6 text-sm text-slate-400">SITEVL — создание сайтов и цифровых решений во Владивостоке.</p>
+            <p className="mt-6 text-sm text-slate-400">SITEVL — создание сайтов и мобильных приложений во Владивостоке и удалённо.</p>
           </div>
           <div>
             <div className="font-bold">Навигация</div>

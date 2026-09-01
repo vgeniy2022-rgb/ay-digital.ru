@@ -43,12 +43,12 @@ export type WebsiteCalculation = {
 };
 
 export const websiteProjectTypeOptions: WebsiteProjectTypeOption[] = [
-  { id: 'business-card', label: 'Сайт-визитка', min: 3_000, max: 15_000, includedFeatures: [] },
-  { id: 'landing', label: 'Лендинг', min: 8_000, max: 25_000, includedFeatures: [] },
-  { id: 'multipage', label: 'Многостраничный сайт', min: 15_000, max: 35_000, includedFeatures: [] },
-  { id: 'admin', label: 'Сайт с системой управления', min: 25_000, max: 45_000, includedFeatures: ['admin'] },
-  { id: 'catalog', label: 'Каталог', min: 40_000, max: 70_000, includedFeatures: ['admin', 'catalog'] },
-  { id: 'custom', label: 'Индивидуальный проект', min: 50_000, max: 90_000, includedFeatures: [], requiresEstimate: true },
+  { id: 'business-card', label: 'Сайт для старта', min: 19_900, max: 24_900, includedFeatures: [] },
+  { id: 'landing', label: 'Лендинг', min: 24_900, max: 39_900, includedFeatures: [] },
+  { id: 'multipage', label: 'Бизнес-сайт', min: 44_900, max: 69_900, includedFeatures: [] },
+  { id: 'admin', label: 'Сайт с системой управления', min: 34_900, max: 59_900, includedFeatures: ['admin'] },
+  { id: 'catalog', label: 'Сайт-каталог', min: 59_900, max: 89_900, includedFeatures: ['admin', 'catalog'] },
+  { id: 'custom', label: 'Индивидуальный веб-сервис', min: 139_900, max: 249_900, includedFeatures: [], requiresEstimate: true },
 ];
 
 export const websitePageRangeOptions: WebsitePageRangeOption[] = [
@@ -60,7 +60,7 @@ export const websitePageRangeOptions: WebsitePageRangeOption[] = [
 
 export const websiteFeatureOptions: WebsiteFeatureOption[] = [
   { id: 'custom-design', label: 'Индивидуальный дизайн', min: 5_000, max: 12_000, complexity: 1 },
-  { id: 'admin', label: 'Админка', min: 10_000, max: 20_000, complexity: 2 },
+  { id: 'admin', label: 'Система управления', min: 10_000, max: 20_000, complexity: 2 },
   { id: 'catalog', label: 'Каталог', min: 15_000, max: 30_000, complexity: 3 },
   { id: 'search', label: 'Поиск', min: 3_000, max: 8_000, complexity: 1 },
   { id: 'filters', label: 'Фильтры', min: 5_000, max: 12_000, complexity: 2 },
@@ -97,7 +97,7 @@ export function calculateWebsitePrice(input: WebsiteCalculationInput): WebsiteCa
     min,
     max,
     display: requiresEstimate
-      ? `от ${formatRubles(Math.max(50_000, min))} ₽ — нужна индивидуальная оценка`
+      ? `от ${formatRubles(Math.max(projectType.requiresEstimate ? 139_900 : 50_000, min))} ₽ — нужна индивидуальная оценка`
       : `${formatRubles(min)}–${formatRubles(max)} ₽`,
     requiresEstimate,
     projectType,

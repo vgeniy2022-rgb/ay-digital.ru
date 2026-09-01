@@ -51,12 +51,11 @@ export function createHomeDefinition(match: XRayRouteMatch): XRayPageDefinition 
   return (
     <PageTransition>
       <CinematicHero status={<SpecialistStatus />} />
-      <WebsiteDirections items={websiteDirections} />
+      <CommercialDirections items={commercialDirections} />
       <Capabilities items={capabilityItems} />
       <Projects cases={featuredCases} />
       <Process steps={processSteps} />
       <LabShowcase to="/lab" />
-      <SiteAdminPromoCard />
       {data.reviews.length > 0 && <Reviews items={data.reviews} />}
       {data.faq.length > 0 && <Faq items={data.faq} />}
       <CallToAction />

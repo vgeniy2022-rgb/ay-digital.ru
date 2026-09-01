@@ -7,6 +7,43 @@ export async function loadXRayDefinition(match: XRayRouteMatch): Promise<XRayPag
       return createHomeDefinition(match);
     }
     case 'static': {
+      if (match.route === '/mobile-apps') {
+        const [{ priceDirections }, { createConfiguredDefinition }] = await Promise.all([
+          import('../../data/priceDirections'),
+          import('./definitionBuilders'),
+        ]);
+        const direction = priceDirections.find((item) => item.slug === 'mobile-apps');
+        if (!direction) throw new Error('X-RAY: конфигурация мобильных приложений не найдена.');
+        return createConfiguredDefinition(
+          match,
+          match.title,
+          'mobile-apps.config.ts',
+          {
+            route: match.route,
+            platforms: ['iOS', 'Android', 'iOS + Android'],
+            productTypes: ['Приложение компании', 'Каталог', 'Интернет-магазин', 'Запись', 'MVP'],
+            startingPrice: direction.packages[0].price,
+            packages: direction.packages.map((item) => ({ name: item.name, price: item.price })),
+            care: ['2 990 ₽ / месяц', '5 990 ₽ / месяц', '9 990 ₽ / месяц'],
+          },
+          `export function MobileAppsPage() {
+  return (
+    <PageTransition>
+      <MobileAppsSeo />
+      <AppsHero visual={<MobileAppVisual />} />
+      <ProductTypes />
+      <Platforms />
+      <Capabilities />
+      <DevelopmentStages />
+      <MobilePricing />
+      <SitevlCare initialDirection="apps" />
+      <AppsFaq />
+      <AppsFinalCallToAction />
+    </PageTransition>
+  );
+}`,
+        );
+      }
       const { createStaticDefinition } = await import('./definitionBuilders');
       return createStaticDefinition(match);
     }

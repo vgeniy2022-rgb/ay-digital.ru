@@ -290,7 +290,7 @@ export function useWebStudioMotion(rootRef: RefObject<HTMLElement | null>, onCha
                 overwrite: true,
               });
             });
-            if (complexityLabel) complexityLabel.textContent = `${String(nextIndex + 1).padStart(2, '0')} / 06`;
+            if (complexityLabel) complexityLabel.textContent = `${String(nextIndex + 1).padStart(2, '0')} / ${String(priceScenes.length).padStart(2, '0')}`;
           },
         });
 

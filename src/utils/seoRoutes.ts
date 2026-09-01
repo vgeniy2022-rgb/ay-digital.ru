@@ -6,6 +6,7 @@ export type BreadcrumbItem = {
 const staticRouteLabels: Record<string, string> = {
   '/': 'Главная',
   '/services': 'Услуги',
+  '/mobile-apps': 'Мобильные приложения',
   '/prices': 'Цены',
   '/cases': 'Кейсы',
   '/about': 'Обо мне',
@@ -36,6 +37,7 @@ const staticRouteLabels: Record<string, string> = {
   '/cases/ay-digital-personal-website': 'Сайт-портфолио SITEVL',
   '/cases/marine-equipment-catalog': 'Каталог морского оборудования',
   '/prices/websites': 'Сайты и управление контентом',
+  '/prices/mobile-apps': 'Мобильные приложения',
   '/prices/programs': 'Установка программ',
   '/prices/devices': 'Настройка ноутбуков и компьютеров',
   '/prices/phones': 'Телефоны и перенос данных',

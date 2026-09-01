@@ -1,14 +1,15 @@
-import { Check, Code2, Database, LayoutDashboard, PanelsTopLeft, Search, ServerCog } from 'lucide-react';
+import { Check, Code2, Database, LayoutDashboard, PanelsTopLeft, Search, ServerCog, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { studioWebsiteTypes } from '../../data/webStudio';
 import { StudioHeading } from './StudioPrimitives';
 
 const builderLayers = [
-  { label: 'Визитка', icon: PanelsTopLeft, modules: ['hero', 'контакты', 'CTA'] },
+  { label: 'Старт', icon: PanelsTopLeft, modules: ['hero', 'контакты', 'CTA'] },
   { label: 'Лендинг', icon: Check, modules: ['преимущества', 'форма', 'сценарий'] },
-  { label: 'Страницы', icon: LayoutDashboard, modules: ['навигация', 'услуги', 'статьи'] },
-  { label: 'Админка', icon: Database, modules: ['dashboard', 'контент', 'editor'] },
+  { label: 'Управление', icon: Database, modules: ['dashboard', 'контент', 'editor'] },
+  { label: 'Бизнес', icon: LayoutDashboard, modules: ['навигация', 'услуги', 'статьи'] },
   { label: 'Каталог', icon: ServerCog, modules: ['категории', 'фильтры', 'PDF'] },
+  { label: 'Магазин', icon: ShoppingCart, modules: ['товары', 'корзина', 'заказы'] },
   { label: 'Система', icon: Code2, modules: ['API', 'users', 'интеграции'] },
 ];
 
@@ -66,7 +67,7 @@ export function WebsiteTypes() {
                 </div>
                 <div className="studio-interface-builder__footer">
                   <span>уровень сложности</span>
-                  <strong data-complexity-label>01 / 06</strong>
+                  <strong data-complexity-label>01 / {String(studioWebsiteTypes.length).padStart(2, '0')}</strong>
                 </div>
               </div>
             </div>

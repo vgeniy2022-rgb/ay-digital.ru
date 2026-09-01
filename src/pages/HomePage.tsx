@@ -1,24 +1,23 @@
 import {
   ArrowRight,
   Check,
-  Code2,
-  Gauge,
+  Globe2,
   LayoutDashboard,
   MessageCircle,
-  MonitorSmartphone,
   MoveUpRight,
   Settings2,
+  Smartphone,
   Sparkles,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ButtonLink } from '../components/ButtonLink';
 import { CallToAction } from '../components/CallToAction';
+import { MobileAppVisual, WebsiteProductVisual } from '../components/CommercialVisuals';
 import { Container } from '../components/Container';
 import { EditorialPhoto } from '../components/EditorialPhoto';
 import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
-import { SiteAdminPromoCard } from '../components/SiteAdminPromoCard';
 import { SpecialistStatus } from '../components/SpecialistStatus';
 import { CasePreviewCard } from '../components/TrustBlocks';
 import { featuredCases } from '../data/cases';
@@ -26,38 +25,28 @@ import { editorialMedia } from '../data/editorialMedia';
 import { useSiteData } from '../hooks/useSiteData';
 import '../styles/home.css';
 
-const websiteDirections = [
+const commercialDirections = [
   {
     number: '01',
-    title: 'Создание сайтов',
-    text: 'Сайт для специалиста, услуги или компании: понятная структура, адаптация и быстрый путь до заявки.',
+    eyebrow: 'САЙТЫ',
+    title: 'Разработка сайтов',
+    subtitle: 'Для бизнеса, услуг и цифровых продуктов',
+    text: 'Профессиональный сайт с понятной структурой, адаптацией под устройства и продуманным путём до обращения.',
+    price: 'от 19 900 ₽',
     href: '/website-development-vladivostok',
-    media: editorialMedia.homeCollaboration,
-    icon: MonitorSmartphone,
+    visual: 'websites' as const,
+    icon: Globe2,
   },
   {
     number: '02',
-    title: 'Сайты с системой управления',
-    text: 'Меняйте услуги, цены, фотографии, отзывы и акции самостоятельно — через понятную панель управления.',
-    href: '/website-admin-vladivostok',
-    media: editorialMedia.sitevlHomeCapture,
-    icon: LayoutDashboard,
-  },
-  {
-    number: '03',
-    title: 'Веб-сервисы для бизнеса',
-    text: 'Личные кабинеты, учёт и внутренние сервисы, которые упрощают работу небольшой команды.',
-    href: '/services',
-    media: editorialMedia.developerWorkspace,
-    icon: Code2,
-  },
-  {
-    number: '04',
-    title: 'Развитие и сопровождение',
-    text: 'Обновляю контент, добавляю разделы и улучшаю скорость, аналитику и поисковую видимость.',
-    href: '/prices',
-    media: editorialMedia.laptopOffice,
-    icon: Gauge,
+    eyebrow: 'МОБИЛЬНЫЕ ПРИЛОЖЕНИЯ',
+    title: 'Мобильные приложения',
+    subtitle: 'iOS и Android',
+    text: 'Разработка мобильных продуктов для бизнеса, сервисов и собственных проектов — от первой версии до запуска.',
+    price: 'от 49 900 ₽',
+    href: '/mobile-apps',
+    visual: 'mobile-apps' as const,
+    icon: Smartphone,
   },
 ];
 
@@ -123,22 +112,29 @@ export function HomePage() {
           <Reveal className="home-section-intro">
             <div>
               <p className="home-kicker">Что я создаю</p>
-              <h2>От задачи и структуры до работающего продукта</h2>
+              <h2>Два направления. Один продуктовый подход.</h2>
             </div>
-            <p>Спокойно разбираю задачу, проектирую путь клиента и собираю интерфейс, который выглядит профессионально и остаётся понятным обычному человеку.</p>
+            <p>Проектирую сайты и мобильные приложения как рабочие цифровые продукты: с понятным сценарием, аккуратным интерфейсом и реалистичным планом запуска.</p>
           </Reveal>
           <div className="home-service-grid">
-            {websiteDirections.map((item, index) => {
+            {commercialDirections.map((item, index) => {
               const Icon = item.icon;
               return (
                 <Reveal delay={index * 0.06} key={item.title}>
                   <motion.article className="home-service-card" whileHover={{ y: -8 }} transition={{ type: 'spring', stiffness: 260, damping: 24 }}>
-                    <EditorialPhoto media={item.media} aspect="wide" className="home-service-card__photo" />
+                    <div className="home-service-card__visual">
+                      {item.visual === 'websites' ? <WebsiteProductVisual compact /> : <MobileAppVisual compact />}
+                    </div>
                     <div className="home-service-card__body">
                       <div className="home-service-card__meta"><span>{item.number}</span><Icon aria-hidden="true" /></div>
+                      <small className="home-service-card__eyebrow">{item.eyebrow}</small>
                       <h3>{item.title}</h3>
+                      <strong className="home-service-card__subtitle">{item.subtitle}</strong>
                       <p>{item.text}</p>
-                      <Link to={item.href}>Подробнее <ArrowRight aria-hidden="true" /></Link>
+                      <div className="home-service-card__footer">
+                        <strong>{item.price}</strong>
+                        <Link to={item.href}>Подробнее <ArrowRight aria-hidden="true" /></Link>
+                      </div>
                     </div>
                   </motion.article>
                 </Reveal>
@@ -222,10 +218,6 @@ export function HomePage() {
             </Link>
           </div>
         </Container>
-      </section>
-
-      <section className="home-editorial-section">
-        <Container><Reveal><SiteAdminPromoCard /></Reveal></Container>
       </section>
 
       {reviews.length ? (
