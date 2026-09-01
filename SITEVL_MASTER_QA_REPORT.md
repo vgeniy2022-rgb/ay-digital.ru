@@ -122,19 +122,26 @@ NOT RUN: сам факт открытия новой popup-вкладки кно
 
 ## 17. Production QA
 
-NOT RUN — будет заполнено после commit, push, READY существующего Vercel deployment и обязательного production smoke на 390×844, 768×1024 и 1440×900.
+PASS — deployment коммита `a599f54` проверен через `https://sitevl-ru.vercel.app` на 390×844, 768×1024 и 1440×900.
+
+- PASS — 27 комбинаций из девяти representative routes и трёх обязательных viewport без document-level overflow и console warnings/errors.
+- PASS — production fonts имеют статус `loaded`; девять offscreen lazy images, которые ещё не имели `naturalWidth` до прокрутки, отдельно проверены прямыми HTTP-запросами и все отвечают 200.
+- PASS — Modern OS: шесть одновременно открытых окон; focus, minimize, Dock restore, maximize (1420×702), restore (900×610) и close. После close осталось пять окон.
+- PASS — production chunks CORE SHOOTER, BLOCKS, NOVA CIRCUIT, SITEVL MATCH и SITEVL FARM реально загрузили игровой UI.
+- PASS — X-RAY на публичной странице работает при 50% и 100%, не создаёт overflow и отсутствует в DOM Modern OS/Studio.
+- PASS — Studio на 390 px не создаёт overflow, шрифт загружен, X-RAY отсутствует.
 
 ## 18. Commit
 
-NOT RUN — будет заполнено после успешной фиксации текущего release gate.
+PASS — основной кодовый commit: `a599f54c91f127e9d8cdf1d8bbf28022c7d31b9e` (`Polish SITEVL UI and responsive QA fixes`). Локальный `HEAD` и `origin/main` совпали после push.
 
 ## 19. Deployment
 
-NOT RUN — будет заполнено после Git push и проверки READY существующего Vercel project.
+PASS — существующий Vercel project `ay-digital-ru`, deployment `dpl_89hbXDFDi8p7xxZ7mjvh5gT9x1if`, URL `https://ay-digital-ri316gooi-vgeniy.vercel.app`, статус `READY`. Build logs подтверждают: branch `main`, commit `a599f54`, 2567 modules, SEO 61/61.
 
 ## 20. Production URL
 
-Текущий подтверждённый alias до нового deployment: `https://sitevl-ru.vercel.app`. Итоговый URL и deployment будут подтверждены после публикации текущего commit.
+PASS — основной production alias: `https://sitevl-ru.vercel.app`. Дополнительный существующий alias того же READY deployment: `https://ay-digital-ru.vercel.app`.
 
 ## Дополнительные проблемы, найденные в ходе полного аудита
 
@@ -323,4 +330,3 @@ NOT RUN — будет заполнено после Git push и проверк�
 8. Откройте Studio на ширине 320 px: шапка не должна создавать horizontal scroll. Создайте тестовый проект локальным AI и проверьте русские тип проекта, стиль и список секций.
 9. В editor переключите «Блоки», «Структура», «Изменить», «Стиль», затем откройте preview и переключите desktop/tablet/mobile.
 10. На публичной странице откройте X-RAY, поставьте 50%, затем 100%, попробуйте вкладки и копирование. В Modern OS и Studio X-RAY отсутствует.
-
