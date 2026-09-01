@@ -103,7 +103,7 @@ export const projectCases: ProjectCase[] = [
     imageAlt: 'Светлый макет сайта SITEVL с десктопной и мобильной версией',
     relatedServices: [
       { label: 'Создание сайтов', href: '/website-development-vladivostok' },
-      { label: 'Сайт с админкой', href: '/website-admin-vladivostok' },
+      { label: 'Сайт с системой управления', href: '/website-admin-vladivostok' },
       { label: 'Цены на сайты', href: '/prices/websites' },
     ],
     relatedArticles: [
@@ -122,7 +122,7 @@ export const projectCases: ProjectCase[] = [
     path: '/cases/marine-equipment-catalog',
     title: 'Каталог морского оборудования',
     shortDescription:
-      'Проект каталога товаров с категориями, поиском, фильтрами, карточками, PDF-документами, формами связи и админкой на Supabase.',
+      'Проект каталога товаров с категориями, поиском, фильтрами, карточками, PDF-документами, формами связи и панелью управления на Supabase.',
     category: 'Каталог товаров',
     serviceSlug: 'web-application',
     date: '2026-08-05',
@@ -180,11 +180,11 @@ export const projectCases: ProjectCase[] = [
         decoding: 'async',
       },
     ],
-    imageAlt: 'Интерфейс каталога морского оборудования с поиском, фильтрами и админкой',
+    imageAlt: 'Интерфейс каталога морского оборудования с поиском, фильтрами и панелью управления',
     relatedServices: [
-      { label: 'Веб-приложения', href: '/services' },
+      { label: 'Онлайн-сервисы', href: '/services' },
       { label: 'Создание сайтов', href: '/website-development-vladivostok' },
-      { label: 'Сайт с админкой', href: '/website-admin-vladivostok' },
+      { label: 'Сайт с системой управления', href: '/website-admin-vladivostok' },
     ],
     relatedArticles: [
       { label: 'Что такое сайт с админкой', href: '/useful/what-is-admin-website' },

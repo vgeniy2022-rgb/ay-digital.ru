@@ -16,7 +16,7 @@ export function CallToAction() {
               <div>
                 <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-200">Связаться</p>
                 <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">
-                  Опишите задачу, а я подскажу самый простой следующий шаг.
+                  Расскажите о задаче — предложу подходящий формат и следующий шаг.
                 </h2>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">

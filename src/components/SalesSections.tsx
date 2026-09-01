@@ -29,7 +29,7 @@ const deliverables = [
   ['Адаптация под телефон', 'Сайт корректно выглядит на смартфонах и компьютерах.'],
   ['Базовая SEO-структура', 'Заголовки, описания страниц и понятная структура.'],
   ['Подключение домена', 'Помогу подключить домен, если он есть или будет куплен.'],
-  ['Инструкция', 'Объясню, как пользоваться сайтом или админкой.'],
+  ['Инструкция', 'Объясню, как обновлять сайт через панель управления.'],
   ['Возможность переноса', 'Сайт можно перенести на другой хостинг при необходимости.'],
   ['Файлы сайта', 'Передача файлов возможна по договорённости после завершения работы.'],
 ];
@@ -42,7 +42,7 @@ const agreementItems = [
   'материалы от клиента',
   'способ публикации',
   'передачу доступов и файлов',
-  'дальнейшую поддержку',
+  'дальнейшее сопровождение',
 ];
 
 function AdminMockup() {
@@ -85,16 +85,16 @@ export function AdminWebsiteSection() {
       <Container>
         <div className="grid items-center gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           <Reveal>
-            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Сайт с админкой</p>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Управление контентом</p>
             <h2 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl">
-              Сайт, которым можно управлять без программиста
+              Обновляйте сайт самостоятельно
             </h2>
             <p className="mt-5 text-base leading-8 text-muted">
-              Клиент может сам добавлять услуги, менять цены, публиковать отзывы, скрывать старые позиции, обновлять
-              акции и добавлять фото работ через простую админку.
+              Меняйте услуги, цены, отзывы, акции и фотографии через понятную панель — без обращения к разработчику
+              за каждой правкой.
             </p>
             <div className="mt-7">
-              <ButtonLink href={data.site.telegramUrl} showArrow={false}>Хочу сайт с админкой</ButtonLink>
+              <ButtonLink href={data.site.telegramUrl} showArrow={false}>Обсудить проект</ButtonLink>
             </div>
           </Reveal>
           <Reveal delay={0.08}>
@@ -150,7 +150,7 @@ export function WebsiteAudienceSection() {
 export function DirectoryComparisonSection() {
   const { data } = useSiteData();
   const directory = ['короткая информация', 'ограниченное оформление', 'мало места для объяснений', 'не всегда удобно показать актуальные цены', 'сложно передать атмосферу'];
-  const website = ['подробные услуги и цены', 'реальные фото и кейсы', 'отзывы и скрины', 'акции и условия записи', 'кнопки Telegram / WhatsApp / телефон', 'можно подключить админку'];
+  const website = ['подробные услуги и цены', 'реальные фото и кейсы', 'отзывы и скрины', 'акции и условия записи', 'кнопки Telegram / WhatsApp / телефон', 'можно подключить управление контентом'];
 
   return (
     <section className="py-12 sm:py-16">
@@ -181,7 +181,7 @@ export function DirectoryComparisonSection() {
               ))}
             </div>
             <div className="mt-7">
-              <ButtonLink href={data.site.telegramUrl} showArrow={false}>Сделать сайт для моего бизнеса</ButtonLink>
+              <ButtonLink href={data.site.telegramUrl} showArrow={false}>Обсудить сайт для бизнеса</ButtonLink>
             </div>
           </div>
         </Reveal>

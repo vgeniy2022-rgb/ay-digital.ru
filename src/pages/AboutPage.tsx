@@ -26,7 +26,7 @@ const directions = [
 ];
 
 const taskGroups = [
-  { title: 'Сайты и веб-приложения', description: 'Структура страниц, интерфейс, адаптация под телефон, SEO-основа, админка и размещение.', icon: MonitorSmartphone },
+  { title: 'Сайты и онлайн-сервисы', description: 'Структура страниц, интерфейс, адаптация под телефон, SEO-основа, управление контентом и публикация.', icon: MonitorSmartphone },
   { title: 'Компьютеры и ноутбуки', description: 'Настройка Windows и macOS, установка программ, подготовка нового устройства, перенос данных.', icon: Laptop },
   { title: 'Телефоны и техника', description: 'Настройка iPhone и Android, перенос данных, консультации по выбору Apple, Samsung и Xiaomi.', icon: Wrench },
 ];

@@ -37,7 +37,7 @@ export function CasesPage() {
     <PageTransition>
       <SeoHead
         title="Кейсы и реальные проекты — SITEVL"
-        description="Опубликованные кейсы Александра: сайт-портфолио SITEVL и каталог морского оборудования с админкой, SEO-структурой и адаптивным интерфейсом."
+        description="Опубликованные кейсы Александра: сайт-портфолио SITEVL и каталог морского оборудования с системой управления, SEO-структурой и адаптивным интерфейсом."
         canonicalPath="/cases"
         structuredData={casesCollectionSchema()}
       />

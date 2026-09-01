@@ -25,6 +25,11 @@ const categoryOrder = [
   'Базовая подготовка сайта к заявкам',
 ];
 
+const categoryLabels: Record<string, string> = {
+  'Сайты и админки': 'Сайты и управление контентом',
+  'Приложения и прототипы': 'Онлайн-сервисы и прототипы',
+};
+
 function createServicesSchema(services: ReturnType<typeof useSiteData>['data']['services']) {
   return {
     '@context': 'https://schema.org',
@@ -96,7 +101,7 @@ export function ServicesPage() {
                     <div className="mb-6 grid gap-5 lg:grid-cols-[1fr_340px] lg:items-end">
                       <div>
                         <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Категория</p>
-                        <h2 className="mt-2 text-3xl font-extrabold leading-tight sm:text-4xl">{group.category}</h2>
+                        <h2 className="mt-2 text-3xl font-extrabold leading-tight sm:text-4xl">{categoryLabels[group.category] || group.category}</h2>
                       </div>
                       <EditorialPhoto
                         media={getServiceCategoryMedia(group.category)}

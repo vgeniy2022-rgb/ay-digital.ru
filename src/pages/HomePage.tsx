@@ -37,24 +37,24 @@ const websiteDirections = [
   },
   {
     number: '02',
-    title: 'Сайты с админкой',
-    text: 'Самостоятельно меняйте услуги, цены, фотографии, отзывы и акции без правки кода.',
+    title: 'Сайты с системой управления',
+    text: 'Меняйте услуги, цены, фотографии, отзывы и акции самостоятельно — через понятную панель управления.',
     href: '/website-admin-vladivostok',
     media: editorialMedia.sitevlHomeCapture,
     icon: LayoutDashboard,
   },
   {
     number: '03',
-    title: 'Веб-приложения',
-    text: 'Личные кабинеты, учёт, внутренние сервисы и интерфейсы под реальный процесс небольшой команды.',
+    title: 'Веб-сервисы для бизнеса',
+    text: 'Личные кабинеты, учёт и внутренние сервисы, которые упрощают работу небольшой команды.',
     href: '/services',
     media: editorialMedia.developerWorkspace,
     icon: Code2,
   },
   {
     number: '04',
-    title: 'Поддержка и развитие',
-    text: 'Обновление контента, новые разделы, улучшение скорости, аналитики и поисковой видимости.',
+    title: 'Развитие и сопровождение',
+    text: 'Обновляю контент, добавляю разделы и улучшаю скорость, аналитику и поисковую видимость.',
     href: '/prices',
     media: editorialMedia.laptopOffice,
     icon: Gauge,
@@ -73,7 +73,7 @@ const processSteps = [
 const capabilityItems = [
   'Лендинг под конкретное предложение',
   'Многостраничный сайт компании',
-  'Управление контентом через админку',
+  'Самостоятельное управление контентом',
   'Каталог услуг или товаров',
   'Формы, Telegram и WhatsApp',
   'Базовая SEO-подготовка',
@@ -102,7 +102,7 @@ export function HomePage() {
             <h1>Создаю сайты и цифровые продукты для бизнеса</h1>
             <p className="home-cinematic-hero__lead">{homeHero.description}</p>
             <div className="home-cinematic-hero__actions">
-              <ButtonLink to="/website-development-vladivostok">Обсудить сайт</ButtonLink>
+              <ButtonLink to="/website-development-vladivostok">Обсудить проект</ButtonLink>
               <ButtonLink to="/cases" variant="secondary">Смотреть работы</ButtonLink>
               <a className="home-cinematic-hero__telegram" href={site.telegramUrl} target="_blank" rel="noreferrer">
                 <MessageCircle aria-hidden="true" /> Telegram
@@ -123,7 +123,7 @@ export function HomePage() {
           <Reveal className="home-section-intro">
             <div>
               <p className="home-kicker">Что я создаю</p>
-              <h2>От первой идеи до работающего цифрового продукта</h2>
+              <h2>От задачи и структуры до работающего продукта</h2>
             </div>
             <p>Спокойно разбираю задачу, проектирую путь клиента и собираю интерфейс, который выглядит профессионально и остаётся понятным обычному человеку.</p>
           </Reveal>
@@ -153,8 +153,8 @@ export function HomePage() {
           <Reveal className="home-capabilities__grid">
             <div>
               <p className="home-kicker">Сайт под задачу</p>
-              <h2>Не шаблон ради шаблона, а понятный инструмент бизнеса</h2>
-              <p>Показываю услуги, цены, реальные работы и следующий шаг. При необходимости добавляю админку, чтобы изменения не зависели от программиста.</p>
+              <h2>Не шаблон ради шаблона, а инструмент для реальной задачи</h2>
+              <p>Показываю услуги, цены, реальные работы и следующий шаг. Если информация меняется регулярно, добавляю систему управления контентом.</p>
               <div className="home-capabilities__list">
                 {capabilityItems.map((item) => <span key={item}><Check aria-hidden="true" />{item}</span>)}
               </div>

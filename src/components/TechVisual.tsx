@@ -1,7 +1,7 @@
 import { Check, MessageCircle, Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const siteRows = ['Сайты и админки', 'Сборка ПК', 'Перенос данных'];
+const siteRows = ['Сайты и управление', 'Сборка ПК', 'Перенос данных'];
 
 export function TechVisual() {
   return (

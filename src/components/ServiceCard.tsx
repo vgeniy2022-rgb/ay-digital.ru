@@ -6,6 +6,11 @@ type ServiceCardProps = {
   service: Service;
 };
 
+const categoryLabels: Record<string, string> = {
+  'Сайты и админки': 'Сайты и управление контентом',
+  'Приложения и прототипы': 'Онлайн-сервисы и прототипы',
+};
+
 export function ServiceCard({ service }: ServiceCardProps) {
   const Icon = service.icon;
   const { data } = useSiteData();
@@ -21,7 +26,9 @@ export function ServiceCard({ service }: ServiceCardProps) {
           </span>
           <div className="min-w-0">
             {service.category && (
-              <div className="text-xs font-bold uppercase tracking-[0.14em] text-accent">{service.category}</div>
+              <div className="text-xs font-bold uppercase tracking-[0.14em] text-accent">
+                {categoryLabels[service.category] || service.category}
+              </div>
             )}
             <div className="mt-2 flex flex-wrap gap-2">
               {service.badge ? (

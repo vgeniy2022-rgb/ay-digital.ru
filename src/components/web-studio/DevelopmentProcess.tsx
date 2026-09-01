@@ -36,7 +36,7 @@ export function OwnershipStory() {
             После передачи проекта клиент не должен платить мне каждый месяц только за возможность поменять текст или цену.
           </p>
           <div className="studio-ownership__facts">
-            <span><Check aria-hidden="true" /> Контент, предусмотренный админкой, можно менять самостоятельно.</span>
+            <span><Check aria-hidden="true" /> Предусмотренный контент можно менять самостоятельно через панель управления.</span>
             <span><CircleDollarSign aria-hidden="true" /> Домен, платный хостинг и сторонние сервисы могут иметь собственную стоимость.</span>
           </div>
         </div>
@@ -179,7 +179,7 @@ export function StudioFaqAndLinks({ faq, relatedServices, relatedArticles }: Stu
         <StudioHeading
           eyebrow="Перед началом"
           title="Вопросы о создании сайта"
-          description="Короткие ответы про стоимость, сроки, материалы, админку, публикацию и удалённую работу."
+          description="Короткие ответы про стоимость, сроки, материалы, управление контентом, публикацию и удалённую работу."
         />
         <div className="studio-faq__grid">
           {faq.map((item) => (

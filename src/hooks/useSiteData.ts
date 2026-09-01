@@ -190,22 +190,28 @@ function normalizeServices(items: ServiceItem[] | undefined, hasApiData: boolean
       ].filter(Boolean) as string[];
 
       const isAdminWebsite = slug === 'website-with-admin' || item.title === 'Сайт с админкой';
+      const usePolishedPresentation = Boolean(
+        fallback && (slug === 'website-with-admin' || slug === 'simple-app'),
+      );
 
       return {
-        title: item.title,
-        shortTitle: item.shortTitle || item.category || fallback?.shortTitle || item.title,
+        title: usePolishedPresentation ? fallback!.title : item.title,
+        shortTitle: usePolishedPresentation
+          ? fallback!.shortTitle
+          : item.shortTitle || item.category || fallback?.shortTitle || item.title,
         slug,
         path: getServicePath(item, slug, fallback),
         category: item.category || fallback?.category,
-        lead: item.lead || item.shortDescription || fallback?.lead || '',
-        description:
-          item.description || item.fullDescription || item.shortDescription || fallback?.description || item.lead || '',
+        lead: usePolishedPresentation ? fallback!.lead : item.lead || item.shortDescription || fallback?.lead || '',
+        description: usePolishedPresentation
+          ? fallback!.description
+          : item.description || item.fullDescription || item.shortDescription || fallback?.description || item.lead || '',
         bullets: bullets.length ? bullets : fallback?.bullets || [],
-        outcome: item.outcome || item.priceText || fallback?.outcome || '',
+        outcome: usePolishedPresentation ? fallback!.outcome : item.outcome || item.priceText || fallback?.outcome || '',
         duration: item.duration || fallback?.duration,
         format: item.format || fallback?.format,
         badge: item.badge || fallback?.badge,
-        buttonText: item.buttonText || fallback?.buttonText,
+        buttonText: usePolishedPresentation ? fallback!.buttonText : item.buttonText || fallback?.buttonText,
         priceText: isAdminWebsite ? '35 000 ₽' : item.priceText || fallback?.priceText,
         isPopular: isActiveValue(item.isPopular) || fallback?.isPopular,
         showOnHome: isActiveValue(item.showOnHome) || fallback?.showOnHome,
@@ -300,19 +306,24 @@ function applyWebsitePriceOverrides(groups: PriceGroup[]): PriceGroup[] {
         description: 'Одностраничный сайт под услугу, акцию, рекламу или конкретное предложение.',
       },
       'Сайт с админкой': {
-        name: 'Сайт с админкой',
+        name: 'Сайт с системой управления',
         price: '35 000 ₽',
-        description: 'Сайт с простой админкой, где клиент может сам менять услуги, цены, отзывы, акции и фото работ без программиста.',
+        description: 'Сайт, где владелец самостоятельно обновляет услуги, цены, отзывы, акции и фотографии через понятную панель управления.',
+      },
+      'Сайт с системой управления': {
+        name: 'Сайт с системой управления',
+        price: '35 000 ₽',
+        description: 'Сайт, где владелец самостоятельно обновляет услуги, цены, отзывы, акции и фотографии через понятную панель управления.',
       },
       Бизнес: {
         name: 'Бизнес-сайт',
         price: '45 000–65 000 ₽',
-        description: 'Расширенный сайт для бизнеса: больше страниц, структура, кейсы, отзывы, FAQ, акции, базовые legal-страницы и админка.',
+        description: 'Расширенный сайт для бизнеса: больше страниц, кейсы, отзывы, FAQ, акции, служебные разделы и управление контентом.',
       },
       'Бизнес-сайт': {
         name: 'Бизнес-сайт',
         price: '45 000–65 000 ₽',
-        description: 'Расширенный сайт для бизнеса: больше страниц, структура, кейсы, отзывы, FAQ, акции, базовые legal-страницы и админка.',
+        description: 'Расширенный сайт для бизнеса: больше страниц, кейсы, отзывы, FAQ, акции, служебные разделы и управление контентом.',
       },
     };
 

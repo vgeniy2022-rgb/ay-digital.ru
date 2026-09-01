@@ -46,7 +46,7 @@ export const websiteProjectTypeOptions: WebsiteProjectTypeOption[] = [
   { id: 'business-card', label: 'Сайт-визитка', min: 3_000, max: 15_000, includedFeatures: [] },
   { id: 'landing', label: 'Лендинг', min: 8_000, max: 25_000, includedFeatures: [] },
   { id: 'multipage', label: 'Многостраничный сайт', min: 15_000, max: 35_000, includedFeatures: [] },
-  { id: 'admin', label: 'Сайт с админкой', min: 25_000, max: 45_000, includedFeatures: ['admin'] },
+  { id: 'admin', label: 'Сайт с системой управления', min: 25_000, max: 45_000, includedFeatures: ['admin'] },
   { id: 'catalog', label: 'Каталог', min: 40_000, max: 70_000, includedFeatures: ['admin', 'catalog'] },
   { id: 'custom', label: 'Индивидуальный проект', min: 50_000, max: 90_000, includedFeatures: [], requiresEstimate: true },
 ];

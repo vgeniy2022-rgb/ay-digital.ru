@@ -77,7 +77,7 @@ export function PortStory() {
               <span className="studio-catalogue__button">Оставить заявку</span>
             </div>
             <div className="studio-catalogue__status" aria-hidden="true">
-              <span>каталог</span><span>поиск</span><span>документы</span><span>админка</span>
+              <span>каталог</span><span>поиск</span><span>документы</span><span>управление</span>
             </div>
           </div>
         </div>
