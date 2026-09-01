@@ -20,12 +20,12 @@ const entries: PaletteEntry[] = [
   { id: 'cases', label: 'Открыть портфолио', hint: 'Кейсы SITEVL', keywords: 'работы проекты портфолио', path: '/cases', icon: Sparkles },
   { id: 'contacts', label: 'Связаться', hint: 'Telegram, WhatsApp, телефон', keywords: 'контакты написать позвонить', path: '/contacts', icon: CornerDownLeft },
   { id: 'lab', label: 'Открыть SITEVL LAB', hint: 'Мои эксперименты', keywords: 'лаборатория demo experiments', path: '/lab', icon: FlaskConical },
-  { id: 'builder', label: 'Открыть SITEVL Studio', hint: 'Visual Website Builder', keywords: 'конструктор редактор no-code preview', path: '/studio', icon: Gauge },
+  { id: 'builder', label: 'Открыть SITEVL Studio', hint: 'Визуальный конструктор сайтов', keywords: 'конструктор редактор no-code preview', path: '/studio', icon: Gauge },
   { id: 'useful', label: 'Открыть библиотеку', hint: 'Полезные материалы', keywords: 'статьи инструкции помощь', path: '/useful', icon: Search },
   { id: 'windows', label: 'Настройка Windows', hint: 'Коммерческая страница', keywords: 'виндовс ноутбук компьютер', path: '/windows-setup-vladivostok', icon: Gauge },
   { id: 'macbook', label: 'Настройка MacBook', hint: 'Коммерческая страница', keywords: 'mac macos apple ноутбук', path: '/macbook-setup-vladivostok', icon: Gauge },
   { id: 'vladivostok', label: 'Сайты из Владивостока', hint: 'Городская web-история', keywords: 'город vl night jdm студия', path: '/website-development-vladivostok#city', icon: MapPin },
-  { id: 'developer', label: 'Переключить Developer Mode', hint: 'Показать технический слой', keywords: 'dev code route технологии', action: 'developer', icon: Code2 },
+  { id: 'developer', label: 'Переключить режим разработчика', hint: 'Показать технический слой', keywords: 'dev code route технологии', action: 'developer', icon: Code2 },
   { id: 'jdm', label: 'Активировать JDM Palette', hint: 'Скрытая палитра на 7 секунд', keywords: 'night city владивосток easter egg', action: 'jdm', icon: Sparkles },
 ];
 

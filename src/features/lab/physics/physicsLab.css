@@ -25,6 +25,8 @@
   .physics-toolbar { overflow-x: auto; align-items: flex-start; flex-direction: column; }
   .physics-toolbar__create, .physics-presets { min-width: max-content; flex-wrap: nowrap; }
   .physics-toolbar select { width: 100%; max-width: none; flex: 0 0 auto; }
+  .physics-toolbar button, .physics-toolbar select, .physics-inspector button { min-height: 44px; }
+  .physics-inspector header button { width: 44px; }
   .physics-inspector { right: 8px; bottom: 8px; left: 8px; width: auto; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .physics-inspector header { grid-column: 1/-1; }
   .physics-inspector label { min-width: 0; }

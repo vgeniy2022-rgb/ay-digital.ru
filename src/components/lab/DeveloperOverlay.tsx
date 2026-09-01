@@ -20,7 +20,7 @@ export function DeveloperOverlay() {
   return (
     <aside className="sitevl-developer-overlay" aria-live="polite">
       <Code2 aria-hidden="true" />
-      <span>Developer Mode</span>
+      <span>Режим разработчика</span>
       <code>{location.pathname}</code>
       <small>React · TypeScript · React Router · Framer Motion</small>
     </aside>

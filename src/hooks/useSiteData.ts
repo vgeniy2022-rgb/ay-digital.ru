@@ -473,12 +473,6 @@ export function useSiteData(): UseSiteDataResult {
     };
   }, [apiData]);
 
-  useEffect(() => {
-    if (import.meta.env.DEV) {
-      console.log('[CMS] Final normalized services:', data.services);
-    }
-  }, [data.services]);
-
   return {
     data,
     isLoading,

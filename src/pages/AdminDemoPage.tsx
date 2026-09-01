@@ -225,19 +225,19 @@ export function AdminDemoPage() {
 
   return (
     <PageTransition>
-      <SeoHead title="Demo Admin — SITEVL LAB" description="Интерактивная демонстрация управления услугами, ценами и фотографиями сайта." canonicalPath="/lab/admin-demo" noindex />
+      <SeoHead title="Демо админ-панели — SITEVL LAB" description="Интерактивная демонстрация управления услугами, ценами и фотографиями сайта." canonicalPath="/lab/admin-demo" noindex />
       <LabFrame>
         <LabHero
           title="Админ-панель, которую можно попробовать"
           description="Измените главный экран, добавьте услугу, загрузите фотографию или переставьте карточки. Публичная часть обновится сразу, а полноэкранный режим покажет результат без элементов редактора."
-          actions={<button className="lab-button" type="button" onClick={() => setFullscreen(true)}><Maximize2 /> Открыть preview</button>}
+          actions={<button className="lab-button" type="button" onClick={() => setFullscreen(true)}><Maximize2 /> Открыть предпросмотр</button>}
         />
 
         <section className="lab-section admin-demo-section">
           <div className="lab-shell">
             <div className="admin-workspace">
               <aside className="admin-workspace__sidebar">
-                <div className="admin-workspace__brand"><span><LayoutDashboard /></span><div><strong>SITEVL</strong><small>ADMIN DEMO</small></div></div>
+                <div className="admin-workspace__brand"><span><LayoutDashboard /></span><div><strong>SITEVL</strong><small>ДЕМО АДМИНКИ</small></div></div>
                 <nav aria-label="Разделы демонстрационной панели">
                   {adminSections.map((item) => {
                     const Icon = item.icon;
@@ -261,7 +261,7 @@ export function AdminDemoPage() {
                     {section === 'dashboard' ? (
                       <div className="admin-dashboard">
                         <div className="admin-dashboard__stats"><article><span>Услуги</span><strong>{state.services.length}</strong></article><article><span>На сайте</span><strong>{visibleCount}</strong></article><article><span>Фотографии</span><strong>{state.services.filter((item) => item.image).length + 1}</strong></article></div>
-                        <div className="admin-dashboard__welcome"><Check /><div><h2>Демо готово к работе</h2><p>Перейдите в редактор, измените текст, затем откройте preview на весь экран.</p></div></div>
+                        <div className="admin-dashboard__welcome"><Check /><div><h2>Демо готово к работе</h2><p>Перейдите в редактор, измените текст, затем откройте предпросмотр на весь экран.</p></div></div>
                       </div>
                     ) : null}
 
@@ -321,7 +321,7 @@ export function AdminDemoPage() {
                   </div>
 
                   <aside className="admin-workspace__preview">
-                    <div className="admin-workspace__preview-bar"><span>LIVE PREVIEW</span><button type="button" onClick={() => setFullscreen(true)}><Maximize2 /> Развернуть</button></div>
+                    <div className="admin-workspace__preview-bar"><span>ПРЕДПРОСМОТР</span><button type="button" onClick={() => setFullscreen(true)}><Maximize2 /> Развернуть</button></div>
                     <SitePreview state={state} />
                   </aside>
                 </div>
@@ -334,7 +334,7 @@ export function AdminDemoPage() {
         <AnimatePresence>
           {fullscreen ? (
             <motion.div className="admin-fullscreen" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label="Полноэкранный предпросмотр сайта">
-              <div className="admin-fullscreen__bar"><button type="button" onClick={() => setFullscreen(false)}><ArrowLeft /> Вернуться в панель</button><span>PUBLIC PREVIEW · изменения сохраняются локально</span><button type="button" onClick={() => setFullscreen(false)} aria-label="Закрыть полноэкранный режим"><Minimize2 /></button></div>
+              <div className="admin-fullscreen__bar"><button type="button" onClick={() => setFullscreen(false)}><ArrowLeft /> Вернуться в панель</button><span>ПУБЛИЧНЫЙ ПРЕДПРОСМОТР · изменения сохраняются локально</span><button type="button" onClick={() => setFullscreen(false)} aria-label="Закрыть полноэкранный режим"><Minimize2 /></button></div>
               <div className="admin-fullscreen__content"><SitePreview state={state} /></div>
             </motion.div>
           ) : null}

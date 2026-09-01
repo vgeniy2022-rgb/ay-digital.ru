@@ -137,19 +137,22 @@
   .retro-chooser footer small { display: none; }
   .retro-desktop__icons { grid-template-columns: repeat(3, 74px); width: auto; }
   .retro-desktop--classic .retro-desktop__icons { right: 8px; left: 8px; grid-template-columns: repeat(4,1fr); }
-  .retro-window { position: absolute; inset: 38px 8px 43px !important; width: auto; height: auto; }
-  .retro-desktop--classic .retro-window { top: 70px !important; bottom: 8px !important; }
-  .retro-session-controls { top: auto; right: 6px; bottom: 43px; }
+  .retro-window { position: absolute; inset: 38px 8px 57px !important; width: auto !important; height: auto !important; grid-template-rows: 48px minmax(0,1fr) 8px; }
+  .retro-window > header button { width: 44px; height: 44px; }
+  .retro-desktop--classic .retro-window { top: 70px !important; bottom: 57px !important; }
+  .retro-taskbar { height: 50px; }
+  .retro-taskbar button { min-height: 44px; }
+  .retro-session-controls { top: auto; right: 6px; bottom: 57px; }
   .retro-desktop--classic .retro-session-controls { top: 31px; right: 5px; bottom: auto; }
-  .retro-session-controls button { min-height: 34px; padding: 0 8px; }
+  .retro-session-controls button { min-height: 44px; padding: 0 8px; }
   .retro-files { grid-template-columns: 1fr; }
   .retro-files aside { display: none; }
   .retro-file-manager { grid-template-columns: 1fr; }.retro-file-manager aside { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid #777; padding: 6px; }.retro-file-manager aside strong,.retro-file-manager aside label { display: none; }.retro-file-manager aside button { min-width: max-content; min-height: 44px; }.retro-file-manager menu button { min-width: 44px; min-height: 44px; }
   .retro-paint { grid-template-columns: 42px 1fr; }
   .retro-classic-menu { gap: 12px; }
   .retro-classic-menu span { display: none; }
-  .retro-browser > nav { flex-wrap: wrap; }.retro-browser > nav form { order: 2; flex-basis: 100%; }.retro-browser__bookmarks button { min-height: 36px; }.retro-session-controls button { min-width: 44px; }.retro-session-controls button:first-child { font-size: 0; }.retro-session-controls button:first-child svg { width: 16px; }
-  .retro-mail { grid-template-columns: 1fr; }.retro-mail > aside { display: none; }.retro-mail > section { grid-template-columns: 120px 1fr; }.retro-network > div { grid-template-columns: 1fr; }.retro-basic > div { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }.retro-basic output { border-top: 1px solid #31532c; border-left: 0; }.retro-weblab > div { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1.2fr; }.retro-weblab iframe { grid-column: 1; grid-row: 3; }.retro-window.is-maximized { inset: 38px 8px 43px !important; }
+  .retro-browser > nav { flex-wrap: wrap; }.retro-browser > nav form { order: 2; flex-basis: 100%; }.retro-browser__bookmarks button { min-height: 44px; }.retro-session-controls button { min-width: 44px; }.retro-session-controls button:first-child { font-size: 0; }.retro-session-controls button:first-child svg { width: 16px; }
+  .retro-mail { grid-template-columns: 1fr; }.retro-mail > aside { display: none; }.retro-mail > section { grid-template-columns: 120px 1fr; }.retro-network > div { grid-template-columns: 1fr; }.retro-basic > div { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }.retro-basic output { border-top: 1px solid #31532c; border-left: 0; }.retro-weblab > div { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr 1.2fr; }.retro-weblab iframe { grid-column: 1; grid-row: 3; }.retro-window.is-maximized { inset: 38px 8px 57px !important; }
 }
 
 @media (prefers-reduced-motion: reduce) { .is-crt .retro-desktop::after, .is-crt .retro-chooser::after { opacity: .28; } }

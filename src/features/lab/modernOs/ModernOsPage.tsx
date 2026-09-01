@@ -134,15 +134,15 @@ function GenericApp({ id, state, setState, openApp }: { id: ModernAppId; state: 
   return <div className="nova-about"><div className="nova-glyph">N</div><small>ВЕРСИЯ 1.0 · БРАУЗЕРНАЯ РЕДАКЦИЯ</small><h2>SITEVL NOVA</h2><p>Современная виртуальная настольная среда SITEVL. Все файлы, показатели и устройства внутри неё являются частью симуляции.</p><dl><div><dt>Среда отображения</dt><dd>{navigator.userAgent.includes('Safari') ? 'Совместимая с WebKit' : 'Браузерный рендерер'}</dd></div><div><dt>WebGL</dt><dd>{document.createElement('canvas').getContext('webgl') ? 'Доступен' : 'Недоступен'}</dd></div><div><dt>WebGPU</dt><dd>{'gpu' in navigator ? 'Доступен' : 'Недоступен'}</dd></div><div><dt>Окон</dt><dd>{state.windows.length}</dd></div></dl></div>;
 }
 
-type AppContentProps = { window: ModernWindow; state: ModernOsState; setState: React.Dispatch<React.SetStateAction<ModernOsState>>; openApp: (id: ModernAppId) => void; onFullscreen: (windowId: string) => void; onGameLaunch: (id: ModernGameId) => void; onGameResult: (id: ModernGameId, result: ModernGameResult) => void; onAiAction: (action: ModernAiAction) => void };
+type AppContentProps = { window: ModernWindow; state: ModernOsState; setState: React.Dispatch<React.SetStateAction<ModernOsState>>; openApp: (id: ModernAppId) => void; onFullscreen: (windowId: string) => void; onGameLaunch: (id: ModernGameId) => void; onGameResult: (id: ModernGameId, result: ModernGameResult) => void; onAiAction: (action: ModernAiAction) => void; immersive: boolean };
 
-function AppContent({ window, state, setState, openApp, onFullscreen, onGameLaunch, onGameResult, onAiAction }: AppContentProps) {
+function AppContent({ window, state, setState, openApp, onFullscreen, onGameLaunch, onGameResult, onAiAction, immersive }: AppContentProps) {
   if (window.appId === 'files') return <FilesApp state={state} setState={setState} />;
   if (window.appId === 'browser') return <BrowserApp state={state} setState={setState} onFullscreen={() => onFullscreen(window.id)} />;
   if (window.appId === 'notes') return <NotesApp state={state} setState={setState} />;
   if (window.appId === 'settings') return <SettingsApp state={state} setState={setState} />;
   if (window.appId === 'terminal') return <TerminalApp state={state} openApp={openApp} onFullscreen={() => onFullscreen(window.id)} />;
-  if (window.appId === 'games') return <Suspense fallback={<div className="nova-app-loading"><Gamepad2 /><span>Загружаю игры…</span></div>}><ModernGames state={state} haptics={!state.lowPowerMode} onLaunch={onGameLaunch} onState={onGameResult} onFarmChange={(farm) => updateState(setState, (current) => ({ ...current, farm }))} onFullscreen={() => onFullscreen(window.id)} /></Suspense>;
+  if (window.appId === 'games') return <Suspense fallback={<div className="nova-app-loading"><Gamepad2 /><span>Загружаю игры…</span></div>}><ModernGames state={state} haptics={!state.lowPowerMode} fullscreen={immersive} onLaunch={onGameLaunch} onState={onGameResult} onFarmChange={(farm) => updateState(setState, (current) => ({ ...current, farm }))} onFullscreen={() => onFullscreen(window.id)} /></Suspense>;
   if (window.appId === 'media') return <Suspense fallback={<div className="nova-app-loading"><Clapperboard /><span>Загружаю медиаплеер…</span></div>}><ModernMedia haptics={!state.lowPowerMode} osVolume={state.sound / 100} onFullscreen={() => onFullscreen(window.id)} /></Suspense>;
   if (window.appId === 'ai') return <Suspense fallback={<div className="nova-app-loading"><Bot /><span>Загружаю SITEVL AI…</span></div>}><ModernAi state={state} setState={setState} onAction={onAiAction} onFullscreen={() => onFullscreen(window.id)} /></Suspense>;
   if (['code', 'weblab', 'documents', 'archive', 'monitor', 'camera', 'recorder'].includes(window.appId)) return <Suspense fallback={<div className="nova-app-loading"><AppWindow /><span>Загружаю приложение…</span></div>}><ModernUtilities appId={window.appId} state={state} setState={setState} /></Suspense>;
@@ -205,7 +205,7 @@ function ModernWindowView({ window, state, setState, openApp, onFullscreen, onGa
       <AppIcon id={window.appId} label={false} /><strong>{window.title}</strong>
       <button className="nova-window-menu" type="button" onPointerDown={stopControlPointer} onClick={() => { onFocus(window.id); onFullscreen(window.id); }} aria-label={immersive ? 'Выйти из режима приложения на весь экран' : 'Приложение на весь экран'} title={immersive ? 'Выйти из полного экрана приложения' : 'Приложение на весь экран'}>{immersive ? <X /> : <Expand />}</button>
     </header>
-    <div className="nova-window-content"><AppContent window={window} state={state} setState={setState} openApp={openApp} onFullscreen={onFullscreen} onGameLaunch={onGameLaunch} onGameResult={onGameResult} onAiAction={onAiAction} /></div>
+    <div className="nova-window-content"><AppContent window={window} state={state} setState={setState} openApp={openApp} onFullscreen={onFullscreen} onGameLaunch={onGameLaunch} onGameResult={onGameResult} onAiAction={onAiAction} immersive={immersive} /></div>
     {!window.maximized && !immersive && !isModernCompactViewport(viewportWidth) ? <button type="button" className="nova-window-resize" onPointerDown={beginResize} onPointerMove={moveResize} onPointerUp={stop} onPointerCancel={stop} aria-label={`Изменить размер окна ${window.title}`} title="Изменить размер окна" /> : null}
   </motion.section>;
 }

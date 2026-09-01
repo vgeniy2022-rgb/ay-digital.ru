@@ -29,7 +29,7 @@ export function StudioExperienceControls() {
       <span title="Локальное время по часовому поясу Asia/Vladivostok"><Clock3 aria-hidden="true" /> Владивосток {time}</span>
       <button type="button" aria-pressed={nightMode} onClick={() => setNightMode((value) => !value)}>
         {nightMode ? <Power aria-hidden="true" /> : <Moon aria-hidden="true" />}
-        VL Night
+        Ночной режим
       </button>
     </div>
   );

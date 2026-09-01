@@ -274,3 +274,11 @@
   .studio-preview-shell header > button:last-child { display: none; }
   .studio-preview-viewport { padding: 12px; }
 }
+
+@media (max-width: 340px) {
+  .studio-projects-header { gap: 8px; }
+  .studio-wordmark span { display: none; }
+  .studio-projects-header__actions { gap: 6px; }
+  .studio-projects-header__actions button { width: 44px; padding: 0; font-size: 0; }
+  .studio-projects-header__actions button svg { width: 17px; height: 17px; }
+}

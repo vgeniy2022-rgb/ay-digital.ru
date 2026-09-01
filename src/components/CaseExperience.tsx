@@ -24,7 +24,7 @@ function InterfaceConcept({ item, device }: { item: ProjectCase; device: CaseDev
       layout
       transition={{ type: 'spring', stiffness: 230, damping: 28 }}
     >
-      <div className="flex h-9 items-center gap-1.5 border-b border-line bg-slate-50 px-3"><i className="h-2 w-2 rounded-full bg-rose-300" /><i className="h-2 w-2 rounded-full bg-amber-300" /><i className="h-2 w-2 rounded-full bg-emerald-300" /><span className="ml-auto text-[8px] font-bold text-muted">CONCEPT VIEW</span></div>
+      <div className="flex h-9 items-center gap-1.5 border-b border-line bg-slate-50 px-3"><i className="h-2 w-2 rounded-full bg-rose-300" /><i className="h-2 w-2 rounded-full bg-amber-300" /><i className="h-2 w-2 rounded-full bg-emerald-300" /><span className="ml-auto text-[8px] font-bold text-muted">КОНЦЕПТ</span></div>
       <div className={`grid min-h-[310px] ${catalog && device !== 'mobile' ? 'grid-cols-[62px_1fr]' : 'grid-cols-1'}`}>
         {catalog && device !== 'mobile' ? <aside className="bg-ink p-2"><div className="h-5 rounded bg-white/12" /><div className="mt-4 grid gap-2">{Array.from({ length: 5 }, (_, index) => <i className="h-2 rounded bg-white/10" key={index} />)}</div></aside> : null}
         <div className="min-w-0 p-3 sm:p-4">
@@ -53,8 +53,8 @@ export function CaseExperience({ item }: { item: ProjectCase }) {
     <section className="mt-8 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
       <article className="min-w-0 rounded-premium border border-line bg-white/84 p-5 shadow-glass sm:p-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div><p className="text-xs font-extrabold uppercase tracking-[0.16em] text-accent">Device preview</p><h2 className="mt-2 text-2xl font-extrabold">Как интерфейс меняется под экран</h2></div>
-          <div className="inline-flex rounded-full border border-line bg-slate-50 p-1" aria-label="Размер концептуального preview">
+          <div><p className="text-xs font-extrabold uppercase tracking-[0.16em] text-accent">ПРЕДПРОСМОТР УСТРОЙСТВ</p><h2 className="mt-2 text-2xl font-extrabold">Как интерфейс меняется под экран</h2></div>
+          <div className="inline-flex rounded-full border border-line bg-slate-50 p-1" aria-label="Размер концептуального предпросмотра">
             {([
               ['desktop', Monitor, 'Компьютер'],
               ['tablet', Tablet, 'Планшет'],
@@ -75,7 +75,7 @@ export function CaseExperience({ item }: { item: ProjectCase }) {
       </article>
 
       <article className="rounded-premium border border-line bg-ink p-6 text-white shadow-glass sm:p-8">
-        <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-300">Case replay</p>
+        <p className="text-xs font-extrabold uppercase tracking-[0.16em] text-blue-300">РАЗБОР КЕЙСА</p>
         <h2 className="mt-3 text-2xl font-extrabold">Путь проекта</h2>
         <div className="mt-6 flex gap-2" aria-label="Этапы кейса">
           {replay.map((itemReplay, index) => <button className={`h-2 flex-1 rounded-full transition ${step === index ? 'bg-blue-400' : index < step ? 'bg-emerald-400' : 'bg-white/15'}`} type="button" aria-label={itemReplay.title} aria-pressed={step === index} onClick={() => setStep(index)} key={itemReplay.title} />)}

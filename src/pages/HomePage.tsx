@@ -213,11 +213,11 @@ export function HomePage() {
           </Reveal>
           <div className="home-lab-showcase__grid">
             <Link to="/lab" className="home-lab-product">
-              <div><span><LayoutDashboard /></span><small>ОТОБРАННЫЕ ВЕБ-ЭКСПЕРИМЕНТЫ</small><h3>Исследуйте возможности браузера</h3><p>SITEVL Studio, физическая песочница, Modern OS, Retro Computer и бесконечный холст в одной среде.</p></div>
+              <div><span><LayoutDashboard /></span><small>ОТОБРАННЫЕ ВЕБ-ЭКСПЕРИМЕНТЫ</small><h3>Исследуйте возможности браузера</h3><p>SITEVL Studio, физическая песочница, Modern OS, ретро-компьютер и бесконечный холст в одной среде.</p></div>
               <MoveUpRight aria-hidden="true" />
             </Link>
             <Link to="/lab/builder" className="home-lab-product home-lab-product--blue">
-              <div><span><Sparkles /></span><small>LANDING BUILDER</small><h3>Соберите свой первый экран</h3><p>Настройте содержание, стиль и блоки, а затем сохраните снимок получившегося сайта.</p></div>
+              <div><span><Sparkles /></span><small>КОНСТРУКТОР ЛЕНДИНГА</small><h3>Соберите свой первый экран</h3><p>Настройте содержание, стиль и блоки, а затем сохраните снимок получившегося сайта.</p></div>
               <MoveUpRight aria-hidden="true" />
             </Link>
           </div>

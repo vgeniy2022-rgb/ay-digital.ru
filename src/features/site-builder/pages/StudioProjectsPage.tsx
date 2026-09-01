@@ -71,8 +71,8 @@ export function StudioProjectsPage() {
         <div className="studio-projects-header__actions">
           <input ref={importRef} type="file" accept="application/json,.json" hidden onChange={importJson} />
           <button className="is-import" type="button" onClick={() => importRef.current?.click()}><Import /> Импорт JSON</button>
-          <button className="is-ai" type="button" onClick={() => setShowAi(true)}><Sparkles /> Создать с ИИ</button>
-          <button className="is-primary" type="button" onClick={() => setShowTemplates(true)}><Plus /> Новый проект</button>
+          <button className="is-ai" type="button" onClick={() => setShowAi(true)} aria-label="Создать с ИИ"><Sparkles /> Создать с ИИ</button>
+          <button className="is-primary" type="button" onClick={() => setShowTemplates(true)} aria-label="Новый проект"><Plus /> Новый проект</button>
         </div>
       </header>
 

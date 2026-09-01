@@ -96,7 +96,7 @@ export function RetroOsPage() {
     if (id === 'weblab') return <RetroWebLab state={retroState} onChange={updateRetroState} />;
     if (id === 'software') return <RetroSoftware state={retroState} onChange={updateRetroState} />;
     if (id === 'backup') return <RetroBackupApp state={retroState} onChange={updateRetroState} />;
-    if (id === 'about') return <div className="retro-about"><strong>SITEVL Retro Computer</strong><p>Виртуальный интерактивный музей. Параметры не являются характеристиками вашего устройства.</p><dl><dt>CPU</dt><dd>SV-486</dd><dt>RAM</dt><dd>16 MB</dd><dt>Графика</dt><dd>SITEVL VGA</dd><dt>Диск</dt><dd>512 MB</dd><dt>Система</dt><dd>DESK 95</dd></dl></div>;
+    if (id === 'about') return <div className="retro-about"><strong>SITEVL Ретро-компьютер</strong><p>Виртуальный интерактивный музей. Параметры не являются характеристиками вашего устройства.</p><dl><dt>CPU</dt><dd>SV-486</dd><dt>RAM</dt><dd>16 MB</dd><dt>Графика</dt><dd>SITEVL VGA</dd><dt>Диск</dt><dd>512 MB</dd><dt>Система</dt><dd>DESK 95</dd></dl></div>;
     return <RetroControlPanel crt={crt} onCrtChange={setCrt} monochrome={monochrome} onMonochromeChange={setMonochrome} />;
   };
 

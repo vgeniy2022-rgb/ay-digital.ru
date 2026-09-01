@@ -10,7 +10,7 @@ const ModernCircuitGame = lazy(() => import('./ModernCircuitGame').then((module)
 const ModernMatchGame = lazy(() => import('./ModernMatchGame').then((module) => ({ default: module.ModernMatchGame })));
 const ModernFarmGame = lazy(() => import('./ModernFarmGame').then((module) => ({ default: module.ModernFarmGame })));
 
-type Props = { state: ModernOsState; haptics: boolean; onLaunch: (id: ModernGameId) => void; onState: (id: ModernGameId, result: ModernGameResult) => void; onFarmChange: (farm: ModernFarmState) => void; onFullscreen: () => void };
+type Props = { state: ModernOsState; haptics: boolean; fullscreen: boolean; onLaunch: (id: ModernGameId) => void; onState: (id: ModernGameId, result: ModernGameResult) => void; onFarmChange: (farm: ModernFarmState) => void; onFullscreen: () => void };
 const gameCopy: Array<{ id: ModernGameId; title: string; genre: string; description: string; controls: string; icon: typeof Gamepad2 }> = [
   { id: 'core-shooter', title: 'CORE SHOOTER', genre: 'FPS / КАМПАНИЯ', description: 'Связанные секторы, двери, три класса противников и два вида импульсного оружия.', controls: 'WASD · мышь · Пробел · R · E', icon: Crosshair },
   { id: 'blocks', title: 'BLOCKS', genre: 'АРКАДНАЯ ЛОГИКА', description: 'Падающие блоки с очередью, удержанием, призрачной проекцией, уровнями и цепочками линий.', controls: 'Стрелки · Пробел · C', icon: Blocks },
@@ -20,17 +20,16 @@ const gameCopy: Array<{ id: ModernGameId; title: string; genre: string; descript
 ];
 const formatTime = (seconds: number) => seconds < 60 ? `${Math.round(seconds)} с` : `${Math.floor(seconds / 60)} ч ${String(Math.round(seconds % 60)).padStart(2, '0')} мин`;
 
-export function ModernGames({ state, haptics, onLaunch, onState, onFarmChange, onFullscreen }: Props) {
-  const [game, setGame] = useState<ModernGameId | null>(null); const [session, setSession] = useState(0); const [gameFullscreen, setGameFullscreen] = useState(false); const startedAt = useRef(0); const activeMs = useRef(0); const reported = useRef(false);
+export function ModernGames({ state, haptics, fullscreen, onLaunch, onState, onFarmChange, onFullscreen }: Props) {
+  const [game, setGame] = useState<ModernGameId | null>(null); const [session, setSession] = useState(0); const startedAt = useRef(0); const activeMs = useRef(0); const reported = useRef(false);
   const activePlayTime = () => (activeMs.current + (!document.hidden && startedAt.current ? performance.now() - startedAt.current : 0)) / 1000;
   const start = (id: ModernGameId) => { onLaunch(id); activeMs.current = 0; startedAt.current = document.hidden ? 0 : performance.now(); reported.current = false; setGame(id); setSession((value) => value + 1); };
   const recordAbandonedSession = () => { if (game && !reported.current) onState(game, { score: 0, playTime: activePlayTime() }); };
   const restart = () => { if (game) { recordAbandonedSession(); onLaunch(game); activeMs.current = 0; startedAt.current = document.hidden ? 0 : performance.now(); reported.current = false; setSession((value) => value + 1); } };
-  const exit = () => { recordAbandonedSession(); if (gameFullscreen) onFullscreen(); setGameFullscreen(false); setGame(null); };
-  const toggleFullscreen = () => { setGameFullscreen((value) => !value); onFullscreen(); };
+  const exit = () => { recordAbandonedSession(); if (fullscreen) onFullscreen(); setGame(null); };
   const reportResult = (id: ModernGameId, result: ModernGameResult) => { if (result.completed) reported.current = true; onState(id, result); };
   useEffect(() => { const visibility = () => { if (document.hidden && startedAt.current) { activeMs.current += performance.now() - startedAt.current; startedAt.current = 0; } else if (!document.hidden && game && !startedAt.current) startedAt.current = performance.now(); }; document.addEventListener('visibilitychange', visibility); return () => document.removeEventListener('visibilitychange', visibility); }, [game]);
-  const props = game ? { haptics, progress: state.games[game], onExit: exit, onRestart: restart, onResult: reportResult, onFullscreen: toggleFullscreen } : null;
+  const props = game ? { haptics, progress: state.games[game], onExit: exit, onRestart: restart, onResult: reportResult, onFullscreen } : null;
   if (game && props) return <Suspense fallback={<div className="nova-app-loading nova-game-loading"><Gamepad2 /><span>Загружаю игровой модуль…</span></div>}>{game === 'core-shooter' ? <ModernCoreShooter key={session} {...props} /> : game === 'blocks' ? <ModernBlocksGame key={session} {...props} /> : game === 'racing' ? <ModernCircuitGame key={session} {...props} /> : game === 'match' ? <ModernMatchGame key={session} {...props} /> : <ModernFarmGame key={session} {...props} farm={state.farm} lowPowerMode={state.lowPowerMode} onFarmChange={onFarmChange} />}</Suspense>;
   return <GameLibrary state={state} onStart={start} />;
 }

@@ -13,7 +13,7 @@ const usefulLinks = [
   { label: 'Приложения и чек-листы', href: '/useful/apps-checklists' },
   { label: 'SITEVL LAB', href: '/lab' },
   { label: 'Мини-бриф', href: '/brief' },
-  { label: 'Changelog', href: '/changelog' },
+  { label: 'Журнал изменений', href: '/changelog' },
 ];
 
 export function Footer() {

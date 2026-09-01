@@ -76,7 +76,7 @@ export const defaultRetroState: RetroState = {
   windows: {},
   files: [
     file('root', null, 'SITEVL HD', 'folder'), file('documents', 'root', 'Документы', 'folder'), file('pictures', 'root', 'Изображения', 'folder'), file('programs', 'root', 'Программы', 'folder'), file('system', 'root', 'Система', 'folder'), file('games', 'root', 'Игры', 'folder'), file('internet', 'root', 'Интернет', 'folder'),
-    file('welcome', 'documents', 'ПРОЧТИ.TXT', 'text', 'SITEVL Retro Computer — интерактивный компьютерный музей.\n\nDESK 95 даёт доступ к общему виртуальному диску и архивным узлам сети.'),
+    file('welcome', 'documents', 'ПРОЧТИ.TXT', 'text', 'SITEVL Ретро-компьютер — интерактивный компьютерный музей.\n\nDESK 95 даёт доступ к общему виртуальному диску и архивным узлам сети.'),
     file('notes', 'documents', 'ЗАМЕТКИ.TXT', 'text', 'ЗАМЕТКИ SITEVL LAB\n\nБраузер и есть компьютер.\nКаталог LAB обновляется и не привязан к фиксированному числу экспериментов.'),
     file('classified', 'system', 'OLD_LOG.TXT', 'text', 'MONO-STATION ОТВЕТИЛА КОДОМ 1998. Проверьте почту и сетевое окружение.', true, true),
     file('blackbox', 'system', 'PROJECT_BLACKBOX.TXT', 'text', 'PROJECT BLACKBOX\n\nКаждая система — другой взгляд на один и тот же набор данных. Вы нашли архитектурный секрет.', true, true),

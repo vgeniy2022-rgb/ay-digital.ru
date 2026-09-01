@@ -7,9 +7,9 @@ import { changelogEntries } from '../data/lab';
 export function ChangelogPage() {
   return (
     <PageTransition>
-      <SeoHead title="Changelog — SITEVL" description="Фактические изменения интерактивного интерфейса SITEVL." canonicalPath="/changelog" noindex />
+      <SeoHead title="Журнал изменений — SITEVL" description="Фактические изменения интерактивного интерфейса SITEVL." canonicalPath="/changelog" noindex />
       <LabFrame>
-        <LabHero title="Changelog" description="Короткий журнал изменений текущей версии. Здесь нет выдуманной истории релизов: только то, что действительно подготовлено в проекте." />
+        <LabHero title="Журнал изменений" description="Короткий журнал изменений текущей версии. Здесь нет выдуманной истории релизов: только то, что действительно подготовлено в проекте." />
         <section className="lab-section">
           <div className="lab-shell">
             <LabSectionHeading eyebrow="Текущая версия" title="Что изменилось" description="Статус относится к состоянию кода. Production deployment не выполнялся." />

@@ -48,7 +48,11 @@
   .infinite-canvas-toolbar strong { display: none; }
   .infinite-canvas-toolbar button { min-width: 44px; min-height: 44px; padding: 0 9px; }
   .infinite-canvas-toolbar button span { display: none; }
+  .infinite-canvas-subbar button, .infinite-canvas-subbar select,
+  .infinite-canvas-inspector button, .infinite-canvas-inspector input[type=color],
+  .infinite-canvas-portal-button { min-height: 44px; }
   .infinite-canvas-inspector { top: 8px; right: 8px; width: min(280px, calc(100% - 16px)); }
+  .infinite-canvas-inspector section { grid-template-columns: 1fr 44px auto 44px; }
   .infinite-canvas-hint { right: 9px; bottom: calc(9px + env(safe-area-inset-bottom)); }
   .infinite-canvas-hint span { display: none; }
 }

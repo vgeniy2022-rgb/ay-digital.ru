@@ -343,7 +343,7 @@ export function WebsiteBuilderPage() {
               </aside>
 
               <section className="builder-preview-panel">
-                <header><span>LIVE LANDING</span><div><button className={device === 'desktop' ? 'is-active' : ''} type="button" onClick={() => setDevice('desktop')} aria-label="Версия для компьютера"><Monitor /></button><button className={device === 'mobile' ? 'is-active' : ''} type="button" onClick={() => setDevice('mobile')} aria-label="Мобильная версия"><Smartphone /></button><button type="button" onClick={() => setFullscreen(true)} aria-label="Открыть на весь экран"><Maximize2 /></button></div></header>
+                <header><span>ПРЕДПРОСМОТР ЛЕНДИНГА</span><div><button className={device === 'desktop' ? 'is-active' : ''} type="button" onClick={() => setDevice('desktop')} aria-label="Версия для компьютера"><Monitor /></button><button className={device === 'mobile' ? 'is-active' : ''} type="button" onClick={() => setDevice('mobile')} aria-label="Мобильная версия"><Smartphone /></button><button type="button" onClick={() => setFullscreen(true)} aria-label="Открыть на весь экран"><Maximize2 /></button></div></header>
                 <div className="builder-preview-stage" data-device={device}><div className="builder-preview-canvas"><LandingPreview draft={draft} previewRef={previewRef} /></div></div>
               </section>
             </div>
@@ -355,7 +355,7 @@ export function WebsiteBuilderPage() {
         <AnimatePresence>
           {fullscreen ? (
             <motion.div className="builder-fullscreen" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label="Полноэкранный просмотр лендинга">
-              <header><button type="button" onClick={() => setFullscreen(false)}><X /> Закрыть preview</button><span>{session.sessionId} · {formatRemaining(remaining)}</span><button type="button" onClick={saveScreenshot}><Download /> Снимок</button></header>
+              <header><button type="button" onClick={() => setFullscreen(false)}><X /> Закрыть предпросмотр</button><span>{session.sessionId} · {formatRemaining(remaining)}</span><button type="button" onClick={saveScreenshot}><Download /> Снимок</button></header>
               <div><LandingPreview draft={draft} previewRef={previewRef} /></div>
             </motion.div>
           ) : null}

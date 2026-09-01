@@ -32,18 +32,10 @@ function createPublicDataUrl(apiUrl: string) {
 
 export async function fetchPublicSiteData(): Promise<PublicSiteData | null> {
   if (!cmsConfig.apiUrl) {
-    if (import.meta.env.DEV) {
-      console.log('[CMS] VITE_CMS_API_URL is not set');
-    }
-
     return null;
   }
 
   const finalUrl = createPublicDataUrl(cmsConfig.apiUrl);
-
-  if (import.meta.env.DEV) {
-    console.log('[CMS] Final CMS url:', finalUrl);
-  }
 
   const controller = new AbortController();
   const timeoutId = window.setTimeout(() => controller.abort('CMS request timeout'), cmsConfig.timeoutMs);
@@ -57,26 +49,15 @@ export async function fetchPublicSiteData(): Promise<PublicSiteData | null> {
       signal: controller.signal,
     });
 
-    if (import.meta.env.DEV) {
-      console.log('[CMS] Response status:', response.status);
-    }
-
     if (!response.ok) {
       throw new Error(`CMS request failed: ${response.status}`);
     }
 
     const payload = (await response.json()) as AppsScriptResponse | PublicSiteData;
-    const data = parsePublicSiteData(payload);
-
+    return parsePublicSiteData(payload);
+  } catch {
     if (import.meta.env.DEV) {
-      console.log('[CMS] Received JSON:', payload);
-      console.log('[CMS] Parsed public data:', data);
-    }
-
-    return data;
-  } catch (error) {
-    if (import.meta.env.DEV) {
-      console.warn('[CMS] Request failed, using fallback data:', error);
+      console.warn('[CMS] Запрос недоступен, используются резервные данные.');
     }
 
     return null;

@@ -204,6 +204,6 @@ export const changelogEntries = [
     date: '2026-08-27',
     status: 'Готово к публикации',
     title: 'SITEVL Experience 2026',
-    items: ['SITEVL Lab', 'Website Builder', 'Demo Admin', 'Architecture Explorer', 'интерактивный бриф и Command Palette'],
+    items: ['SITEVL LAB', 'конструктор сайтов', 'демо админ-панели', 'исследователь архитектуры', 'интерактивный бриф и палитра команд'],
   },
 ];
