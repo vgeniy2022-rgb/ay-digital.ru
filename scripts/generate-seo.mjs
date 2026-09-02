@@ -38,6 +38,14 @@ const baseRoutes = [
     schemaType: 'Service',
   },
   {
+    path: '/ai-website',
+    title: 'AI-конструктор концепции сайта — SITEVL',
+    description: 'Опишите бизнес и получите безопасную концепцию сайта: структуру, тексты, адаптивный интерактивный прототип и оценку по действующему прайсу SITEVL.',
+    priority: 0.9,
+    changefreq: 'weekly',
+    schemaType: 'Service',
+  },
+  {
     path: '/prices',
     title: 'Цены на IT-услуги во Владивостоке — SITEVL',
     description: 'Актуальные стартовые цены на сайты, мобильные приложения, SITEVL Care, настройку техники и другие IT-услуги во Владивостоке.',

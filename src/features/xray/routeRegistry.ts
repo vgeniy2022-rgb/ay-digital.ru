@@ -13,6 +13,11 @@ const staticRoutes: Record<string, StaticRoute> = {
     componentName: 'MobileAppsPage',
     sections: ['AppsHero', 'ProductTypes', 'Platforms', 'Capabilities', 'DevelopmentStages', 'Pricing', 'SitevlCare', 'FAQ', 'CTA'],
   },
+  '/ai-website': {
+    title: 'AI-концепция сайта',
+    componentName: 'AiWebsitePage',
+    sections: ['AiHero', 'GenerationModes', 'BusinessBrief', 'SafePreview', 'ConceptEditor', 'PriceRecommendation', 'LeadForm'],
+  },
   '/services': {
     title: 'Услуги',
     componentName: 'ServicesPage',

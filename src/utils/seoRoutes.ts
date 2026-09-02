@@ -7,6 +7,7 @@ const staticRouteLabels: Record<string, string> = {
   '/': 'Главная',
   '/services': 'Услуги',
   '/mobile-apps': 'Мобильные приложения',
+  '/ai-website': 'AI-концепция сайта',
   '/prices': 'Цены',
   '/cases': 'Кейсы',
   '/about': 'Обо мне',
