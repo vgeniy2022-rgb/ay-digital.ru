@@ -1,6 +1,7 @@
 import type { AIProvider, AiGenerateRequest, AiProjectType, AiVisualStyle, SitePlan, SitePlanSectionType } from './types';
 
 const pageNames = ['Главная', 'Услуги', 'О проекте', 'Контакты', 'Портфолио'];
+const DEFAULT_GEMINI_ENDPOINT = '/api/ai';
 
 function inferBusinessName(prompt: string) {
   const quoted = prompt.match(/[«"]([^»"]{2,80})[»"]/);
@@ -78,7 +79,7 @@ export class LocalAIProvider implements AIProvider {
 export class GeminiAIProvider implements AIProvider {
   readonly id = 'gemini' as const;
   readonly label = 'Google Gemini';
-  constructor(private readonly endpoint = import.meta.env?.VITE_SITEVL_AI_ENDPOINT || '') {}
+  constructor(private readonly endpoint = import.meta.env?.VITE_SITEVL_AI_ENDPOINT || DEFAULT_GEMINI_ENDPOINT) {}
   async isAvailable() { return Boolean(this.endpoint); }
   async generateStructured<T>(request: AiGenerateRequest): Promise<T> {
     if (!this.endpoint) throw new Error('Gemini endpoint не настроен.');
@@ -108,7 +109,7 @@ export const CloudflareAIProvider = GeminiAIProvider;
 
 export function getAiProvider(mode: 'auto' | 'local' | 'cloud' = 'auto') {
   const cloud = new GeminiAIProvider();
-  if (mode === 'cloud' || (mode === 'auto' && import.meta.env?.VITE_SITEVL_AI_ENDPOINT)) return cloud;
+  if (mode === 'cloud' || (mode === 'auto' && typeof window !== 'undefined')) return cloud;
   return new LocalAIProvider();
 }
 
@@ -116,6 +117,6 @@ export function getAiCapabilities() {
   return {
     webGpu: typeof navigator !== 'undefined' && 'gpu' in navigator,
     local: true,
-    cloud: Boolean(import.meta.env?.VITE_SITEVL_AI_ENDPOINT),
+    cloud: true,
   };
 }

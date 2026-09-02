@@ -31,6 +31,7 @@ test('unknown components and malicious markup never enter the project', () => {
 
 test('local provider is available and Gemini provider is honest when unset', async () => {
   assert.equal(await new LocalAIProvider().isAvailable(), true);
+  assert.equal(await new GeminiAIProvider().isAvailable(), true);
   assert.equal(await new GeminiAIProvider('').isAvailable(), false);
   await assert.rejects(() => new GeminiAIProvider('').generateStructured({ kind: 'site-plan', prompt: 'test' }), /не настроен/);
 });

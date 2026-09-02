@@ -102,7 +102,7 @@ export function ModernAi({ state, setState, onAction, onFullscreen }: { state: M
         {loading ? <article className="is-assistant is-loading"><b>AI</b><div><LoaderCircle /><span>Формирую ответ…</span></div></article> : null}
         <div ref={endRef} />
       </section>
-      {!capabilities.cloud ? <div className="nova-ai-unavailable"><Bot /><span><strong>Gemini пока не настроен.</strong><small>Укажите серверный `GEMINI_API_KEY` в Vercel и `VITE_SITEVL_AI_ENDPOINT=/api/ai`. Ключ никогда не должен иметь префикс `VITE_`. Быстрые системные действия работают локально.</small></span></div> : null}
+      {!capabilities.cloud ? <div className="nova-ai-unavailable"><Bot /><span><strong>Gemini пока не настроен.</strong><small>Серверный Gemini endpoint недоступен. Быстрые системные действия продолжают работать локально.</small></span></div> : null}
       {error ? <p className="nova-ai-error">{error}</p> : null}
       <form onSubmit={(event) => { event.preventDefault(); void send(); }}><textarea value={input} onChange={(event) => setInput(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void send(); } }} placeholder={capabilities.cloud ? 'Спросите о SITEVL NOVA…' : 'Например: «Открой браузер»'} /><button type={loading ? 'button' : 'submit'} disabled={!loading && !input.trim()} onClick={loading ? () => controllerRef.current?.abort() : undefined} aria-label={loading ? 'Остановить генерацию' : 'Отправить'}>{loading ? <Square /> : <Send />}</button></form>
     </main>
