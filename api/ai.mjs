@@ -1,4 +1,4 @@
-const DEFAULT_MODEL = 'gemini-3.7-flash';
+const DEFAULT_MODEL = 'gemini-2.5-flash-lite';
 const ALLOWED_KINDS = new Set(['site-plan', 'rewrite', 'site-action']);
 const MAX_PROMPT_LENGTH = 12000;
 
