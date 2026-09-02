@@ -35,6 +35,6 @@
 
 Вместо собственных имён подходит стандартная полная Vercel/Upstash-пара `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` либо `KV_REST_API_URL` / `KV_REST_API_TOKEN`.
 
-Backend поддерживает эту пару напрямую. Значения не выводились, не копировались во frontend и не добавлялись в Git. Окончательное подтверждение `configured:true`, реальной записи и retention выполняется после production deployment.
+Backend поддерживает эту пару напрямую. Значения не выводились, не копировались во frontend и не добавлялись в Git. После production deployment подтверждены `configured:true`, запись двух безопасных QA-лидов, чтение закрытой записи владельцем и TTL около 90 дней.
 
-После подключения хранилища обязательны: redeploy, `configured:true`, реальный Gemini-запрос, безопасная тестовая заявка, подтверждение сохранения в закрытом хранилище и production browser QA.
+Release-gate завершён: redeploy, `configured:true`, реальный Gemini-запрос, безопасная тестовая заявка, подтверждение закрытой записи и production browser QA выполнены 2026-09-03.
