@@ -2,6 +2,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, Check, Dices, FlaskConical, Keyboard, RotateCcw, Smartphone, Timer, Trophy } from 'lucide-react';
 import { useMemo, useState, type PointerEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getPopularLabExperiments, useLabAnalytics } from '../analytics/labAnalyticsContext';
 import { labAchievements, labExperiments } from '../core/catalog';
 import { LabShell } from '../core/LabShell';
 import { resetLabProgress } from '../core/storage';
@@ -9,6 +10,14 @@ import { useLabState } from '../core/useLabState';
 import type { LabExperiment, LabExperimentGroup } from '../core/types';
 import { labRu } from '../i18n/ru';
 import './labHome.css';
+
+const labNumber = new Intl.NumberFormat('ru-RU');
+const labPlural = new Intl.PluralRules('ru-RU');
+
+function formatLabCount(value: number, words: { one: string; few: string; many: string }) {
+  const category = labPlural.select(value);
+  return `${labNumber.format(value)} ${category === 'one' ? words.one : category === 'few' ? words.few : words.many}`;
+}
 
 const labGroups: Array<{ id: LabExperimentGroup; eyebrow: string; title: string; description: string }> = [
   { id: 'CREATE', eyebrow: 'СОЗДАВАТЬ', title: 'Инструменты для собственных идей', description: 'Собирайте сайты и свободные визуальные структуры, сохраняйте результат и возвращайтесь к нему позже.' },
@@ -55,10 +64,12 @@ function formatTime(seconds: number) {
 
 export function LabHomePage() {
   const navigate = useNavigate();
+  const { stats: globalStats, status: globalStatsStatus } = useLabAnalytics();
   const { state, exploredCount, completedCount, level } = useLabState();
   const [resetNotice, setResetNotice] = useState(false);
   const unlocked = useMemo(() => labAchievements.filter((achievement) => state.achievements[achievement.id]), [state.achievements]);
   const lastExperiment = labExperiments.find((item) => item.id === state.lastExperiment);
+  const popularExperiments = useMemo(() => getPopularLabExperiments(globalStats), [globalStats]);
   const surprise = () => {
     const unfinished = labExperiments.filter((item) => !state.completed.includes(item.id));
     const pool = unfinished.length ? unfinished : labExperiments;
@@ -77,6 +88,11 @@ export function LabHomePage() {
       <h1>ЭКСПЕРИМЕНТАЛЬНАЯ<br />ВЕБ-СРЕДА</h1>
       <p>{labRu.description}</p>
       <div className="lab-home-hero__actions"><button type="button" onClick={surprise}><Dices />{labRu.random}</button><span>{labRu.localProgress}</span></div>
+      <div className={`lab-global-stats is-${globalStatsStatus}`} role="status" aria-live="polite">
+        {globalStatsStatus === 'ready' && globalStats
+          ? <><strong>{formatLabCount(globalStats.visits, { one: 'посещение', few: 'посещения', many: 'посещений' })}</strong><i /><strong>{formatLabCount(globalStats.uniqueVisitors, { one: 'исследователь', few: 'исследователя', many: 'исследователей' })}</strong></>
+          : globalStatsStatus === 'loading' ? 'СТАТИСТИКА LAB ОБНОВЛЯЕТСЯ' : 'Статистика временно недоступна'}
+      </div>
       <div className="lab-home-signal" aria-hidden="true"><span /><span /><span /><span /><i /></div>
     </section>
 
@@ -107,6 +123,11 @@ export function LabHomePage() {
         </section>;
       })}
     </section>
+
+    {popularExperiments.length ? <section className="lab-popular" aria-labelledby="lab-popular-title">
+      <header><small>ГЛОБАЛЬНЫЕ ЗАПУСКИ</small><h2 id="lab-popular-title">Популярные эксперименты</h2><p>Анонимная агрегированная статистика открытий экспериментов SITEVL LAB.</p></header>
+      <ol>{popularExperiments.map(({ experiment, starts }, index) => <li key={experiment.id}><span>{String(index + 1).padStart(2, '0')}</span><Link to={experiment.href}>{experiment.title}</Link><strong>{formatLabCount(starts, { one: 'запуск', few: 'запуска', many: 'запусков' })}</strong></li>)}</ol>
+    </section> : null}
 
     <section className="lab-achievements-panel"><div><small>{labRu.achievementSystem}</small><h2>{labRu.achievementSignals}</h2></div><div>{labAchievements.map((achievement) => <article className={state.achievements[achievement.id] ? 'is-unlocked' : ''} key={achievement.id}><i>{state.achievements[achievement.id] ? <Check /> : null}</i><span><em>{achievement.category} · {achievement.xp} XP</em><strong>{achievement.title}</strong><small>{achievement.description}</small></span></article>)}</div></section>
     {resetNotice ? <div className="lab-toast" role="status">{labRu.resetDone}</div> : null}

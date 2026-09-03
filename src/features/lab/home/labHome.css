@@ -8,6 +8,11 @@
 .lab-home-hero__actions button { display: inline-flex; min-height: 50px; align-items: center; gap: 10px; border: 1px solid #477cd4; border-radius: 8px; padding: 0 18px; color: #fff; background: #245dbd; font-size: 11px; font-weight: 850; letter-spacing: .08em; cursor: pointer; }
 .lab-home-hero__actions svg { width: 17px; }
 .lab-home-hero__actions span { color: var(--lab-muted); font: 700 10px/1.5 ui-monospace, monospace; letter-spacing: .08em; }
+.lab-global-stats { position: relative; z-index: 2; display: flex; width: fit-content; min-height: 25px; align-items: center; gap: 7px; margin-top: 16px; color: var(--lab-muted); font: 750 10px/1.4 ui-monospace, monospace; letter-spacing: .055em; }
+.lab-global-stats strong { color: #fff; font-size: 12px; }
+.lab-global-stats i { width: 3px; height: 3px; border-radius: 50%; background: var(--lab-blue); box-shadow: 0 0 8px var(--lab-blue); }
+.lab-global-stats.is-loading { font-size: 8px; letter-spacing: .12em; opacity: .72; }
+.lab-global-stats.is-unavailable { font-size: 9px; letter-spacing: .06em; }
 .lab-home-signal { position: absolute; z-index: 0; right: -2%; bottom: -35%; width: min(28vw, 360px); aspect-ratio: 1; border: 1px solid var(--lab-line); border-radius: 50%; opacity: .28; pointer-events: none; }
 .lab-home-signal::before, .lab-home-signal::after { position: absolute; content: ''; border: 1px solid var(--lab-line); border-radius: 50%; inset: 16%; }
 .lab-home-signal::after { inset: 35%; }
@@ -79,6 +84,18 @@
 .lab-module > a svg { width: 16px; }
 .lab-module.is-explored { box-shadow: inset 0 2px var(--module-accent); }
 .lab-module.is-completed { box-shadow: inset 0 3px #72dca9; }
+.lab-popular { display: grid; grid-template-columns: .75fr 1.25fr; width: min(calc(100% - 48px), 1420px); gap: 60px; margin: 72px auto 0; border-top: 1px solid var(--lab-line); padding-top: 48px; }
+.lab-popular header { display: grid; align-content: start; gap: 10px; }
+.lab-popular header small { color: var(--lab-blue); font: 850 9px/1 ui-monospace, monospace; letter-spacing: .13em; }
+.lab-popular h2 { margin: 0; font-size: clamp(30px, 3vw, 44px); line-height: 1; letter-spacing: -.035em; }
+.lab-popular header p { max-width: 430px; margin: 0; color: var(--lab-muted); font-size: 12px; line-height: 1.55; }
+.lab-popular ol { display: grid; margin: 0; padding: 0; list-style: none; }
+.lab-popular li { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto; min-height: 64px; align-items: center; gap: 14px; border-bottom: 1px solid var(--lab-line); }
+.lab-popular li:first-child { border-top: 1px solid var(--lab-line); }
+.lab-popular li > span { color: var(--lab-blue); font: 800 9px/1 ui-monospace, monospace; }
+.lab-popular li a { overflow: hidden; color: #fff; font-size: 15px; font-weight: 750; text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
+.lab-popular li a:hover { color: var(--lab-blue); }
+.lab-popular li strong { color: var(--lab-muted); font: 750 9px/1 ui-monospace, monospace; letter-spacing: .05em; }
 .lab-preview-builder { position: relative; width: 74%; height: 70%; border: 1px solid rgba(255,255,255,.2); border-radius: 7px; background: #f2f4f8; box-shadow: 0 24px 70px rgba(0,0,0,.35); transform: perspective(700px) rotateX(4deg) rotateY(-5deg); }
 .lab-preview-builder > i { position: absolute; top: 0; bottom: 0; left: 0; width: 22%; border-right: 1px solid #d9dde5; background: #e6e9ef; }
 .lab-preview-builder > div { position: absolute; top: 18%; right: 8%; left: 30%; display: grid; gap: 10px; }
@@ -140,6 +157,7 @@
   .lab-level-panel__stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .lab-module, .lab-module:nth-child(n) { grid-column: span 12; }
   .lab-achievements-panel { grid-template-columns: 1fr; gap: 28px; }
+  .lab-popular { grid-template-columns: 1fr; gap: 26px; }
 }
 @media (max-width: 600px) {
   .lab-home-hero { width: calc(100% - 28px); min-height: 450px; padding: 54px 0 36px; }
@@ -158,6 +176,9 @@
   .lab-module__facts { flex-wrap: wrap; gap: 10px; padding-block: 10px; }
   .lab-achievements-panel { width: calc(100% - 28px); margin-top: 60px; padding-bottom: 70px; }
   .lab-achievements-panel > div:last-child { grid-template-columns: 1fr; }
+  .lab-popular { width: calc(100% - 28px); margin-top: 56px; padding-top: 38px; }
+  .lab-popular li { grid-template-columns: 30px minmax(0, 1fr); gap: 10px; padding: 10px 0; }
+  .lab-popular li strong { grid-column: 2; }
   .lab-continue-panel, .lab-level-panel { width: calc(100% - 28px); }
   .lab-continue-panel { align-items: stretch; flex-direction: column; }
   .lab-continue-panel a { justify-content: center; }

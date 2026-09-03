@@ -4,6 +4,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { SeoHead } from './components/SeoHead';
 import { AppLayout } from './layouts/AppLayout';
 import { privacyContent, termsContent } from './data/legal';
+import { LabAnalyticsProvider } from './features/lab/analytics/LabAnalyticsProvider';
 
 const HomePage = lazy(() => import('./pages/HomePage').then((module) => ({ default: module.HomePage })));
 const MobileAppsPage = lazy(() => import('./pages/MobileAppsPage').then((module) => ({ default: module.MobileAppsPage })));
@@ -66,26 +67,28 @@ export default function App() {
 
   if (location.pathname === '/lab' || location.pathname.startsWith('/lab/')) {
     return (
-      <Suspense fallback={<div className="min-h-screen bg-[#0c0e12]" />}>
-        <Routes>
-          <Route path="/lab" element={<LabHomePage />} />
-          <Route path="/lab/builder" element={<LabBuilderPage />} />
-          <Route path="/lab/2d" element={<BreakWebsitePage />} />
-          <Route path="/lab/3d" element={<TheRoomPage />} />
-          <Route path="/lab/physics" element={<PhysicsLabPage />} />
-          <Route path="/lab/os" element={<Navigate to="/lab/modern-os" replace />} />
-          <Route path="/lab/retro" element={<RetroOsPage />} />
-          <Route path="/lab/modern-os" element={<ModernOsPage />} />
-          <Route path="/lab/canvas" element={<InfiniteCanvasPage />} />
-          <Route path="/lab/website-builder" element={<Navigate to="/lab/builder" replace />} />
-          <Route path="/lab/builder-legacy" element={<WebsiteBuilderPage />} />
-          <Route path="/lab/admin-demo" element={<Navigate to="/lab" replace />} />
-          <Route path="/lab/architecture" element={<Navigate to="/lab" replace />} />
-          <Route path="/lab/web-evolution" element={<Navigate to="/lab" replace />} />
-          <Route path="/lab/seo" element={<Navigate to="/lab" replace />} />
-          <Route path="*" element={<Navigate to="/lab" replace />} />
-        </Routes>
-      </Suspense>
+      <LabAnalyticsProvider>
+        <Suspense fallback={<div className="min-h-screen bg-[#0c0e12]" />}>
+          <Routes>
+            <Route path="/lab" element={<LabHomePage />} />
+            <Route path="/lab/builder" element={<LabBuilderPage />} />
+            <Route path="/lab/2d" element={<BreakWebsitePage />} />
+            <Route path="/lab/3d" element={<TheRoomPage />} />
+            <Route path="/lab/physics" element={<PhysicsLabPage />} />
+            <Route path="/lab/os" element={<Navigate to="/lab/modern-os" replace />} />
+            <Route path="/lab/retro" element={<RetroOsPage />} />
+            <Route path="/lab/modern-os" element={<ModernOsPage />} />
+            <Route path="/lab/canvas" element={<InfiniteCanvasPage />} />
+            <Route path="/lab/website-builder" element={<Navigate to="/lab/builder" replace />} />
+            <Route path="/lab/builder-legacy" element={<WebsiteBuilderPage />} />
+            <Route path="/lab/admin-demo" element={<Navigate to="/lab" replace />} />
+            <Route path="/lab/architecture" element={<Navigate to="/lab" replace />} />
+            <Route path="/lab/web-evolution" element={<Navigate to="/lab" replace />} />
+            <Route path="/lab/seo" element={<Navigate to="/lab" replace />} />
+            <Route path="*" element={<Navigate to="/lab" replace />} />
+          </Routes>
+        </Suspense>
+      </LabAnalyticsProvider>
     );
   }
 
