@@ -1,5 +1,6 @@
 .apps-hero { padding-block: clamp(4rem,8vw,8rem); overflow: hidden; color: #eef7ff; background: radial-gradient(circle at 78% 20%,rgba(43,127,226,.23),transparent 28%),#07111d; }
 .apps-hero__grid { display: grid; grid-template-columns: minmax(0,.9fr) minmax(520px,1.1fr); align-items: center; gap: clamp(3rem,6vw,7rem); }
+.apps-hero__grid > * { min-width: 0; }
 .apps-kicker { margin: 0; color: #4e9cff; font-size: .7rem; font-weight: 900; letter-spacing: .16em; }
 .apps-hero h1 { max-width: 850px; margin: 1.1rem 0 0; font-size: clamp(3rem,6vw,6.6rem); line-height: .92; text-wrap: balance; }
 .apps-hero__lead { max-width: 700px; margin: 1.6rem 0 0; color: #9db0c4; font-size: clamp(1rem,1.4vw,1.25rem); line-height: 1.75; }
@@ -64,7 +65,7 @@
 }
 @media (max-width: 720px) {
   .apps-hero { padding-top: 3.5rem; }
-  .apps-hero h1 { font-size: clamp(2.7rem,14vw,4.4rem); }
+  .apps-hero h1 { font-size: clamp(2.5rem,11vw,4.4rem); }
   .apps-platform-grid,.apps-faq__grid { grid-template-columns: 1fr; }
   .apps-platform-grid article { min-height: 280px; }
   .apps-platform-grid h3 { margin-top: 3.4rem; }

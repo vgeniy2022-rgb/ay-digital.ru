@@ -17,7 +17,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
 
   return (
     <article
-      className="group block rounded-premium border border-line bg-white/78 p-6 shadow-glass transition duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-soft"
+      className="group flex h-full min-w-0 flex-col rounded-premium border border-line bg-white/78 p-6 shadow-glass transition duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-soft lg:p-7"
     >
       <div className="flex min-w-0 items-start gap-4">
         <div className="flex min-w-0 items-start gap-3">
@@ -61,7 +61,7 @@ export function ServiceCard({ service }: ServiceCardProps) {
       {service.outcome ? (
         <p className="mt-5 text-sm leading-6 text-muted">{service.outcome}</p>
       ) : null}
-      <div className="mt-7 grid grid-cols-1 gap-2">
+      <div className="mt-auto grid grid-cols-1 gap-2 pt-7">
         <a
           className="inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-line bg-white px-4 text-sm font-extrabold text-accent shadow-glass transition hover:-translate-y-0.5 hover:border-slate-300 hover:text-ink"
           href={data.site.telegramUrl}

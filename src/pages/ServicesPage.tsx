@@ -93,7 +93,7 @@ export function ServicesPage() {
       <section className="pb-16">
         <Container>
           {services.length ? (
-            <div className="grid gap-10" aria-busy={isLoading}>
+            <div className="grid gap-14 lg:gap-16" aria-busy={isLoading}>
               {[...groupedServices, ...(uncategorizedServices.length ? [{ category: 'Другие услуги', items: uncategorizedServices }] : [])].map((group) => (
                 <section key={group.category}>
                   <Reveal>
@@ -110,12 +110,21 @@ export function ServicesPage() {
                       />
                     </div>
                   </Reveal>
-                  <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                    {group.items.map((service, index) => (
-                      <Reveal delay={index * 0.04} key={`${group.category}-${service.slug}`}>
-                        <ServiceCard service={service} />
-                      </Reveal>
-                    ))}
+                  <div className="grid items-stretch gap-5 md:grid-cols-2 xl:grid-cols-6">
+                    {group.items.map((service, index) => {
+                      const remainder = group.items.length % 3;
+                      const lastRowPosition = remainder === 1 && index === group.items.length - 1
+                        ? 'xl:col-start-3'
+                        : remainder === 2 && index === group.items.length - 2
+                          ? 'xl:col-start-2'
+                          : '';
+
+                      return (
+                        <Reveal className={`h-full xl:col-span-2 ${lastRowPosition}`} delay={index * 0.04} key={`${group.category}-${service.slug}`}>
+                          <ServiceCard service={service} />
+                        </Reveal>
+                      );
+                    })}
                   </div>
                 </section>
               ))}
