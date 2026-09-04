@@ -1,8 +1,12 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { localSeoLinks } from '../data/localSeoLinks';
 import { navItems } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
 import { Container } from './Container';
+import { SiteAnalyticsContext } from '../features/site-analytics/siteAnalyticsContext';
+
+const numberFormatter = new Intl.NumberFormat('ru-RU');
 
 const usefulLinks = [
   { label: 'Полезное', href: '/useful' },
@@ -18,6 +22,7 @@ const usefulLinks = [
 
 export function Footer() {
   const { data } = useSiteData();
+  const { stats, status } = useContext(SiteAnalyticsContext);
   const { contacts, site } = data;
 
   return (
@@ -82,6 +87,11 @@ export function Footer() {
           <p className="mt-5 max-w-5xl text-xs leading-5 text-slate-500">
             Информация на сайте носит справочный характер. Цены ориентировочные и не являются публичной офертой. Точная стоимость и сроки согласуются индивидуально перед началом работы.
           </p>
+          {status === 'ready' && stats ? (
+            <p className="mt-3 text-xs leading-5 text-slate-500" aria-label="Анонимная статистика посещений SITEVL">
+              За всё время: {numberFormatter.format(stats.visits)} посещений · {numberFormatter.format(stats.uniqueVisitors)} посетителей
+            </p>
+          ) : null}
           <p className="mt-2 max-w-5xl text-xs leading-5 text-slate-500">
             Аудит сайта является предварительной проверкой заметных рисков и не является юридическим заключением.
           </p>

@@ -84,7 +84,7 @@ export function parseLabStatsResults(results) {
   };
 }
 
-async function redisPipeline(commands, { fetchImpl = fetch, environment = process.env, timeoutMs = 5000 } = {}) {
+export async function redisPipeline(commands, { fetchImpl = fetch, environment = process.env, timeoutMs = 5000 } = {}) {
   const redis = redisConfiguration(environment);
   if (!redis.url || !redis.token) throw new Error('storage unavailable');
   const response = await fetchImpl(`${redis.url.replace(/\/$/, '')}/pipeline`, {
