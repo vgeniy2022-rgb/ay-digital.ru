@@ -95,4 +95,15 @@
 
 ## Production acceptance
 
-После deployment необходимо подтвердить `READY`, HTTP 200 и повторить визуальную проверку production на 390×844, 430×932 и 1440×900. Итоговые production-скриншоты сохраняются в `after-production/`.
+Git deployment в существующий Vercel-проект `ay-digital-ru` завершился со статусом `success` (`Deployment has completed`). Production `https://sitevl-ru.vercel.app/` отвечает `HTTP 200`.
+
+После deployment выполнена повторная browser-проверка production:
+
+| Viewport | Визуальная проверка | Overflow | Desktop regression |
+| --- | --- | --- | --- |
+| 320×720 | PASS | 0 px | — |
+| 390×844 | PASS | 0 px | — |
+| 430×932 | PASS | 0 px | — |
+| 1440×900 | PASS | 0 px | PASS |
+
+На production подтверждены вычисленные стили mobile: белый текст AI CTA, светлые tertiary actions, Status surface `rgba(8, 12, 20, 0.68)`, белый Status title и светлое описание. После загрузки актуальных данных карточка показала `Сегодня свободен`; текст и описание визуально читаются. Итоговые production-скриншоты сохранены в `after-production/`, включая отдельный `home-390x844-status.png`.
