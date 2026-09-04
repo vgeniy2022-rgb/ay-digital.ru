@@ -81,6 +81,21 @@ export async function trackSiteVisit(event, options = {}) {
   return { accepted: true, rateLimited: false, deduplicated: !isNewVisit };
 }
 
+export async function resetSiteStatsNamespace(options = {}) {
+  let cursor = '0';
+  do {
+    const scanResult = await redisPipeline([
+      ['SCAN', cursor, 'MATCH', 'sitevl:site:*', 'COUNT', '100'],
+    ], options);
+    const page = scanResult[0]?.result;
+    if (!Array.isArray(page) || page.length !== 2 || !Array.isArray(page[1])) throw new Error('invalid scan response');
+    cursor = String(page[0]);
+    const keys = page[1].filter((key) => typeof key === 'string' && key.startsWith('sitevl:site:'));
+    if (keys.length) await redisPipeline([['DEL', ...keys]], options);
+  } while (cursor !== '0');
+  return readSiteStats(options);
+}
+
 export function resetSiteStatsRateLimitsForTests() {
   requestWindows.clear();
 }

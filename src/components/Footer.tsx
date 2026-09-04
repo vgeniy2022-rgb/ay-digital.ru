@@ -8,6 +8,13 @@ import { SiteAnalyticsContext } from '../features/site-analytics/siteAnalyticsCo
 
 const numberFormatter = new Intl.NumberFormat('ru-RU');
 
+function formatMetric(value: number, one: string, few: string, many: string) {
+  const modulo100 = value % 100;
+  const modulo10 = value % 10;
+  const word = modulo100 >= 11 && modulo100 <= 14 ? many : modulo10 === 1 ? one : modulo10 >= 2 && modulo10 <= 4 ? few : many;
+  return `${numberFormatter.format(value)} ${word}`;
+}
+
 const usefulLinks = [
   { label: 'Полезное', href: '/useful' },
   { label: 'Обо мне', href: '/about' },
@@ -89,7 +96,7 @@ export function Footer() {
           </p>
           {status === 'ready' && stats ? (
             <p className="mt-3 text-xs leading-5 text-slate-500" aria-label="Анонимная статистика посещений SITEVL">
-              За всё время: {numberFormatter.format(stats.visits)} посещений · {numberFormatter.format(stats.uniqueVisitors)} посетителей
+              За всё время: {formatMetric(stats.visits, 'посещение', 'посещения', 'посещений')} · {formatMetric(stats.uniqueVisitors, 'посетитель', 'посетителя', 'посетителей')}
             </p>
           ) : null}
           <p className="mt-2 max-w-5xl text-xs leading-5 text-slate-500">
