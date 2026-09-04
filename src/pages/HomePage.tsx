@@ -91,10 +91,13 @@ export function HomePage() {
             <h1>Создаю сайты и цифровые продукты для бизнеса</h1>
             <p className="home-cinematic-hero__lead">{homeHero.description}</p>
             <div className="home-cinematic-hero__actions">
-              <ButtonLink to="/website-development-vladivostok">Обсудить проект</ButtonLink>
-              <ButtonLink to="/ai-website" variant="secondary">Создать AI-концепцию</ButtonLink>
-              <ButtonLink to="/cases" variant="secondary">Смотреть работы</ButtonLink>
-              <a className="home-cinematic-hero__telegram" href={site.telegramUrl} target="_blank" rel="noreferrer">
+              <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--primary" to="/website-development-vladivostok">Обсудить проект</ButtonLink>
+              <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--ai" to="/ai-website" variant="secondary">Создать AI-концепцию</ButtonLink>
+              <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--works" to="/cases" variant="secondary" aria-label="Смотреть работы">
+                <span className="home-cinematic-hero__works-label home-cinematic-hero__works-label--desktop">Смотреть работы</span>
+                <span className="home-cinematic-hero__works-label home-cinematic-hero__works-label--mobile">Работы</span>
+              </ButtonLink>
+              <a className="home-cinematic-hero__action home-cinematic-hero__telegram" href={site.telegramUrl} target="_blank" rel="noreferrer">
                 <MessageCircle aria-hidden="true" /> Telegram
               </a>
             </div>
