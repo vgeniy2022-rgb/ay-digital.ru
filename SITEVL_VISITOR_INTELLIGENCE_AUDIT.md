@@ -115,4 +115,4 @@ Retention по умолчанию составляет 180 дней, регул�
 
 Публичные endpoint после cleanup продолжили отвечать: SITE stats `6 visits / 4 visitors`; LAB stats `9 visits / 7 visitors`. Эти реальные агрегаты не сбрасывались и не изменялись cleanup-операцией.
 
-Live Gemini `/api/ai` был настроен, но три QA-запроса получили временный upstream HTTP 503 `high demand`. Поэтому текущий production QA не выдаёт этот пункт за PASS: AI analytics/lead linkage проверены, а новый успешный Gemini ответ нужно повторить после восстановления доступности модели.
+Live Gemini `/api/ai` был настроен, но четыре QA-запроса в двух отдельных сессиях получили временный upstream HTTP 503 `high demand`. Поэтому текущий production QA не выдаёт этот пункт за PASS: AI analytics/lead linkage проверены, а новый успешный Gemini ответ нужно повторить после восстановления доступности модели.

@@ -68,6 +68,6 @@
 - Production Redis chain: PASS для `SV-FEED01`, включая source, 1 session, 6 страниц, Modern OS, AI concept и linked lead.
 - Production cleanup: PASS; QA visitor/history/pages/experiments и test lead удалены, контрольное чтение пустое.
 - Публичные counters после cleanup: SITE 6/4, LAB 9/7; существующие агрегаты не сбрасывались.
-- Gemini live check: три ответа HTTP 503 `high demand`; configured-флаг остаётся true, но успешный ответ в этом проходе не подтверждён.
+- Gemini live check: четыре ответа в двух сессиях получили HTTP 503 `high demand`; configured-флаг остаётся true, но успешный ответ в этом проходе не подтверждён.
 
 Финальный deployment выполняется без временного QA endpoint.
