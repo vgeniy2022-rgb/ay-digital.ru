@@ -89,15 +89,27 @@ Retention по умолчанию составляет 180 дней, регул�
 - SEO audit: 64/64 PASS.
 - Локальный browser smoke: Главная → Приложения → Цены → LAB → Modern OS → AI Website; ошибок console не обнаружено.
 
-## Ограничение live Telegram QA
+## Live Telegram QA
 
-До релиза production возвращал `telegramConfigured:false`. Код поддерживает новые `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` и обратную совместимость со старыми AI-lead именами, но live-сообщение существующего `@ay_digital_orders_bot` нельзя считать проверенным до добавления обоих secrets в Vercel Production.
+После добавления `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` в Vercel Production выполнен новый deployment. Оба production endpoint (`/api/visitor-events` и `/api/ai-leads`) вернули `telegramConfigured:true`. Серверный вызов Telegram `getMe` подтвердил, что настроенный токен принадлежит существующему боту `@ay_digital_orders_bot`; token и chat ID в ответ endpoint, логи, Git и frontend не выводились.
+
+Telegram API принял со статусом `sent` семь отдельных QA-уведомлений:
+
+- новый уникальный посетитель;
+- просмотр `/prices`;
+- вход в `/lab`;
+- запуск `modern-os`;
+- открытие `/ai-website`;
+- создание AI-концепта;
+- новая связанная заявка с цепочкой visitor.
+
+Переходы на главную и `/mobile-apps` были сохранены в истории без лишних Telegram-сообщений. Проверка подтверждает принятие сообщений Telegram API; визуальное отображение сообщений в пользовательском клиенте Telegram данным серверным тестом не оценивается.
 
 ## Production QA
 
-После Git deployment production endpoint `/api/visitor-events` вернул `configured:true`, `retentionDays:180`, `telegramConfigured:false`.
+После Git deployment production endpoint `/api/visitor-events` вернул `configured:true`, `retentionDays:180`, `telegramConfigured:true`; `/api/ai-leads` вернул `configured:true`, `storage:private-redis`, `telegramConfigured:true`.
 
-Изолированный QA visitor `SV-FEED01` прошёл цепочку:
+Новый изолированный QA visitor прошёл цепочку:
 
 `Главная → Мобильные приложения → Цены → LAB → Modern OS → AI Website → AI concept → lead_created`.
 
@@ -109,10 +121,10 @@ Retention по умолчанию составляет 180 дней, регул�
 - `generatedAiConcept=1`, `leadSubmitted=1`;
 - страницы `/`, `/mobile-apps`, `/prices`, `/lab`, `/lab/modern-os`, `/ai-website`;
 - experiment `modern-os`;
-- AI lead ответил `stored:true`, `linked:true`, reference `SV-AI-FEED01`.
+- AI lead ответил `stored:true`, `linked:true`, `notification:sent`.
 
-Сразу после проверки были удалены только профиль `SV-FEED01`, его event/session/notification keys и созданный test lead. Контрольное чтение вернуло пустые `visitor`, `history`, `pages` и `experiments`. Временный QA endpoint удалён из финального source/deployment.
+Сразу после проверки были удалены только профиль QA visitor, его event/session/notification keys и созданный test lead. Контрольное чтение вернуло пустые `visitor`, `history`, `pages` и `experiments`. Временный закрытый QA endpoint удалён из финального source/deployment.
 
 Публичные endpoint после cleanup продолжили отвечать: SITE stats `6 visits / 4 visitors`; LAB stats `9 visits / 7 visitors`. Эти реальные агрегаты не сбрасывались и не изменялись cleanup-операцией.
 
-Live Gemini `/api/ai` был настроен, но четыре QA-запроса в двух отдельных сессиях получили временный upstream HTTP 503 `high demand`. Поэтому текущий production QA не выдаёт этот пункт за PASS: AI analytics/lead linkage проверены, а новый успешный Gemini ответ нужно повторить после восстановления доступности модели.
+Повторный live Gemini-запрос дошёл до настроенного провайдера, но модель вернула upstream HTTP 503 `high demand`. В соответствии с release gate это зафиксировано отдельно как временная недоступность модели, а не ошибка конфигурации `GEMINI_API_KEY` или SITEVL endpoint. AI analytics, создание события и visitor → lead linkage проверены независимо; успешный новый текст Gemini в этом проходе не подтверждён.
