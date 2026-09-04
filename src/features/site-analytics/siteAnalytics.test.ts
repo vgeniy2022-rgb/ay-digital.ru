@@ -119,7 +119,10 @@ test('frontend session marker prevents refresh and SPA navigation inflation', as
   assert.equal(await ensureSiteVisit('/', local, session, sender), true);
   assert.equal(await ensureSiteVisit('/', local, session, sender), false);
   assert.equal(await ensureSiteVisit('/services', local, session, sender), false);
-  assert.deepEqual(payloads, [[visitorId, sessionId]]);
+  assert.equal(payloads.length, 1);
+  assert.match(payloads[0][0], /^SV-[A-F0-9]{6}$/);
+  assert.equal(payloads[0][1], sessionId);
+  assert.equal(local.values.get(LAB_VISITOR_ID_KEY), payloads[0][0]);
   assert.equal(session.values.get(SITE_VISIT_TRACKED_KEY), 'true');
 });
 

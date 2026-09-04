@@ -7,6 +7,8 @@ import { useSiteData } from '../hooks/useSiteData';
 import { AiWebsitePreview } from '../features/ai-website/AiWebsitePreview';
 import { aiWebsiteStyleLabels, createAiWebsiteConceptId, createAiWebsiteSessionId, recommendAiWebsitePackage, validateAiWebsiteConcept } from '../features/ai-website/schema';
 import { aiWebsiteModes, aiWebsiteStyles, type AiWebsiteAnswers, type AiWebsiteConcept, type AiWebsiteContact, type AiWebsiteMode } from '../features/ai-website/types';
+import { ensureLabIdentity } from '../features/lab/analytics/labAnalytics';
+import { trackAiConceptCreated } from '../features/site-analytics/visitorIntelligence';
 import '../styles/ai-website.css';
 
 const emptyAnswers: AiWebsiteAnswers = { business: '', city: '', offer: '', audience: '', services: '', functions: '', style: 'auto', brandColor: '#2563eb', contacts: '', budget: '', deadline: '', existingUrl: '', existingText: '' };
@@ -57,7 +59,9 @@ export function AiWebsitePage() {
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.error || 'Не удалось создать концепцию.');
       const safeConcept = validateAiWebsiteConcept(payload.concept, prompt, answers);
-      setPreviousConcept(concept); setConcept(safeConcept); setConceptId(createAiWebsiteConceptId());
+      const nextConceptId = createAiWebsiteConceptId();
+      setPreviousConcept(concept); setConcept(safeConcept); setConceptId(nextConceptId);
+      void trackAiConceptCreated(nextConceptId, window.localStorage, window.sessionStorage);
       const nextCount = generationCount + 1; setGenerationCount(nextCount); sessionStorage.setItem('sitevl-ai-count', String(nextCount));
       setProgress(100); setStatus('ready');
       setMessage(payload.fallback ? 'Gemini не вернул валидную схему, поэтому показан безопасный базовый вариант. Его можно отредактировать.' : payload.repaired ? 'Ответ Gemini автоматически исправлен и проверен по безопасной схеме.' : 'Концепция создана Gemini и проверена по безопасной схеме.');
@@ -68,7 +72,8 @@ export function AiWebsitePage() {
   async function submitLead(event: React.FormEvent) {
     event.preventDefault(); if (!concept || !packageInfo) return;
     setLeadState('sending'); setMessage('');
-    const body = { sessionId, conceptId, source: '/ai-website', originalPrompt: prompt, answers, generatedConcept: concept, selectedVariant: variant, selectedStyle: concept.theme.style, recommendedPackage: packageInfo.name, estimatedStartingPrice: packageInfo.price, budget: answers.budget, deadline: answers.deadline, requiredFeatures: concept.features, contact };
+    const visitor = ensureLabIdentity(window.localStorage, window.sessionStorage);
+    const body = { sessionId, visitorId: visitor.visitorId, visitorSessionId: visitor.sessionId, conceptId, source: '/ai-website', originalPrompt: prompt, answers, generatedConcept: concept, selectedVariant: variant, selectedStyle: concept.theme.style, recommendedPackage: packageInfo.name, estimatedStartingPrice: packageInfo.price, budget: answers.budget, deadline: answers.deadline, requiredFeatures: concept.features, contact };
     try {
       const response = await fetch('/api/ai-leads', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const payload = await response.json().catch(() => ({}));

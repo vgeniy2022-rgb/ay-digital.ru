@@ -15,6 +15,7 @@ type StorageLike = Pick<Storage, 'getItem' | 'setItem'>;
 type CryptoLike = Pick<Crypto, 'getRandomValues'> & { randomUUID?: () => `${string}-${string}-${string}-${string}-${string}` };
 
 const ID_PATTERN = /^(?:visitor|session|event)-[a-f0-9]{32}$|^(?:visitor|session|event)-[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
+const SITEVL_VISITOR_PATTERN = /^SV-[A-F0-9]{6}$/;
 let memoryVisitorId = '';
 let memorySessionId = '';
 const memoryExperimentEvents = new Map<string, string>();
@@ -24,6 +25,12 @@ export function createAnonymousId(kind: AnonymousIdKind, cryptoApi: CryptoLike =
   const bytes = new Uint8Array(16);
   cryptoApi.getRandomValues(bytes);
   return `${kind}-${Array.from(bytes, (value) => value.toString(16).padStart(2, '0')).join('')}`;
+}
+
+export function createSitevlVisitorId(cryptoApi: CryptoLike = globalThis.crypto) {
+  const bytes = new Uint8Array(3);
+  cryptoApi.getRandomValues(bytes);
+  return `SV-${Array.from(bytes, (value) => value.toString(16).padStart(2, '0')).join('').toUpperCase()}`;
 }
 
 function readStorage(storage: StorageLike, key: string) {
@@ -36,8 +43,9 @@ function writeStorage(storage: StorageLike, key: string, value: string) {
 
 function ensureStoredId(storage: StorageLike, key: string, kind: AnonymousIdKind, memoryValue: string) {
   const stored = readStorage(storage, key);
-  if (stored && ID_PATTERN.test(stored) && stored.startsWith(`${kind}-`)) return stored;
-  const next = memoryValue || createAnonymousId(kind);
+  if (kind === 'visitor' && stored && SITEVL_VISITOR_PATTERN.test(stored)) return stored;
+  if (kind !== 'visitor' && stored && ID_PATTERN.test(stored) && stored.startsWith(`${kind}-`)) return stored;
+  const next = memoryValue || (kind === 'visitor' ? createSitevlVisitorId() : createAnonymousId(kind));
   writeStorage(storage, key, next);
   return next;
 }

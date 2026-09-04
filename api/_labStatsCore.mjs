@@ -9,6 +9,7 @@ export const LAB_STATS_KEYS = Object.freeze({
 const experimentIdSet = new Set(LAB_PUBLIC_EXPERIMENT_IDS);
 const requestWindows = new Map();
 const ANONYMOUS_ID_PATTERN = /^(?:visitor|session|event)-[a-f0-9]{32}$|^(?:visitor|session|event)-[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
+const VISITOR_ID_PATTERN = /^(?:SV-[A-F0-9]{6}|visitor-[a-f0-9]{32}|visitor-[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})$/i;
 const MAX_REQUESTS_PER_MINUTE = 30;
 const VISIT_SESSION_TTL_SECONDS = 6 * 60 * 60;
 const EXPERIMENT_EVENT_TTL_SECONDS = 60 * 60;
@@ -37,8 +38,8 @@ export function validateLabTrackBody(raw) {
 
   if (raw.event === 'lab_visit') {
     if (!hasExactKeys(raw, ['event', 'sessionId', 'visitorId'])) return { ok: false, error: 'Некорректные поля события.' };
-    if (!ANONYMOUS_ID_PATTERN.test(raw.sessionId) || !ANONYMOUS_ID_PATTERN.test(raw.visitorId)) return { ok: false, error: 'Некорректный анонимный идентификатор.' };
-    if (!String(raw.sessionId).startsWith('session-') || !String(raw.visitorId).startsWith('visitor-')) return { ok: false, error: 'Некорректный анонимный идентификатор.' };
+    if (!ANONYMOUS_ID_PATTERN.test(raw.sessionId) || !VISITOR_ID_PATTERN.test(raw.visitorId)) return { ok: false, error: 'Некорректный анонимный идентификатор.' };
+    if (!String(raw.sessionId).startsWith('session-')) return { ok: false, error: 'Некорректный анонимный идентификатор.' };
     return { ok: true, value: { event: 'lab_visit', sessionId: raw.sessionId, visitorId: raw.visitorId } };
   }
 

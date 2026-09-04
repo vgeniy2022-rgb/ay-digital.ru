@@ -5,7 +5,8 @@ export const SITE_STATS_KEYS = Object.freeze({
   visitors: 'sitevl:site:visitors',
 });
 
-const ANONYMOUS_ID_PATTERN = /^(?:visitor|session)-[a-f0-9]{32}$|^(?:visitor|session)-[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
+const VISITOR_ID_PATTERN = /^(?:SV-[A-F0-9]{6}|visitor-[a-f0-9]{32}|visitor-[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})$/i;
+const SESSION_ID_PATTERN = /^session-(?:[a-f0-9]{32}|[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})$/i;
 const MAX_REQUESTS_PER_MINUTE = 10;
 const VISIT_SESSION_TTL_SECONDS = 6 * 60 * 60;
 const requestWindows = new Map();
@@ -26,10 +27,7 @@ export function validateSiteTrackBody(raw) {
   if (!plainObject(raw) || !hasExactKeys(raw, ['event', 'sessionId', 'visitorId']) || raw.event !== 'site_visit') {
     return { ok: false, error: 'Некорректный формат события.' };
   }
-  if (!ANONYMOUS_ID_PATTERN.test(raw.sessionId) || !ANONYMOUS_ID_PATTERN.test(raw.visitorId)) {
-    return { ok: false, error: 'Некорректный анонимный идентификатор.' };
-  }
-  if (!String(raw.sessionId).startsWith('session-') || !String(raw.visitorId).startsWith('visitor-')) {
+  if (!SESSION_ID_PATTERN.test(raw.sessionId) || !VISITOR_ID_PATTERN.test(raw.visitorId)) {
     return { ok: false, error: 'Некорректный анонимный идентификатор.' };
   }
   return { ok: true, value: { event: 'site_visit', sessionId: raw.sessionId, visitorId: raw.visitorId } };

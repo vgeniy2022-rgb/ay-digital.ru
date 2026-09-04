@@ -1,4 +1,5 @@
 import { createLeadSummary, sanitizeAiWebsiteLead } from './_aiLeadValidation.mjs';
+import { isTelegramConfigured, linkLeadToVisitor, telegramConfiguration } from './_visitorIntelligenceCore.mjs';
 
 const submissionWindows = new Map();
 
@@ -17,7 +18,7 @@ const json = (response, status, payload) => {
 
 const configuration = () => ({
   storageConfigured: Boolean(redisConfiguration().url && redisConfiguration().token),
-  telegramConfigured: Boolean(process.env.AI_LEADS_TELEGRAM_BOT_TOKEN && process.env.AI_LEADS_TELEGRAM_CHAT_ID),
+  telegramConfigured: isTelegramConfigured(),
 });
 
 const checkRate = async (sessionId) => {
@@ -72,8 +73,7 @@ async function persistLead(lead) {
 }
 
 async function notifyTelegram(lead) {
-  const token = process.env.AI_LEADS_TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.AI_LEADS_TELEGRAM_CHAT_ID;
+  const { token, chatId } = telegramConfiguration();
   if (!token || !chatId) return 'not-configured';
   const response = await fetch(`https://api.telegram.org/bot${encodeURIComponent(token)}/sendMessage`, {
     method: 'POST',
@@ -99,8 +99,16 @@ export default async function handler(request, response) {
   const lead = { ...validated.value, id: crypto.randomUUID(), createdAt: new Date().toISOString() };
   try {
     const retentionDays = await persistLead(lead);
-    const notification = await notifyTelegram(lead).catch(() => 'failed');
-    return json(response, 201, { stored: true, reference: validated.value.conceptId, retentionDays, notification });
+    let linked = false;
+    let notification = 'failed';
+    try {
+      const visitorResult = await linkLeadToVisitor(lead);
+      linked = visitorResult.linked;
+      notification = linked ? visitorResult.notification : await notifyTelegram(lead);
+    } catch {
+      notification = 'failed';
+    }
+    return json(response, 201, { stored: true, reference: validated.value.conceptId, retentionDays, linked, notification });
   } catch {
     return json(response, 502, { error: 'Не удалось надёжно сохранить заявку. Результат остался в браузере — попробуйте ещё раз или свяжитесь напрямую.' });
   }

@@ -8,6 +8,8 @@ import { PageTransition } from '../components/PageTransition';
 import { SeoHead } from '../components/SeoHead';
 import { builderBusinesses, businessStructures } from '../data/lab';
 import { useSiteData } from '../hooks/useSiteData';
+import { ensureLabIdentity } from '../features/lab/analytics/labAnalytics';
+import { trackVisitorBriefCompleted } from '../features/site-analytics/visitorIntelligence';
 
 type BriefAnswers = {
   projectType: string;
@@ -89,6 +91,7 @@ export function BriefPage() {
   const [step, setStep] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [visitorId] = useState(() => ensureLabIdentity(window.localStorage, window.sessionStorage).visitorId);
 
   useEffect(() => {
     const projectType = searchParams.get('projectType');
@@ -112,14 +115,14 @@ export function BriefPage() {
     return { title: labelFrom(websitePackages, answers.websitePackage), description: `Сайт для направления «${business.label}». ${structure.emphasis}.`, structure: structure.pages, price: priceFrom(websitePackages, answers.websitePackage), budget: budgetOptions.find((item) => item.value === answers.budget)?.label || 'не указан' };
   }, [answers]);
 
-  const summary = `Здравствуйте! Я прошёл Brief SITEVL. Проект: ${result.title}. ${result.description} Основные разделы или возможности: ${result.structure.join(', ') || 'нужно уточнить'}. Стартовый ориентир: ${result.price}. Бюджет: ${result.budget}. Хочу обсудить детали.`;
+  const summary = `Здравствуйте! Я прошёл Brief SITEVL. Visitor ID: ${visitorId}. Проект: ${result.title}. ${result.description} Основные разделы или возможности: ${result.structure.join(', ') || 'нужно уточнить'}. Стартовый ориентир: ${result.price}. Бюджет: ${result.budget}. Хочу обсудить детали.`;
 
   const choose = (value: string) => {
     if (!question) return;
     if (question.multiple) { const current = new Set(selectedValues); if (current.has(value)) current.delete(value); else current.add(value); setAnswers((state) => ({ ...state, [question.key]: [...current].join(',') })); return; }
     setAnswers((state) => ({ ...state, [question.key]: value }));
   };
-  const next = () => { if (!selectedValue) return; if (step === questions.length - 1) setCompleted(true); else setStep((current) => current + 1); };
+  const next = () => { if (!selectedValue) return; if (step === questions.length - 1) { setCompleted(true); void trackVisitorBriefCompleted(window.localStorage, window.sessionStorage); } else setStep((current) => current + 1); };
   const back = () => { if (completed) setCompleted(false); else setStep((current) => Math.max(0, current - 1)); };
   const reset = () => { setAnswers(initialAnswers); setStep(0); setCompleted(false); setCopied(false); };
   const copy = async () => { try { await navigator.clipboard.writeText(summary); setCopied(true); window.setTimeout(() => setCopied(false), 1800); } catch (error) { if (import.meta.env.DEV) console.error('[Brief] clipboard error', error); } };

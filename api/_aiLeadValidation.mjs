@@ -1,5 +1,7 @@
 const SESSION_PATTERN = /^[A-Z0-9-]{8,32}$/i;
 const CONCEPT_PATTERN = /^SV-AI-[A-Z0-9]{6}$/i;
+const VISITOR_PATTERN = /^(?:SV-[A-F0-9]{6}|visitor-[a-f0-9]{32}|visitor-[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})$/i;
+const VISITOR_SESSION_PATTERN = /^session-(?:[a-f0-9]{32}|[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})$/i;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const clean = (value, limit) => typeof value === 'string'
@@ -16,6 +18,8 @@ export function sanitizeAiWebsiteLead(raw) {
   const contact = plainObject(raw.contact) ? raw.contact : {};
   const sessionId = clean(raw.sessionId, 32);
   const conceptId = clean(raw.conceptId, 20);
+  const visitorId = clean(raw.visitorId, 48);
+  const visitorSessionId = clean(raw.visitorSessionId, 48);
   const name = clean(contact.name, 100);
   const phone = clean(contact.phone, 40);
   const telegram = clean(contact.telegram, 80);
@@ -24,6 +28,9 @@ export function sanitizeAiWebsiteLead(raw) {
 
   if (!SESSION_PATTERN.test(sessionId) || !CONCEPT_PATTERN.test(conceptId) || raw.source !== '/ai-website') {
     return { ok: false, error: 'Некорректная AI-сессия.' };
+  }
+  if ((visitorId || visitorSessionId) && (!VISITOR_PATTERN.test(visitorId) || !VISITOR_SESSION_PATTERN.test(visitorSessionId))) {
+    return { ok: false, error: 'Некорректная связь с анонимной сессией.' };
   }
   if (!name) return { ok: false, error: 'Укажите имя.' };
   if (!phone && !telegram && !whatsapp && !email) return { ok: false, error: 'Укажите хотя бы один способ связи.' };
@@ -43,6 +50,8 @@ export function sanitizeAiWebsiteLead(raw) {
     value: {
       schemaVersion: 1,
       sessionId,
+      visitorId,
+      visitorSessionId,
       conceptId,
       source: '/ai-website',
       originalPrompt: clean(raw.originalPrompt, 6000),

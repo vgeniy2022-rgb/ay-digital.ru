@@ -12,6 +12,7 @@ import {
   type LabStats,
 } from './labAnalytics';
 import { LabAnalyticsContext, type LabStatsStatus } from './labAnalyticsContext';
+import { trackVisitorExperiment } from '../../site-analytics/visitorIntelligence';
 
 export function LabAnalyticsProvider({ children }: PropsWithChildren) {
   const location = useLocation();
@@ -30,6 +31,7 @@ export function LabAnalyticsProvider({ children }: PropsWithChildren) {
     const { sessionId } = ensureLabIdentity(window.localStorage, window.sessionStorage);
     const eventId = getExperimentEventId(window.sessionStorage, location.key, experiment.id);
     void trackExperimentStart(experiment.id, eventId, sessionId);
+    void trackVisitorExperiment(experiment.id, eventId, location.pathname, window.localStorage, window.sessionStorage);
   }, [location.key, location.pathname]);
 
   useEffect(() => {
