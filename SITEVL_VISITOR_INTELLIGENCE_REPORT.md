@@ -35,6 +35,10 @@
 | Telegram templates and mocked delivery tests | PASS |
 | Telegram production configuration | BLOCKED — Vercel secrets отсутствуют |
 | Telegram live delivery through `@ay_digital_orders_bot` | NOT TESTED — secrets отсутствуют |
+| Production Redis visitor chain | PASS |
+| Production visitor → AI lead linkage | PASS |
+| QA visitor/lead cleanup | PASS |
+| Gemini live generation during this QA | BLOCKED — upstream model returned HTTP 503 high demand |
 
 ## Server-only environment
 
@@ -60,5 +64,10 @@
 - SEO generation: PASS, 64 sitemap URL и 78 prerendered HTML.
 - SEO audit: PASS, 64 indexable URL.
 - Browser smoke: PASS для цепочки Главная → Приложения → Цены → LAB → Modern OS → AI Website, console errors/warnings: 0.
+- Production `/api/visitor-events`: `configured:true`, retention 180 days, Telegram not configured.
+- Production Redis chain: PASS для `SV-FEED01`, включая source, 1 session, 6 страниц, Modern OS, AI concept и linked lead.
+- Production cleanup: PASS; QA visitor/history/pages/experiments и test lead удалены, контрольное чтение пустое.
+- Публичные counters после cleanup: SITE 6/4, LAB 9/7; существующие агрегаты не сбрасывались.
+- Gemini live check: три ответа HTTP 503 `high demand`; configured-флаг остаётся true, но успешный ответ в этом проходе не подтверждён.
 
-Production deployment и post-deploy API/browser evidence добавляются после публикации commit из этого отчёта.
+Финальный deployment выполняется без временного QA endpoint.

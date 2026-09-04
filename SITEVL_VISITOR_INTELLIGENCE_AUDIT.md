@@ -92,3 +92,27 @@ Retention по умолчанию составляет 180 дней, регул�
 ## Ограничение live Telegram QA
 
 До релиза production возвращал `telegramConfigured:false`. Код поддерживает новые `TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` и обратную совместимость со старыми AI-lead именами, но live-сообщение существующего `@ay_digital_orders_bot` нельзя считать проверенным до добавления обоих secrets в Vercel Production.
+
+## Production QA
+
+После Git deployment production endpoint `/api/visitor-events` вернул `configured:true`, `retentionDays:180`, `telegramConfigured:false`.
+
+Изолированный QA visitor `SV-FEED01` прошёл цепочку:
+
+`Главная → Мобильные приложения → Цены → LAB → Modern OS → AI Website → AI concept → lead_created`.
+
+Проверенное состояние Redis:
+
+- `firstSource=telegram-vl-1` и `firstReferrerHost=t.me`;
+- `sessions=1`;
+- `viewedMobileApps=1`, `viewedPrices=1`, `visitedLab=1`, `openedAiWebsite=1`;
+- `generatedAiConcept=1`, `leadSubmitted=1`;
+- страницы `/`, `/mobile-apps`, `/prices`, `/lab`, `/lab/modern-os`, `/ai-website`;
+- experiment `modern-os`;
+- AI lead ответил `stored:true`, `linked:true`, reference `SV-AI-FEED01`.
+
+Сразу после проверки были удалены только профиль `SV-FEED01`, его event/session/notification keys и созданный test lead. Контрольное чтение вернуло пустые `visitor`, `history`, `pages` и `experiments`. Временный QA endpoint удалён из финального source/deployment.
+
+Публичные endpoint после cleanup продолжили отвечать: SITE stats `6 visits / 4 visitors`; LAB stats `9 visits / 7 visitors`. Эти реальные агрегаты не сбрасывались и не изменялись cleanup-операцией.
+
+Live Gemini `/api/ai` был настроен, но три QA-запроса получили временный upstream HTTP 503 `high demand`. Поэтому текущий production QA не выдаёт этот пункт за PASS: AI analytics/lead linkage проверены, а новый успешный Gemini ответ нужно повторить после восстановления доступности модели.
