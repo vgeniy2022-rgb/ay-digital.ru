@@ -71,7 +71,7 @@
 - Telegram API delivery: PASS для нового visitor, цен, LAB, Modern OS, открытия AI-концепта, создания концепта и новой заявки; все семь вернули `notification:sent`.
 - Production Redis chain: PASS для изолированного QA visitor, включая source, 1 session, 6 страниц, Modern OS, AI concept и linked lead.
 - Production cleanup: PASS; QA visitor/history/pages/experiments и test lead удалены, контрольное чтение пустое.
-- Публичные counters после cleanup: SITE 6/4, LAB 9/7; существующие агрегаты не сбрасывались.
+- Публичные counters после cleanup: SITE 9/7, LAB 9/7; существующие агрегаты не сбрасывались.
 - Gemini live check после Telegram deployment: upstream HTTP 503 `high demand`; запрос дошёл до Gemini, поэтому это не ошибка конфигурации, но успешный ответ в этом проходе не подтверждён.
 
 Финальный deployment выполняется без временного QA endpoint.

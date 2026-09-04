@@ -125,6 +125,6 @@ Telegram API принял со статусом `sent` семь отдельны
 
 Сразу после проверки были удалены только профиль QA visitor, его event/session/notification keys и созданный test lead. Контрольное чтение вернуло пустые `visitor`, `history`, `pages` и `experiments`. Временный закрытый QA endpoint удалён из финального source/deployment.
 
-Публичные endpoint после cleanup продолжили отвечать: SITE stats `6 visits / 4 visitors`; LAB stats `9 visits / 7 visitors`. Эти реальные агрегаты не сбрасывались и не изменялись cleanup-операцией.
+Публичные endpoint после cleanup продолжили отвечать: SITE stats `9 visits / 7 visitors`; LAB stats `9 visits / 7 visitors`. Эти реальные агрегаты не сбрасывались cleanup-операцией.
 
 Повторный live Gemini-запрос дошёл до настроенного провайдера, но модель вернула upstream HTTP 503 `high demand`. В соответствии с release gate это зафиксировано отдельно как временная недоступность модели, а не ошибка конфигурации `GEMINI_API_KEY` или SITEVL endpoint. AI analytics, создание события и visitor → lead linkage проверены независимо; успешный новый текст Gemini в этом проходе не подтверждён.
