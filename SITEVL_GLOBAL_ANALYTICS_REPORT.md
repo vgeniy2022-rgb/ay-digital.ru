@@ -46,4 +46,26 @@ SITEVL считает анонимные агрегированные посещ
 
 Автоматические тесты покрывают атомарный increment, dedup повторов сессии, переиспользование visitor ID, прямой `/lab` с независимым двойным учётом, SPA navigation/reload, исключение технических путей, безопасный Redis fallback, публичную response schema и аудит frontend на credentials/fingerprinting.
 
-Результаты production deployment и clean-browser QA фиксируются в итоговом отчёте задачи после получения Vercel READY. Значения SITE, созданные во время production QA, удаляются только из `sitevl:site:*`; LAB и AI-данные не затрагиваются.
+Release gate на финальном коде:
+
+- `npm test` — PASS, 127/127;
+- `npm run lint` — PASS без предупреждений;
+- `npx tsc -b --pretty false` — PASS;
+- `npm run build` — PASS;
+- SEO generation — 64 URL в sitemap и 78 prerendered HTML;
+- SEO audit — PASS, 64 индексируемых URL;
+- `git diff --check` — PASS.
+
+Production QA выполнялся после Vercel READY на `https://sitevl-ru.vercel.app`:
+
+1. начальное состояние нового namespace — `0` посещений и `0` посетителей;
+2. первый чистый вход на `/` — `1 / 1`;
+3. SPA-переходы `/ → /services → /mobile-apps` — осталось `1 / 1`;
+4. reload в той же сессии — осталось `1 / 1`;
+5. отдельный чистый origin — `2 / 2`;
+6. прямой вход на `/lab` увеличил SITE отдельно, а LAB изменился с `5 / 5` до `6 / 6`;
+7. мобильный viewport `390 × 844` — ширина документа `390`, horizontal overflow отсутствует, строка счётчика имеет высоту `20px`; API был перехвачен локальным mock, поэтому после очистки production POST не отправлялся;
+8. созданные QA-значения удалены только из `sitevl:site:*`; итоговый SITE — `0 / 0`, LAB остался `6 / 6`;
+9. одноразовый защищённый reset-route удалён из финального исходного кода и production deployment.
+
+Финальная production-проверка выполнялась только GET-запросами: `/`, `/lab`, `/privacy` и `/api/site-stats` отвечают HTTP 200. После reset новые тестовые POST-события в production не отправлялись.
