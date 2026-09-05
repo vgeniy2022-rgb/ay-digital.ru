@@ -4,7 +4,7 @@
 
 ## 1. Изменения
 
-- Новый опубликованный в локальном каталоге кейс `/cases/inner-support-school`.
+- Новый кейс `/cases/inner-support-school`, опубликованный в production.
 - AI-концепт убран из коммерческой навигации и основных продающих CTA; добавлен как инструмент в LAB.
 - В действующий прайс добавлены три позиции установки программ. Прежние расширенные пакеты сохранены.
 
@@ -113,7 +113,24 @@ Read-only проверка существующего production 6 сентяб�
 - `/api/visitor-events` — HTTP 200, `configured:true`, `telegramConfigured:true`, `version:2`.
 - `/api/lab-stats` — HTTP 200.
 
-Это исходная проверка production до публикации нового кейса. После отдельной команды пользователя «задиплой сайт» публикация разрешена. Release gate повторно пройден: 154 теста, lint, TypeScript, build, SEO generation/prerender/audit и `git diff --check`. Релиз выполняется через существующую Git-интеграцию проекта `ay-digital-ru`; результаты проверки опубликованной версии будут добавлены после статуса READY.
+После отдельной команды пользователя «задиплой сайт» релиз опубликован через существующую Git-интеграцию проекта `ay-digital-ru`. Release gate повторно пройден: 154 теста, lint, TypeScript, build, SEO generation/prerender/audit и `git diff --check`.
+
+Проверенный код: `9fadae35f72cf091a980cb2d688cfe2339493853`.
+Production deployment: `dpl_GqRKug4sma9kjBZw2DM297BJ7kKK`, статус **READY**. Привязка `sitevl.tech` проверена через Vercel API и соответствует этому SHA.
+
+Production QA:
+
+- 30/30 HTTP-проверок: восемь страниц, sitemap, robots, три дополнительных домена, три read-only API и все 14 изображений.
+- `/`, `/cases`, `/cases/inner-support-school`, `/prices`, `/prices/programs`, `/program-installation-vladivostok`, `/lab`, `/ai-website` — HTTP 200, один H1, правильный canonical на `https://sitevl.tech`.
+- Sitemap содержит 73 URL и ровно одну запись нового кейса; robots указывает на `https://sitevl.tech/sitemap.xml`.
+- Все 14 WebP возвращают HTTP 200 и `image/webp`; SHA-256 каждого опубликованного файла совпал с локальным.
+- `sitevl-ru.vercel.app` и `ay-digital-ru.vercel.app` продолжают отвечать HTTP 200 без жёсткого редиректа. `www.sitevl.tech` возвращает 308 на основной домен, сохраняя путь `/prices` и тестовый `src`.
+- 24/24 браузерных сценария на production: восемь маршрутов при ширине 1440, 390 и 320 px. Контент, навигация, цены, H1, canonical и отсутствие горизонтального переполнения — PASS.
+- Первый быстрый браузерный прогон считывал Suspense до загрузки контента; тест исправлен ожиданием H1, затем полностью повторён. Код сайта ради этого не менялся.
+- `/api/ai` — HTTP 200, `configured:true`, `provider:gemini`; `/api/visitor-events` — HTTP 200, `configured:true`, `telegramConfigured:true`, `version:2`; `/api/lab-stats` — HTTP 200.
+- Необработанные ошибки браузера не обнаружены. Запрос error-логов данного deployment за последний час вернул 0 записей.
+
+Этот QA проверяет публикацию и доступность существующих API, но не является новым тестом платной генерации Gemini, отправки заявки или доставки Telegram.
 
 Не отправлялись тестовые лиды, сообщения Telegram и платные запросы генерации. POST аналитики блокировались только в QA-браузере, без подмены ответов сервера. Production visitor/lead-записи не создавались и не удалялись; очистка не требуется.
 
@@ -122,6 +139,8 @@ Read-only проверка существующего production 6 сентяб�
 Базовый HEAD до публикации: `7233944a35e61720b89e1117bc9892c73bc58190`.
 
 Ветка публикации — `main`, remote — существующий `origin`. Подтверждена привязка к Vercel project `ay-digital-ru` (`prj_REyqEPemqb3DbzgR2z7PMPJv0FsL`), production branch — `main`. Новый проект не создаётся.
+
+Код релиза отправлен в `origin/main` коммитом `9fadae35f72cf091a980cb2d688cfe2339493853`. Настоящее дополнение отчёта фиксируется отдельным документационным коммитом; он не меняет код, серверные API или ресурсы сайта. Его итоговый SHA и deployment ID указываются в сообщении о завершении публикации после проверки READY.
 
 ## 9. Сознательно не затронуто
 
