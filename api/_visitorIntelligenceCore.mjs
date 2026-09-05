@@ -1,5 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { redisPipeline } from './_labStatsCore.mjs';
+import { commitVisitorEvent, LINK_LEAD_SCRIPT, V2_NAMESPACE } from './_visitorStoreV2.mjs';
 
 export const VISITOR_NAMESPACE = 'sitevl:visitor:v1';
 export const VISITOR_EVENT_TYPES = Object.freeze([
@@ -18,14 +19,14 @@ const SOURCE_PATTERN = /^(?:direct|referral|[a-z0-9][a-z0-9_-]{0,63})$/;
 const HOST_PATTERN = /^(?:[a-z0-9](?:[a-z0-9-]{0,62})(?:\.[a-z0-9](?:[a-z0-9-]{0,62}))*)?$/i;
 const SAFE_PATH_PATTERN = /^\/[a-z0-9/_-]*$/i;
 const DEVICES = new Set(['mobile', 'tablet', 'desktop']);
+const DEVICE_FAMILIES = new Set(['iPhone', 'iPad', 'Android', 'Mac', 'Windows', 'Linux', 'Other']);
 const BROWSERS = new Set(['Safari', 'Chrome', 'Firefox', 'Edge', 'Opera', 'Other']);
 const EXPERIMENTS = new Set(['builder', 'canvas', 'physics', 'modern-os', 'retro']);
-const ALLOWED_KEYS = new Set(['event', 'visitorId', 'sessionId', 'eventId', 'path', 'source', 'referrerHost', 'deviceType', 'browser', 'experimentId', 'conceptId']);
+const ALLOWED_KEYS = new Set(['event', 'visitorId', 'sessionId', 'eventId', 'path', 'source', 'referrerHost', 'deviceType', 'deviceFamily', 'browser', 'experimentId', 'conceptId']);
 const requestWindows = new Map();
 const MAX_REQUESTS_PER_MINUTE = 40;
 const MAX_GLOBAL_REQUESTS_PER_MINUTE = 600;
 const MAX_TELEGRAM_NOTIFICATIONS_PER_HOUR = 120;
-const MAX_HISTORY_EVENTS = 100;
 
 const plainObject = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 const clean = (value, limit) => typeof value === 'string' ? value.trim().slice(0, limit) : '';
@@ -86,7 +87,8 @@ export function validateVisitorEvent(raw) {
   const value = { event, visitorId, sessionId, eventId, path };
   if (event === 'session_start') {
     if (!DEVICES.has(raw.deviceType) || !BROWSERS.has(raw.browser)) return { ok: false, error: 'Некорректные технические данные.' };
-    return { ok: true, value: { ...value, source: normalizeSource(raw.source), referrerHost: normalizeReferrerHost(raw.referrerHost), deviceType: raw.deviceType, browser: raw.browser } };
+    if (raw.deviceFamily !== undefined && !DEVICE_FAMILIES.has(raw.deviceFamily)) return { ok: false, error: 'Некорректное семейство устройства.' };
+    return { ok: true, value: { ...value, source: normalizeSource(raw.source), referrerHost: normalizeReferrerHost(raw.referrerHost), deviceType: raw.deviceType, deviceFamily: raw.deviceFamily || 'Other', browser: raw.browser } };
   }
   if (event === 'experiment_start') {
     if (!EXPERIMENTS.has(raw.experimentId)) return { ok: false, error: 'Неизвестный эксперимент.' };
@@ -121,8 +123,14 @@ function checkMemoryRate(sessionId, now) {
 async function checkRedisRate(sessionId, now, options) {
   const key = `${VISITOR_NAMESPACE}:rate:${sessionId}`;
   const globalKey = `${VISITOR_NAMESPACE}:global-rate:${Math.floor(now / 60_000)}`;
-  const result = await redisPipeline([['INCR', key], ['EXPIRE', key, '60'], ['INCR', globalKey], ['EXPIRE', globalKey, '120']], options);
-  return Number(result[0]?.result || 0) <= MAX_REQUESTS_PER_MINUTE && Number(result[2]?.result || 0) <= MAX_GLOBAL_REQUESTS_PER_MINUTE;
+  const commands = [['INCR', key], ['EXPIRE', key, '60'], ['INCR', globalKey], ['EXPIRE', globalKey, '120']];
+  // A generous, short-lived network limit supplements IDs; it never merges visitors behind NAT.
+  if (/^[a-f0-9]{64}$/.test(options.networkHash || '')) {
+    const networkKey = `${V2_NAMESPACE}:network-rate:${options.networkHash}:${Math.floor(now / 60_000)}`;
+    commands.push(['INCR', networkKey], ['EXPIRE', networkKey, '120']);
+  }
+  const result = await redisPipeline(commands, options);
+  return Number(result[0]?.result || 0) <= MAX_REQUESTS_PER_MINUTE && Number(result[2]?.result || 0) <= MAX_GLOBAL_REQUESTS_PER_MINUTE && (!result[4] || Number(result[4].result) <= 240);
 }
 
 function routeLabel(path) {
@@ -141,8 +149,10 @@ function routeLabel(path) {
 const experimentLabels = Object.freeze({ builder: 'Конструктор', canvas: 'Бесконечный холст', physics: 'Physics Lab', 'modern-os': 'Modern OS', retro: 'Retro OS' });
 const deviceLabels = Object.freeze({ mobile: 'Мобильное устройство', tablet: 'Планшет', desktop: 'Компьютер' });
 
-function sourceLabel(source, referrerHost = '') {
+export function sourceLabel(source = 'direct', referrerHost = '') {
   if (source.startsWith('telegram')) return 'Telegram';
+  if (source.startsWith('vk')) return 'ВКонтакте';
+  if (source === 'referral') return referrerHost ? `Переход: ${referrerHost}` : 'Внешний переход';
   if (source !== 'direct') return source;
   return referrerHost ? `Переход: ${referrerHost}` : 'Прямой переход';
 }
@@ -154,6 +164,7 @@ function vladivostokTime(iso) {
 async function sendTelegram(text, { fetchImpl = fetch, environment = process.env } = {}) {
   const config = telegramConfiguration(environment);
   if (!config.token || !config.chatId) return { status: 'not-configured' };
+  try {
   const response = await fetchImpl(`https://api.telegram.org/bot${encodeURIComponent(config.token)}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -162,7 +173,8 @@ async function sendTelegram(text, { fetchImpl = fetch, environment = process.env
   });
   if (!response.ok) return { status: 'failed' };
   const payload = await response.json().catch(() => ({}));
-  return { status: 'sent', messageId: Number(payload?.result?.message_id) || null };
+  return { status: payload.ok === true ? 'sent' : 'failed', messageId: Number(payload?.result?.message_id) || null };
+  } catch { return { status: 'failed' }; }
 }
 
 function visitorKeys(visitorId) {
@@ -174,20 +186,48 @@ function visitorKeys(visitorId) {
   };
 }
 
-function telegramTextForEvent(event, isNewVisitor, timestamp) {
-  if (isNewVisitor && event.event === 'session_start') {
-    return ['👤 Новый посетитель SITEVL', `ID: ${event.visitorId}`, `Устройство: ${deviceLabels[event.deviceType] || event.deviceType} · ${event.browser}`, `Источник: ${sourceLabel(event.source, event.referrerHost)}`, `Вход: ${routeLabel(event.path)}`, `Время: ${vladivostokTime(timestamp)}`].join('\n');
+export function elapsedLabel(milliseconds) {
+  if (!Number.isFinite(milliseconds)) return 'не определено';
+  const minutes = Math.max(0, Math.floor(milliseconds / 60_000));
+  if (minutes < 1) return 'менее минуты';
+  if (minutes < 60) return `${minutes} мин`;
+  const hours = Math.floor(minutes / 60);
+  return hours < 24 ? `${hours} ч ${minutes % 60} мин` : `${Math.floor(hours / 24)} дн ${hours % 24} ч`;
+}
+
+export function telegramTextForEvent(event, context, timestamp) {
+  const who = `Посетитель #${context.visitorNumber}`;
+  if (event.event === 'session_start' && context.newSession) {
+    const lines = [context.isNewVisitor ? '👤 Новый посетитель SITEVL' : '🔁 Посетитель вернулся на SITEVL',
+      `Посещение сайта: #${context.visitNumber}`, `Уникальный посетитель: #${context.visitorNumber}`,
+      `Сессия посетителя: #${context.sessionNumber}`,
+      `Устройство: ${event.deviceFamily !== 'Other' && event.deviceFamily ? event.deviceFamily : deviceLabels[event.deviceType]} · ${event.browser}`,
+      `Источник: ${sourceLabel(context.currentSource, context.currentReferrerHost)}`,
+      `Рекламная метка: ${!['direct', 'referral'].includes(context.currentSource) ? context.currentSource : 'нет'}`,
+      `Вход: ${routeLabel(event.path)}`, `Время: ${vladivostokTime(timestamp)} (Владивосток)`];
+    if (context.isNewVisitor) lines.push('Первый визит.');
+    else {
+      lines.push(`Первый визит: ${vladivostokTime(context.firstVisit)}`,
+        `Предыдущий визит: ${context.previousVisit ? vladivostokTime(context.previousVisit) : 'нет данных'}`,
+        `Вернулся через: ${elapsedLabel(Date.parse(timestamp) - Date.parse(context.previousVisit))}`,
+        `Первый источник: ${sourceLabel(context.firstSource, context.firstReferrerHost)}`,
+        `Текущий источник: ${sourceLabel(context.currentSource, context.currentReferrerHost)}`,
+        `Ранее в сохранённой статистике: страниц ${context.prior.pages}, запусков LAB ${context.prior.experiments}, AI-концептов ${context.prior.concepts}, заявок ${context.prior.leads}`);
+    }
+    if (context.networkState) lines.push(`IP-assist: ${context.networkState === 'same' ? 'сеть не изменилась' : 'новая сеть'} (вспомогательный признак)`);
+    return lines.join('\n');
   }
-  if (event.event === 'page_view' && (event.path === '/prices' || event.path.startsWith('/prices/'))) return `🔥 ${event.visitorId} смотрит цены`;
-  if (event.event === 'page_view' && event.path === '/ai-website') return `✨ ${event.visitorId} открыл AI-концепт`;
-  if (event.event === 'page_view' && event.path === '/lab') return `🔬 ${event.visitorId} открыл LAB`;
-  if (event.event === 'experiment_start') return `🎮 ${event.visitorId} запустил ${experimentLabels[event.experimentId] || event.experimentId}`;
-  if (event.event === 'ai_concept_created') return `✨ ${event.visitorId} создал AI-концепт ${event.conceptId}`;
+  const suffix = `\nПосещение сайта: #${context.visitNumber} · Сессия: #${context.sessionNumber}`;
+  if (event.event === 'page_view' && (event.path === '/prices' || event.path.startsWith('/prices/'))) return `🔥 ${who} смотрит цены${suffix}`;
+  if (event.event === 'page_view' && event.path === '/ai-website') return `✨ ${who} открыл AI-концепт${suffix}`;
+  if (event.event === 'page_view' && event.path === '/lab') return `🔬 ${who} открыл LAB${suffix}`;
+  if (event.event === 'experiment_start') return `🎮 ${who} запустил ${experimentLabels[event.experimentId] || event.experimentId}${suffix}`;
+  if (event.event === 'ai_concept_created') return `✨ ${who} создал AI-концепт ${event.conceptId}${suffix}`;
   return '';
 }
 
-function notifyAction(event, isNewVisitor) {
-  if (isNewVisitor && event.event === 'session_start') return 'new-visitor';
+function notifyAction(event, context) {
+  if (context.newSession && event.event === 'session_start') return 'session-start';
   if (event.event === 'page_view' && (event.path === '/prices' || event.path.startsWith('/prices/'))) return 'prices';
   if (event.event === 'page_view' && event.path === '/ai-website') return 'ai-website';
   if (event.event === 'page_view' && event.path === '/lab') return 'lab';
@@ -206,54 +246,25 @@ function profileFlagsForPath(path) {
 }
 
 export async function trackVisitorEvent(event, options = {}) {
+  const validated = validateVisitorEvent(event);
+  if (!validated.ok) throw new Error('invalid visitor event');
+  event = validated.value;
   const nowMs = options.now?.() ?? Date.now();
   if (!checkMemoryRate(event.sessionId, nowMs)) return { accepted: false, rateLimited: true, deduplicated: false, notification: 'skipped' };
   if (!await checkRedisRate(event.sessionId, nowMs, options)) return { accepted: false, rateLimited: true, deduplicated: false, notification: 'skipped' };
   const timestamp = new Date(nowMs).toISOString();
   const ttl = visitorTtlSeconds(options.environment);
-  const keys = visitorKeys(event.visitorId);
-  const claim = await redisPipeline([
-    ['SET', `${VISITOR_NAMESPACE}:event:${event.eventId}`, '1', 'NX', 'EX', String(ttl)],
-    ['HSETNX', keys.profile, 'firstVisit', timestamp],
-    ['SET', `${VISITOR_NAMESPACE}:session:${event.sessionId}`, event.visitorId, 'NX', 'EX', String(ttl)],
-  ], options);
-  if (claim[0]?.result !== 'OK') return { accepted: true, rateLimited: false, deduplicated: true, notification: 'skipped' };
-
-  const isNewVisitor = Number(claim[1]?.result || 0) === 1;
-  const isNewSession = claim[2]?.result === 'OK';
-  const history = { event: event.event, at: timestamp, path: event.path };
-  if (event.event === 'session_start') Object.assign(history, { source: event.source, referrerHost: event.referrerHost, deviceType: event.deviceType, browser: event.browser });
-  if (event.experimentId) history.experimentId = event.experimentId;
-  if (event.conceptId) history.conceptId = event.conceptId;
-  const profileFields = ['lastVisit', timestamp, 'lastPage', event.path, ...profileFlagsForPath(event.path)];
-  if (event.event === 'session_start') profileFields.push('deviceType', event.deviceType, 'browser', event.browser);
-  if (event.event === 'ai_concept_created') profileFields.push('generatedAiConcept', '1', 'lastConceptId', event.conceptId);
-  if (event.event === 'brief_completed') profileFields.push('briefCompleted', '1');
-  const commands = [
-    ['HSET', keys.profile, ...profileFields],
-    ['SADD', keys.pages, event.path],
-    ['RPUSH', keys.history, JSON.stringify(history)],
-    ['LTRIM', keys.history, String(-MAX_HISTORY_EVENTS), '-1'],
-    ['ZADD', `${VISITOR_NAMESPACE}:index`, String(nowMs), event.visitorId],
-    ['ZREMRANGEBYRANK', `${VISITOR_NAMESPACE}:index`, '0', '-5001'],
-    ['EXPIRE', keys.profile, String(ttl)],
-    ['EXPIRE', keys.pages, String(ttl)],
-    ['EXPIRE', keys.history, String(ttl)],
-    ['EXPIRE', `${VISITOR_NAMESPACE}:index`, String(ttl)],
-  ];
-  if (isNewVisitor && event.event === 'session_start') commands[0] = ['HSET', keys.profile, ...profileFields, 'firstPage', event.path, 'firstSource', event.source, 'firstReferrerHost', event.referrerHost];
-  if (isNewSession) commands.push(['HINCRBY', keys.profile, 'sessions', '1']);
-  if (event.event === 'experiment_start') {
-    commands.push(['SADD', keys.experiments, event.experimentId], ['EXPIRE', keys.experiments, String(ttl)]);
-  }
-  await redisPipeline(commands, options);
+  const committed = await commitVisitorEvent(event, profileFlagsForPath(event.path), ttl, nowMs, options);
+  if (committed.conflict || committed.sessionRequired) return { accepted: false, conflict: true, notification: 'skipped' };
+  if (committed.deduplicated) return { accepted: true, rateLimited: false, deduplicated: true, notification: 'skipped' };
+  const context = committed.context;
 
   let notification = 'skipped';
-  const action = notifyAction(event, isNewVisitor);
-  const text = telegramTextForEvent(event, isNewVisitor, timestamp);
+  const action = notifyAction(event, context);
+  const text = telegramTextForEvent(event, context, timestamp);
   if (action && text) {
     const telegramRateKey = `${VISITOR_NAMESPACE}:telegram-rate:${Math.floor(nowMs / 3_600_000)}`;
-    const notifyClaim = await redisPipeline([['SET', `${VISITOR_NAMESPACE}:notify:${event.visitorId}:${action}`, '1', 'NX', 'EX', String(ttl)]], options);
+    const notifyClaim = await redisPipeline([['SET', `${V2_NAMESPACE}:notify:${event.sessionId}:${action}`, '1', 'NX', 'EX', String(ttl)]], options);
     if (notifyClaim[0]?.result === 'OK') {
       const telegramRate = await redisPipeline([['INCR', telegramRateKey], ['EXPIRE', telegramRateKey, '7200']], options);
       notification = Number(telegramRate[0]?.result || 0) <= MAX_TELEGRAM_NOTIFICATIONS_PER_HOUR ? (await sendTelegram(text, options)).status : 'rate-limited';
@@ -267,7 +278,15 @@ export async function readVisitor(visitorId, options = {}) {
   const keys = visitorKeys(visitorId);
   const result = await redisPipeline([['HGETALL', keys.profile], ['LRANGE', keys.history, '0', '-1'], ['SMEMBERS', keys.pages], ['SMEMBERS', keys.experiments]], options);
   const history = Array.isArray(result[1]?.result) ? result[1].result.map((item) => { try { return JSON.parse(item); } catch { return null; } }).filter(Boolean) : [];
-  return { visitor: parseHash(result[0]?.result), history, pages: result[2]?.result || [], experiments: result[3]?.result || [] };
+  const visitor = parseHash(result[0]?.result);
+  let session = {};
+  const sessionId = options.sessionId || visitor.lastSessionId;
+  if (SESSION_PATTERN.test(sessionId || '')) {
+    const response = await redisPipeline([['HGETALL', `${V2_NAMESPACE}:session:${sessionId}`]], options);
+    const candidate = parseHash(response[0]?.result);
+    if (candidate.visitorId === visitorId) session = candidate;
+  }
+  return { visitor, session, history, pages: result[2]?.result || [], experiments: result[3]?.result || [] };
 }
 
 export function buildLeadTelegramSummary(lead, intelligence) {
@@ -280,19 +299,27 @@ export function buildLeadTelegramSummary(lead, intelligence) {
   }
   const firstVisitMs = Date.parse(visitor.firstVisit || '');
   const elapsedMs = Number.isFinite(firstVisitMs) ? Math.max(0, Date.parse(lead.createdAt) - firstVisitMs) : NaN;
-  const elapsed = Number.isFinite(elapsedMs) ? (elapsedMs < 3_600_000 ? `${Math.max(1, Math.round(elapsedMs / 60_000))} мин` : `${Math.round(elapsedMs / 3_600_000)} ч`) : 'не определено';
+  const session = intelligence?.session || {};
   return [
-    '🚀 Новый лид SITEVL', '',
-    'Visitor:', lead.visitorId || 'не связан', '',
+    '💼 Новая заявка SITEVL', '',
+    `Посетитель: ${visitor.visitorNumber ? `#${visitor.visitorNumber}` : 'не связан'}`,
+    `Посещение сайта: ${session.visitNumber ? `#${session.visitNumber}` : 'не определено'}`,
+    `Сессия посетителя: ${session.sessionNumber ? `#${session.sessionNumber}` : 'не определено'}`,
+    `Первый визит: ${visitor.firstVisit ? vladivostokTime(visitor.firstVisit) : 'не определено'}`,
+    `Первый источник: ${sourceLabel(visitor.firstSource, visitor.firstReferrerHost)}`,
+    `Текущий источник: ${sourceLabel(session.source, session.referrerHost)}`,
+    `Рекламная метка: ${session.source && !['direct', 'referral'].includes(session.source) ? session.source : 'нет'}`, '',
     'Имя:', lead.contact.name || 'не указано', '',
     'Телефон:', lead.contact.phone || lead.contact.whatsapp || 'не указан', '',
     'Telegram:', lead.contact.telegram || 'не указан', '',
+    'Email:', lead.contact.email || 'не указан', '',
     'Тип проекта:', lead.recommendedPackage || 'не определён', '',
     'Бюджет:', lead.budget || 'не указан', '',
     'AI Concept ID:', lead.conceptId, '',
     'До заявки:', uniquePathLabels.length ? uniquePathLabels.slice(-12).join(' → ') : 'история недоступна', '',
     'Сессий:', visitor.sessions || 'не определено', '',
-    'Время до заявки:', elapsed,
+    'Время до заявки:', elapsedLabel(elapsedMs),
+    `Время заявки: ${vladivostokTime(lead.createdAt)} (Владивосток)`,
   ].join('\n').slice(0, 3500);
 }
 
@@ -302,15 +329,11 @@ export async function linkLeadToVisitor(lead, options = {}) {
   const timestamp = new Date(nowMs).toISOString();
   const ttl = visitorTtlSeconds(options.environment);
   const keys = visitorKeys(lead.visitorId);
-  await redisPipeline([
-    ['HSET', keys.profile, 'lastVisit', timestamp, 'leadSubmitted', '1', 'leadId', lead.id, 'lastConceptId', lead.conceptId],
-    ['RPUSH', keys.history, JSON.stringify({ event: 'lead_created', at: timestamp, path: '/ai-website', conceptId: lead.conceptId, leadId: lead.id })],
-    ['LTRIM', keys.history, String(-MAX_HISTORY_EVENTS), '-1'],
-    ['EXPIRE', keys.profile, String(ttl)],
-    ['EXPIRE', keys.history, String(ttl)],
-  ], options);
-  const intelligence = await readVisitor(lead.visitorId, options);
-  const notification = (await sendTelegram(buildLeadTelegramSummary(lead, intelligence), options)).status;
+  if (!/^[a-f0-9-]{36}$/i.test(lead.id || '') || !CONCEPT_PATTERN.test(lead.conceptId || '')) return { linked: false, notification: 'skipped', intelligence: null };
+  const result = await redisPipeline([['EVAL', LINK_LEAD_SCRIPT, '4', keys.profile, `${V2_NAMESPACE}:session:${lead.visitorSessionId}`, `${V2_NAMESPACE}:lead:${lead.id}`, keys.history, lead.visitorId, timestamp, lead.id, lead.conceptId, String(ttl)]], options);
+  if (!Number(result[0]?.result)) return { linked: false, notification: 'skipped', intelligence: null };
+  const intelligence = await readVisitor(lead.visitorId, { ...options, sessionId: lead.visitorSessionId });
+  const notification = Number(result[0]?.result) === 1 ? (await sendTelegram(buildLeadTelegramSummary(lead, intelligence), options)).status : 'skipped';
   return { linked: true, notification, intelligence };
 }
 

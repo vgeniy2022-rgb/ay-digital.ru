@@ -1,5 +1,6 @@
 import { isLabStatsStorageConfigured } from './_labStatsCore.mjs';
 import { isTelegramConfigured, trackVisitorEvent, validateVisitorEvent, visitorRetentionDays } from './_visitorIntelligenceCore.mjs';
+import { isIpAssistConfigured, requestNetworkHash } from './_visitorNetwork.mjs';
 
 const json = (response, status, payload) => {
   response.statusCode = status;
@@ -10,7 +11,7 @@ const json = (response, status, payload) => {
 };
 
 export default async function handler(request, response) {
-  if (request.method === 'GET') return json(response, 200, { configured: isLabStatsStorageConfigured(), telegramConfigured: isTelegramConfigured(), retentionDays: visitorRetentionDays() });
+  if (request.method === 'GET') return json(response, 200, { version: 2, configured: isLabStatsStorageConfigured(), telegramConfigured: isTelegramConfigured(), ipAssistEnabled: isIpAssistConfigured(), retentionDays: visitorRetentionDays() });
   if (request.method !== 'POST') return json(response, 405, { error: 'Метод не поддерживается.' });
   const rawSize = Number(request.headers?.['content-length'] || 0);
   let parsedSize = 0;
@@ -21,8 +22,9 @@ export default async function handler(request, response) {
   if (!validated.ok) return json(response, 400, { error: validated.error });
   if (!isLabStatsStorageConfigured()) return json(response, 503, { error: 'Visitor Intelligence временно недоступен.' });
   try {
-    const result = await trackVisitorEvent(validated.value);
+    const result = await trackVisitorEvent(validated.value, { networkHash: requestNetworkHash(request) });
     if (result.rateLimited) return json(response, 429, { error: 'Слишком много событий.' });
+    if (!result.accepted) return json(response, 409, { error: 'Сначала необходимо зарегистрировать сессию этого браузера.' });
     return json(response, 202, { accepted: true, deduplicated: result.deduplicated, notification: result.notification });
   } catch {
     return json(response, 503, { error: 'Visitor Intelligence временно недоступен.' });
