@@ -117,7 +117,7 @@ Viewport: **390×844, 768×1024, 1366×768, 1440×900**. Проверены со
 1. В Google Search Console добавить **Domain Property `sitevl.tech`**, без `https://` и без www.
 2. Получить **уникальное TXT-значение, которое покажет Google**, и самостоятельно добавить его в DNS Masterhost. Не заменять существующие A/CNAME и не удалять действующие TXT. В этой задаче DNS не менялся и verification-токен не придумывался.
 3. После подтверждения отправить sitemap: **https://sitevl.tech/sitemap.xml**.
-4. Через URL Inspection запросить индексацию главной, `/web-studio`, `/services`, `/prices/websites`, `/mobile-apps`, `/prices/mobile-apps` и новых специализированных коммерческих страниц.
+4. Через URL Inspection запросить индексацию главной, `/website-development-vladivostok`, `/services`, `/prices/websites`, `/mobile-apps`, `/prices/mobile-apps` и новых специализированных коммерческих страниц.
 5. **Старую property не удалять.** Существующий HTML verification token сохранён побайтово. Новый canonical не означает немедленную переиндексацию или гарантированную позицию в поиске.
 
 Официальные инструкции: [Google: Domain Property](https://support.google.com/webmasters/answer/34592?hl=en), [Google: TXT verification](https://support.google.com/webmasters/answer/9008080?hl=en), [Vercel: domain redirects](https://vercel.com/docs/domains/working-with-domains/deploying-and-redirecting).
