@@ -50,7 +50,50 @@
 - Настоящий изолированный локальный Redis через Unix socket: параллельные INCR, повторные события, возвращение, legacy migration, session binding, lead binding, короткий hash TTL, отсутствие IP merge, отказ Redis/Telegram.
 - Unit: source/referrer, coarse device, HMAC, отсутствие секрета, owner auth, frontend concurrent registration.
 - Integration-тесты требуют `redis-server` и `redis-cli` на PATH (или `REDIS_SERVER_BIN`/`REDIS_CLI_BIN`). Без них помечаются SKIP, не подменяются mock-реализацией Lua. На этой машине запущены реально, без SKIP.
-- Полный release gate и production QA: результаты будут дополнены после публикации; до проверки production PASS не заявляется.
+- Полный release gate: `npm test` — 149/149 PASS, 0 SKIP; `npm run lint`, `npx tsc -b --pretty false`, `npm run build`, `git diff --check` — PASS. SEO generation: 72 sitemap URL, 86 prerendered HTML; SEO audit: 72 indexable + 14 noindex — PASS. Существующее предупреждение Vite о крупных chunks не является ошибкой сборки; перепаковка LAB/Studio не входит в эту задачу.
+
+## Production QA — фактический результат
+
+Код опубликован через существующую Git-интеграцию `origin/main`, новый проект не создавался.
+
+- Application commit: `b78900095828ac2d3be4e56ad0ab1e743d5e4fac`.
+- Проверенный application deployment: `dpl_HCyUVBDd4RpkDpkvwrwq8WNUZg7m`, READY.
+- `GET /api/visitor-events`: HTTP 200, `version: 2`, `configured: true`, `telegramConfigured: true`, `ipAssistEnabled: false`.
+- `GET /api/visitor-owner`: HTTP 404 — данные не раскрываются публично.
+- Недопустимое событие с произвольными `redisKey`/message: HTTP 400 до записи.
+
+| Проверка в изолированных QA-браузерах | Наблюдение | Результат |
+|---|---|---|
+| A: первый вход через `src=telegram-v2-qa` | visitorNumber 1, visitNumber 1, sessions 1 | PASS |
+| A: перезагрузка | те же номера и одна сессия; повтор page event дедуплицирован | PASS |
+| SPA: Главная → Приложения → Цены → LAB → Modern OS | события сохранены у одного внутреннего visitor ID и посещения 1 | PASS |
+| B: отдельный новый браузер | visitorNumber 2, visitNumber 2, sessions 1 | PASS |
+| A: новая сессия с прежним browser ID | visitorNumber 1, visitNumber 4, sessions 2 | PASS |
+| First/current source при возвращении | первый `telegram-v2-qa`, текущий `direct` | PASS |
+| Цены в новой сессии | новое уведомление для того же посетителя; в прежней сессии повторы подавляются | PASS |
+| Resize до 390×844 | число отправленных событий не изменилось, горизонтального переполнения нет | PASS |
+| Gemini внутри Modern OS | HTTP 200, provider `gemini`, видимый содержательный ответ | PASS |
+| Генерация AI-концепта | HTTP 200, provider `gemini`, `fallback: false`, 6 секций | PASS |
+| Отправка QA-заявки через форму | HTTP 201, `stored: true`, `linked: true`, notification `sent` | PASS |
+| Telegram | 10 успешных серверных отправок: 7 основных событий A, новый B, возвращение A и цены новой сессии | PASS на уровне Telegram API |
+| Browser errors | ошибок JavaScript в трёх QA-сессиях не зарегистрировано | PASS |
+
+Между QA-визитами возникло production-посещение №3, не созданное этой проверкой. Поэтому номер нового визита A — 4, а не 3. Это ожидаемая работа общей атомарной последовательности; чужие записи не читались для извлечения контактов и не удалялись.
+
+Проверка использовала чистые изолированные браузерные контексты с заранее случайно созданными и проверенными как свободные QA visitor ID. При возвращении в отдельный контекст переносились только QA browser ID и первый источник. Публичные POST счётчиков `/api/site-stats` и `/api/lab-stats` подавлялись только во внешнем QA-harness, не в production-коде. Реальные `/api/visitor-events`, `/api/ai`, `/api/ai-leads` не подменялись. Секреты Telegram не извлекались из Vercel; использовались уже настроенные серверные переменные. Прочтение владельцем сообщений не проверено — `sent` означает успешный ответ Telegram API, а не read receipt. В этой проверке Gemini 503 high demand не наблюдался.
+
+### Очистка
+
+По точному manifest двух QA visitor ID, трёх session ID и одной проверенной по QA-имени/email заявке инвентаризированы 57 возможных ключей; 42 из них существовали и были удалены. Также удалены только соответствующие элементы visitor/lead index. Независимая повторная read-only проверка подтвердила отсутствие этих ключей и ссылки QA-заявки в индексе. Две глобальные последовательности НЕ уменьшались: после очистки visitorSequence = 3, visitSequence = 4. Чужие visitor/lead записи не удалены. Тестовые сообщения в Telegram оставлены как подтверждение отправок; доступа к чтению/удалению чата в этой проверке не использовалось.
+
+### Сайт после публикации и очистки
+
+- `sitevl.tech`, `sitevl-ru.vercel.app`, `ay-digital-ru.vercel.app`: `/`, `/prices`, `/lab/modern-os`, `/ai-website` — 12/12 HTTP 200; canonical везде `https://sitevl.tech` + путь.
+- `www.sitevl.tech/prices?src=telegram-v2-qa` → HTTP 308 на `https://sitevl.tech/prices?src=telegram-v2-qa`; старые vercel.app адреса без принудительного host redirect.
+- Sitemap и robots: HTTP 200, основной домен `sitevl.tech`.
+- Redis-аналитика сайта/LAB, AI и AI leads health endpoints — HTTP 200. Публичная статистика LAB осталась 9/7; SITEVL изменилась 43/35 → 44/36 за счёт не-QA посещения. Сбросов/компенсирующих DECR не было.
+- Vercel runtime logs проверенного application deployment, уровень error за последний час: 0 записей. Это разовая проверка, постоянный мониторинг не настраивался.
+- Финальное документирующее изменение отчёта не меняет runtime-код. Его Git commit и последний deployment указаны в итоговом сообщении задачи.
 
 ## Первичные источники
 
