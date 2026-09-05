@@ -35,9 +35,11 @@ export type ProjectCase = {
   draftNote?: string;
   projectPrice?: string;
   developmentTime?: string;
+  gallery?: CaseGalleryData;
 };
 
 export const projectCases: ProjectCase[] = [
+  innerSupportCase,
   {
     slug: 'ay-digital-personal-website',
     path: '/cases/ay-digital-personal-website',
@@ -202,3 +204,25 @@ export const projectCases: ProjectCase[] = [
 
 export const publishedCases = projectCases.filter((item) => item.published);
 export const featuredCases = publishedCases.filter((item) => item.featured);
+import { innerSupportCase } from './innerSupportCase';
+
+export type CaseScreenshot = {
+  id: string;
+  label: string;
+  alt: string;
+  caption: string;
+  src: string;
+  srcSet: string;
+  width: number;
+  height: number;
+};
+
+export type CaseGalleryData = {
+  websiteUrl: string;
+  websiteName: string;
+  websiteFeatures: string[];
+  websiteScreens: CaseScreenshot[];
+  appFeatures: { title: string; description: string }[];
+  appScreens: CaseScreenshot[];
+  evidenceNote: string;
+};

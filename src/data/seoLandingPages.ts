@@ -94,7 +94,7 @@ const rawSeoLandingPages: SeoLandingPage[] = [
     intro: 'Подбираю и устанавливаю только согласованные программы из понятных источников. Платные программы, подписки и лицензии не входят в стоимость услуги и обсуждаются отдельно.',
     priceGroupTitles: ['Программы'],
     sections: [
-      { title: 'Пакеты установки', items: ['Студент — базовый набор для учёбы и презентаций', 'Офис — документы, таблицы, почта и удалённая работа', 'Полный комплект — подготовка компьютера к повседневной работе', 'установка одной программы, если нужен точечный вариант'] },
+      { title: 'Одна программа или готовый набор', items: ['установка одной обычной программы на Windows или MacBook', 'пакет из трёх обычных программ — например, браузер, PDF-просмотрщик и архиватор', 'профессиональные программы, включая Photoshop и AutoCAD, оцениваются отдельно', 'сохранены расширенные пакеты: Студент, Офис и Полный комплект'] },
       { title: 'Что обычно ставят', items: ['Microsoft Office или совместимые офисные программы', 'браузеры', 'PDF-просмотр и работа с документами', 'архиватор', 'медиаплеер', 'мессенджеры и программы для работы'] },
       { title: 'Формат работы', text: 'Часть программ можно установить удалённо. Если устройство новое или требуется комплексная настройка, удобнее согласовать очный формат во Владивостоке.' },
     ],
@@ -384,7 +384,6 @@ const rawSeoLandingPages: SeoLandingPage[] = [
     ],
     links: [
       { label: 'Цены на разработку сайтов', href: '/prices/websites' },
-      { label: 'Получить AI-концепт сайта', href: '/ai-website' },
       { label: 'Кейсы SITEVL', href: '/cases' },
     ],
   },
@@ -442,7 +441,6 @@ const rawSeoLandingPages: SeoLandingPage[] = [
     ],
     links: [
       { label: 'Цены на сайты и лендинги', href: '/prices/websites' },
-      { label: 'Получить AI-концепт лендинга', href: '/ai-website' },
       { label: 'Создание сайтов во Владивостоке', href: '/website-development-vladivostok' },
     ],
   },
@@ -500,7 +498,6 @@ const rawSeoLandingPages: SeoLandingPage[] = [
     ],
     links: [
       { label: 'Цены на сайт-каталог', href: '/prices/websites' },
-      { label: 'Получить AI-концепт каталога', href: '/ai-website' },
       { label: 'Кейсы SITEVL', href: '/cases' },
     ],
   },
@@ -558,7 +555,6 @@ const rawSeoLandingPages: SeoLandingPage[] = [
     ],
     links: [
       { label: 'Цены на интернет-магазин', href: '/prices/websites' },
-      { label: 'Получить AI-концепт магазина', href: '/ai-website' },
       { label: 'Обсудить разработку', href: siteConfig.telegramUrl },
     ],
   },
@@ -616,7 +612,6 @@ const rawSeoLandingPages: SeoLandingPage[] = [
     ],
     links: [
       { label: 'Цены на веб-сервисы', href: '/prices/websites' },
-      { label: 'Получить AI-концепт сервиса', href: '/ai-website' },
       { label: 'Обсудить первую версию', href: siteConfig.telegramUrl },
     ],
   },

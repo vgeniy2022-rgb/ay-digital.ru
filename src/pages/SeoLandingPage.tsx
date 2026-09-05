@@ -146,8 +146,8 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
               <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">{currentPage.description}</p>
               <p className="mt-5 max-w-2xl text-base leading-7 text-graphite">{currentPage.intro}</p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <ButtonLink to={isWebsiteProductPage ? '/ai-website' : '/services'}>
-                  {isWebsiteProductPage ? 'Получить AI-концепт сайта' : 'Выбрать услугу'}
+                <ButtonLink to={isWebsiteProductPage ? '/contacts' : '/services'}>
+                  {isWebsiteProductPage ? 'Обсудить разработку сайта' : 'Выбрать услугу'}
                 </ButtonLink>
                 {isWebsiteProductPage ? (
                   <ButtonLink to="/prices/websites" variant="secondary">

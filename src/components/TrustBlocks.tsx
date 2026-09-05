@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ProjectCase, publishedCases } from '../data/cases';
 import { getServiceCategoryMedia } from '../data/editorialMedia';
 import { EditorialPhoto } from './EditorialPhoto';
+import { CaseScreenshotImage } from './CaseGallery';
 
 export function AuthorCard() {
   return (
@@ -97,11 +98,11 @@ export function CasePreviewCard({ item }: { item: ProjectCase }) {
       className="group block h-full rounded-premium border border-line bg-white/84 p-6 shadow-glass transition duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-soft"
       to={item.path}
     >
-      <EditorialPhoto
+      {item.gallery?.websiteScreens[0] ? <div className="case-real-cover"><CaseScreenshotImage image={item.gallery.websiteScreens[0]} sizes="(max-width: 768px) 85vw, 540px" /></div> : <EditorialPhoto
         media={{ ...caseMedia, alt: item.imageAlt, label: item.category }}
         aspect="wide"
         className="shadow-none"
-      />
+      />}
       <div className="mt-6 flex flex-wrap gap-2">
         <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-extrabold text-accent">{item.category}</span>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-graphite">{item.clientType}</span>

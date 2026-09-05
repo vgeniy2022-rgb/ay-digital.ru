@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight, Check, Dices, FlaskConical, Keyboard, RotateCcw, Smartphone, Timer, Trophy } from 'lucide-react';
+import { ArrowUpRight, Check, Dices, FlaskConical, Keyboard, RotateCcw, Smartphone, Sparkles, Timer, Trophy } from 'lucide-react';
 import { useMemo, useState, type PointerEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getPopularLabExperiments, useLabAnalytics } from '../analytics/labAnalyticsContext';
@@ -114,6 +114,11 @@ export function LabHomePage() {
     <section className="lab-progress-panel" aria-label="Прогресс LAB"><div><small>ЭКСПЕРИМЕНТЫ LAB</small><strong>{labRu.explored} {exploredCount}/{labExperiments.length}</strong></div><div className="lab-progress-track"><i style={{ width: `${(completedCount / labExperiments.length) * 100}%` }} /></div><div><small>{labRu.achievements}</small><strong>{unlocked.length}/{labAchievements.length}</strong></div><button type="button" onClick={reset} aria-label="Сбросить прогресс"><RotateCcw /></button></section>
 
     <section className="lab-catalog" aria-label="Каталог экспериментов SITEVL LAB">
+      <section className="lab-ai-tool" aria-labelledby="lab-ai-tool-title">
+        <div className="lab-ai-tool__icon" aria-hidden="true"><Sparkles /></div>
+        <div><small>ЛАБОРАТОРНЫЙ ИНСТРУМЕНТ · GEMINI</small><h2 id="lab-ai-tool-title">AI-концепт сайта</h2><p>Инструмент для быстрого наброска структуры и визуального направления будущего сайта. Опишите идею, исследуйте варианты и поправьте прототип.</p><span>Эксперимент: результат AI требует проверки. Не готовый сайт и не окончательная смета.</span></div>
+        <Link to="/ai-website">Открыть генератор <ArrowUpRight aria-hidden="true" /></Link>
+      </section>
       {labGroups.map((group) => {
         const experiments = labExperiments.filter((experiment) => experiment.group === group.id);
         if (!experiments.length) return null;

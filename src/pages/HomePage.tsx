@@ -96,7 +96,6 @@ export function HomePage() {
             </p>
             <div className="home-cinematic-hero__actions">
               <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--primary" to="/website-development-vladivostok">Заказать разработку сайта</ButtonLink>
-              <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--ai" to="/ai-website" variant="secondary">Получить AI-концепт сайта</ButtonLink>
               <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--works" to="/cases" variant="secondary" aria-label="Смотреть работы">
                 <span className="home-cinematic-hero__works-label home-cinematic-hero__works-label--desktop">Смотреть работы</span>
                 <span className="home-cinematic-hero__works-label home-cinematic-hero__works-label--mobile">Работы</span>

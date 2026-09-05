@@ -213,7 +213,7 @@ function normalizeServices(items: ServiceItem[] | undefined, hasApiData: boolean
         format: item.format || fallback?.format,
         badge: item.badge || fallback?.badge,
         buttonText: usePolishedPresentation ? fallback!.buttonText : item.buttonText || fallback?.buttonText,
-        priceText: isAdminWebsite ? 'от 34 900 ₽' : item.priceText || fallback?.priceText,
+        priceText: slug === 'program-installation' ? fallback?.priceText : isAdminWebsite ? 'от 34 900 ₽' : item.priceText || fallback?.priceText,
         isPopular: isActiveValue(item.isPopular) || fallback?.isPopular,
         showOnHome: isActiveValue(item.showOnHome) || fallback?.showOnHome,
         icon: getIcon(item.icon || item.category, slug, fallback?.icon),
@@ -312,9 +312,19 @@ function applyWebsitePriceOverrides(groups: PriceGroup[]): PriceGroup[] {
     note: 'Стартовая цена зависит от платформы, экранов, серверной части и интеграций.',
     items: mobileDirection.packages.map((item) => ({ name: item.name, price: item.price, description: item.fit, includes: item.includes })),
   };
+  const programDirection = priceDirections.find((direction) => direction.slug === 'programs');
+  const programNames = new Set(programDirection?.packages.map((item) => item.name));
+  const programs: PriceGroup[] = programDirection ? [{
+    title: programDirection.groupTitle,
+    note: programDirection.disclaimer,
+    items: [
+      ...programDirection.packages.map((item) => ({ name: item.name, price: item.price, description: item.fit, includes: item.includes })),
+      ...(groups.find((group) => group.title === 'Программы')?.items.filter((item) => !programNames.has(item.name)) ?? []),
+    ],
+  }] : [];
 
-  const withoutCommercial = groups.filter((group) => group.title !== 'Сайты' && group.title !== 'Мобильные приложения');
-  return [commercialWebsites, commercialApps, ...withoutCommercial];
+  const withoutCommercial = groups.filter((group) => group.title !== 'Сайты' && group.title !== 'Мобильные приложения' && (!programDirection || group.title !== 'Программы'));
+  return [commercialWebsites, commercialApps, ...programs, ...withoutCommercial];
 }
 
 function normalizeCases(items: CmsCaseItem[] | undefined, hasApiData: boolean): CaseItem[] {

@@ -317,13 +317,13 @@ const baseStaticContent = {
     sections: [
       { title: 'Разработка сайтов под задачу', text: 'Можно начать с компактного сайта, лендинга или многостраничного сайта компании. Для большого ассортимента подойдёт каталог или интернет-магазин, а для регулярных изменений — система управления контентом.' },
       { title: 'Мобильные приложения iOS и Android', text: 'Первая версия мобильного продукта строится вокруг главного пользовательского сценария. Платформы, серверная часть, роли и интеграции выбираются после обсуждения задачи, а не добавляются формально.' },
-      { title: 'Стоимость и следующий шаг', text: 'Стартовые пакеты опубликованы в едином разделе цен. До начала работы фиксируются состав проекта, материалы, сроки и ограничения. Для предварительного обсуждения можно получить AI-концепт или сразу описать задачу.' },
+      { title: 'Стоимость и следующий шаг', text: 'Стартовые пакеты опубликованы в едином разделе цен. До начала работы фиксируются состав проекта, материалы, сроки и ограничения. Посмотрите реальные кейсы и опишите задачу для предварительного обсуждения.' },
     ],
     links: [
       { label: 'Создание сайтов во Владивостоке', href: '/website-development-vladivostok' },
       { label: 'Цены на разработку сайтов', href: '/prices/websites' },
       { label: 'Разработка мобильного приложения', href: '/mobile-apps' },
-      { label: 'Получить AI-концепт сайта', href: '/ai-website' },
+      { label: 'Реальные проекты', href: '/cases' },
       { label: 'Частный веб-разработчик', href: '/about' },
     ],
   },
@@ -386,7 +386,6 @@ const baseStaticContent = {
     links: [
       { label: 'Заказать разработку сайта', href: '/website-development-vladivostok' },
       { label: 'Посмотреть реальные кейсы', href: '/cases' },
-      { label: 'Получить AI-концепт сайта', href: '/ai-website' },
     ],
   },
   '/useful': {
@@ -736,7 +735,7 @@ function routeStructuredData(route) {
       inLanguage: 'ru-RU',
       datePublished: route.source.date,
       dateModified: route.source.date,
-      image: defaultImage,
+      image: route.source.gallery?.websiteScreens[0]?.src ? `${siteUrl}${route.source.gallery.websiteScreens[0].src}` : defaultImage,
       author: { '@id': `${siteUrl}/#person` },
       publisher: { '@id': `${siteUrl}/#identity` },
       mainEntityOfPage: url,
@@ -1031,7 +1030,15 @@ function renderPriceContent(source) {
 }
 
 function renderCaseContent(source) {
+  const gallery = source.gallery;
+  const media = gallery ? `<section style="padding-top:42px;"><h2>Сайт и мобильное приложение</h2>
+    <a href="${escapeHtml(gallery.websiteUrl)}" target="_blank" rel="noreferrer">${escapeHtml(gallery.websiteName)}</a>
+    ${renderList(gallery.websiteFeatures)}${renderCards(gallery.appFeatures)}
+    <h3>Реальные скриншоты проекта</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:24px;">
+    ${[...gallery.websiteScreens, ...gallery.appScreens].map((image) => `<figure style="margin:0;"><img src="${escapeHtml(image.src)}" srcset="${escapeHtml(image.srcSet)}" sizes="(max-width:640px) 90vw, 420px" width="${image.width}" height="${image.height}" loading="lazy" decoding="async" alt="${escapeHtml(image.alt)}" style="width:100%;height:auto;object-fit:contain;"><figcaption>${escapeHtml(image.caption)}</figcaption></figure>`).join('')}</div>
+    <details><summary>Источники и границы проверки</summary><p>${escapeHtml(gallery.evidenceNote)}</p></details></section>` : '';
   return `<p style="max-width:820px;margin:20px 0 0;color:#344054;font-size:18px;line-height:1.7;">${escapeHtml(source.shortDescription)}</p>
+    ${media}
     <section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Задача</h2><p style="max-width:820px;margin:16px 0 0;color:#475467;line-height:1.7;">${escapeHtml(source.task)}</p></section>
     <section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Что реализовано</h2>${renderList(source.workCompleted)}</section>
     <section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Результат</h2>${renderList(source.result)}</section>

@@ -131,7 +131,7 @@ export const xrayArticleSlugs = [
 ] as const;
 
 export const xrayPriceSlugs = ['websites', 'mobile-apps', 'programs', 'devices', 'phones', 'pc'] as const;
-export const xrayCaseSlugs = ['ay-digital-personal-website', 'marine-equipment-catalog'] as const;
+export const xrayCaseSlugs = ['ay-digital-personal-website', 'marine-equipment-catalog', 'inner-support-school'] as const;
 export const xrayLocalSlugs = [
   'computer-help-artem',
   'computer-help-ussuriysk',
@@ -204,7 +204,7 @@ export function matchXRayRoute(pathname: string): XRayRouteMatch | null {
       slug: caseSlug,
       title: 'Кейс',
       componentName: 'CasePage',
-      sections: ['CaseHero', 'Task', 'InitialSituation', 'WorkCompleted', 'Challenges', 'Result', 'Technologies', 'RelatedLinks'],
+      sections: ['CaseHero', ...(caseSlug === 'inner-support-school' ? ['WebsiteGallery', 'MobileApp', 'RealScreenshots'] : []), 'Task', 'InitialSituation', 'WorkCompleted', 'Challenges', 'Result', 'Technologies', 'RelatedLinks'],
     };
   }
 

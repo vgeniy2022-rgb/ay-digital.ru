@@ -33,7 +33,7 @@ export function WebStudioHero({ telegramUrl }: WebStudioHeroProps) {
             </p>
             <div className="studio-hero-story__actions">
               <StudioButton href={telegramUrl} target="_blank" rel="noreferrer">Заказать разработку сайта</StudioButton>
-              <StudioButton href="/ai-website" tone="secondary">Получить AI-концепт</StudioButton>
+              <StudioButton href="/cases" tone="secondary">Смотреть кейсы</StudioButton>
             </div>
             <div className="studio-hero-story__location">
               <MapPin aria-hidden="true" className="h-4 w-4" />

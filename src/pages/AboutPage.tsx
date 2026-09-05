@@ -114,7 +114,6 @@ export function AboutPage() {
                   Написать в Telegram
                 </ButtonLink>
                 <ButtonLink to="/website-development-vladivostok" variant="secondary">Создание сайтов</ButtonLink>
-                <ButtonLink to="/ai-website" variant="secondary">Получить AI-концепт</ButtonLink>
                 <ButtonLink to="/cases" variant="secondary">Смотреть кейсы</ButtonLink>
               </div>
             </Reveal>

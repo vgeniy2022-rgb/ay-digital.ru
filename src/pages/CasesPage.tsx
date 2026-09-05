@@ -15,7 +15,7 @@ function casesCollectionSchema() {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: 'Кейсы и примеры проектов',
-    description: 'Реальные проекты Александра: сайт-портфолио SITEVL и каталог морского оборудования.',
+    description: 'Реальные проекты SITEVL: сайт психологической школы с мобильным управлением, собственный сайт и каталог оборудования.',
     url: absoluteUrl('/cases'),
     inLanguage: 'ru-RU',
     author: {
@@ -37,7 +37,7 @@ export function CasesPage() {
     <PageTransition>
       <SeoHead
         title="Кейсы и реальные проекты — SITEVL"
-        description="Опубликованные кейсы Александра: сайт-портфолио SITEVL и каталог морского оборудования с системой управления, SEO-структурой и адаптивным интерфейсом."
+        description="Кейсы SITEVL: психологическая школа с сайтом и приложением для iPhone, сайт-портфолио и каталог оборудования. Реальные задачи, интерфейсы и решения."
         canonicalPath="/cases"
         structuredData={casesCollectionSchema()}
       />

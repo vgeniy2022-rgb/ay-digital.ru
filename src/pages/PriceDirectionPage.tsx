@@ -18,7 +18,6 @@ const websiteProductLinks = [
   { label: 'Создание сайта-каталога', href: '/catalog-website-development' },
   { label: 'Разработка интернет-магазина', href: '/online-store-development' },
   { label: 'Веб-приложение и онлайн-сервис', href: '/web-application-development' },
-  { label: 'Получить AI-концепт сайта', href: '/ai-website' },
 ] as const;
 
 function createDirectionSchema(direction: NonNullable<ReturnType<typeof getPriceDirection>>) {

@@ -37,6 +37,7 @@ const staticRouteLabels: Record<string, string> = {
   '/website-development-nakhodka': 'Создание сайтов в Находке',
   '/cases/ay-digital-personal-website': 'Сайт-портфолио SITEVL',
   '/cases/marine-equipment-catalog': 'Каталог морского оборудования',
+  '/cases/inner-support-school': 'Психологическая школа: сайт и приложение',
   '/prices/websites': 'Сайты и управление контентом',
   '/prices/mobile-apps': 'Мобильные приложения',
   '/prices/programs': 'Установка программ',

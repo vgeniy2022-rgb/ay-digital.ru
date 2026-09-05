@@ -18,7 +18,6 @@ const websiteDirections = [
   { label: 'Веб-приложение и онлайн-сервис', href: '/web-application-development' },
   { label: 'Сайт с системой управления', href: '/website-admin-vladivostok' },
   { label: 'Цены на разработку сайтов', href: '/prices/websites' },
-  { label: 'Получить AI-концепт сайта', href: '/ai-website' },
 ] as const;
 
 function uniqueLinks(items: { label: string; href: string }[]) {

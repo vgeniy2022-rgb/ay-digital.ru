@@ -7,6 +7,7 @@ import { PageTransition } from '../components/PageTransition';
 import { Reveal } from '../components/Reveal';
 import { SeoHead } from '../components/SeoHead';
 import { CaseExperience } from '../components/CaseExperience';
+import { CaseGallery, CaseScreenshotImage } from '../components/CaseGallery';
 import { CaseMedia, CaseResultBlock, RelatedCases, TechnologiesList } from '../components/TrustBlocks';
 import { absoluteUrl, siteConfig } from '../config/site';
 import { ProjectCase, publishedCases } from '../data/cases';
@@ -23,7 +24,7 @@ function caseStructuredData(item: ProjectCase) {
     inLanguage: 'ru-RU',
     datePublished: item.date,
     dateModified: item.date,
-    image: absoluteUrl(siteConfig.defaultOgImage),
+    image: absoluteUrl(item.gallery?.websiteScreens[0]?.src || siteConfig.defaultOgImage),
     author: {
       '@type': 'Person',
       name: siteConfig.specialistName,
@@ -78,7 +79,7 @@ export function CasePage() {
           <div className="grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
             <Reveal>
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Кейс</p>
-              <h1 className="mt-5 max-w-4xl text-4xl font-extrabold leading-[1.03] text-ink sm:text-6xl">{item.title}</h1>
+              <h1 className={`mt-5 max-w-4xl text-4xl font-extrabold leading-[1.03] text-ink sm:text-6xl ${item.gallery ? 'case-real-heading' : ''}`}>{item.title}</h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">{item.shortDescription}</p>
               <div className="mt-7 flex flex-wrap gap-3 text-sm font-bold text-graphite">
                 <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/78 px-4 py-2 shadow-glass">
@@ -103,7 +104,7 @@ export function CasePage() {
               </div>
             </Reveal>
             <Reveal delay={0.08}>
-              <CaseMedia label={`${item.category}: ${item.title}`} alt={item.imageAlt} />
+              {item.gallery?.websiteScreens[0] ? <div className="case-real-cover"><CaseScreenshotImage image={item.gallery.websiteScreens[0]} eager sizes="(max-width: 1024px) 90vw, 600px" /></div> : <CaseMedia label={`${item.category}: ${item.title}`} alt={item.imageAlt} />}
             </Reveal>
           </div>
         </Container>
@@ -111,9 +112,7 @@ export function CasePage() {
 
       <section className="pb-16">
         <Container>
-          <Reveal>
-            <CaseExperience item={item} />
-          </Reveal>
+          {item.gallery ? <CaseGallery gallery={item.gallery} /> : <Reveal><CaseExperience item={item} /></Reveal>}
           <div className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
             <Reveal>
               <article className="h-full rounded-premium border border-line bg-white/84 p-6 shadow-glass sm:p-8">

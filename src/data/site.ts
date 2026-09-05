@@ -13,6 +13,7 @@ import {
   Wrench,
 } from 'lucide-react';
 import { siteConfig } from '../config/site';
+import { getPriceDirection } from './priceDirections';
 
 export type NavItem = {
   label: string;
@@ -108,7 +109,6 @@ export const homeHero = {
 export const navItems: NavItem[] = [
   { label: 'Услуги', href: '/services' },
   { label: 'Приложения', href: '/mobile-apps' },
-  { label: 'AI-концепт', href: '/ai-website' },
   { label: 'Цены', href: '/prices' },
   { label: 'Кейсы', href: '/cases' },
   { label: 'Полезное', href: '/useful' },
@@ -259,13 +259,14 @@ export const services: Service[] = [
     title: 'Установка программ',
     shortTitle: 'Программы',
     slug: 'program-installation',
-    path: '/services',
+    path: '/program-installation-vladivostok',
     category: 'Компьютеры и ноутбуки',
     lead: 'Установлю нужные программы для учёбы, работы, документов, браузеров, медиа, архивов и базовых задач.',
     description: 'Установлю нужные программы для учёбы, работы, документов, браузеров, медиа, архивов и базовых задач.',
     bullets: ['программы', 'Windows', 'macOS', 'Office'],
     outcome: 'Устройство готово к повседневной работе.',
     buttonText: 'Установить программы',
+    priceText: getPriceDirection('programs')?.packages[0].price,
     icon: MonitorCog,
   },
   {
@@ -484,26 +485,10 @@ export const priceGroups: PriceGroup[] = [
   },
   {
     title: 'Программы',
-    items: [
-      {
-        name: 'Студент',
-        price: '1 500 ₽',
-        description: 'Базовый набор программ для учёбы, документов и презентаций.',
-        includes: ['Word', 'Excel', 'PowerPoint', 'браузер на выбор', 'PDF-просмотрщик', '1 программа на выбор клиента'],
-      },
-      {
-        name: 'Офис',
-        price: '2 500 ₽',
-        description: 'Рабочий набор программ для документов, таблиц, почты и удалённой работы.',
-        includes: ['Word', 'Excel', 'PowerPoint', 'браузеры', 'PDF-просмотрщик', 'архиватор', 'медиаплеер', 'облако по желанию', 'настройка почты', '2 программы на выбор клиента', 'базовая настройка автозапуска и рабочего стола'],
-      },
-      {
-        name: 'Полный комплект',
-        price: '3 500–5 000 ₽',
-        description: 'Компьютер полностью готов к работе, учёбе и повседневным задачам.',
-        includes: ['всё из пакета “Офис”', 'до 5 программ на выбор', 'настройка браузеров', 'установка мессенджеров', 'настройка облака', 'базовая проверка системы', 'удаление лишнего из автозапуска', 'объяснение, где что находится'],
-      },
-    ],
+    note: getPriceDirection('programs')?.disclaimer,
+    items: (getPriceDirection('programs')?.packages ?? []).map((item) => ({
+      name: item.name, price: item.price, description: item.fit, includes: item.includes,
+    })),
   },
   {
     title: 'Настройка устройств',

@@ -87,6 +87,7 @@ export function AiWebsitePage() {
   }
 
   return <PageTransition><main className="ai-website-page">
+    <Container><Link className="inline-flex min-h-12 items-center gap-2 py-4 text-sm font-bold text-accent" to="/lab"><Undo2 className="h-4 w-4" aria-hidden="true" /> Вернуться в SITEVL LAB</Link></Container>
     <section className="ai-website-hero"><Container><div className="ai-website-hero__grid"><div><span className="ai-website-eyebrow"><Sparkles /> SITEVL AI · GEMINI</span><h1>Соберите концепцию сайта за несколько минут</h1><p>Опишите бизнес — AI предложит структуру, тексты и визуальное направление. Вы увидите настоящий адаптивный прототип и сможете поправить его до обращения.</p><div className="ai-website-trust"><span><Check /> Без регистрации</span><span><Check /> До 3 вариантов</span><span><Check /> Без фейковых отзывов</span></div></div><aside><strong>Как это работает</strong><ol><li>Расскажите о задаче</li><li>Gemini создаст безопасный JSON-план</li><li>SITEVL отрисует интерактивный прототип</li></ol><small>AI может ошибаться. Проверяйте факты перед публикацией.</small></aside></div></Container></section>
     <Container className="ai-generator">
       <section className="ai-generator__brief">
