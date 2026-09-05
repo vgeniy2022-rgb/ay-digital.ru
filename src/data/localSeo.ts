@@ -155,7 +155,7 @@ export const localSeoPages: LocalSeoPage[] = [
     remoteTasks: ['создание структуры сайта', 'дизайн и адаптивная вёрстка', 'подключение контактов', 'базовая SEO-подготовка', 'настройка админки'],
     personalTasks: ['личная встреча не требуется', 'фото и материалы можно передать онлайн', 'публикация и правки согласуются удалённо'],
     relatedMainPage: { label: 'Создание сайтов во Владивостоке', href: '/website-development-vladivostok' },
-    relatedServices: [{ label: 'Сайт с системой управления', href: '/website-admin-vladivostok' }, { label: 'Цены на сайты', href: '/prices/websites' }, ...commonServiceLinks],
+    relatedServices: [{ label: 'Разработка лендинга', href: '/landing-development' }, { label: 'Сайт с системой управления', href: '/website-admin-vladivostok' }, { label: 'Цены на сайты', href: '/prices/websites' }, ...commonServiceLinks],
     relatedArticles: websiteArticles,
     faq: [
       { question: 'Можно ли заказать сайт в Артёме без личной встречи?', answer: 'Да, сайт можно сделать полностью удалённо: обсуждение, материалы, правки и запуск проходят онлайн.' },
@@ -183,7 +183,7 @@ export const localSeoPages: LocalSeoPage[] = [
     remoteTasks: ['проектирование структуры', 'подготовка страниц', 'адаптация под мобильные устройства', 'настройка кнопок Telegram и WhatsApp', 'техническая SEO-основа'],
     personalTasks: ['личное присутствие обычно не нужно', 'материалы передаются онлайн', 'правки согласуются в переписке'],
     relatedMainPage: { label: 'Создание сайтов во Владивостоке', href: '/website-development-vladivostok' },
-    relatedServices: [{ label: 'Сайт с системой управления', href: '/website-admin-vladivostok' }, { label: 'Кейсы', href: '/cases' }, ...commonServiceLinks],
+    relatedServices: [{ label: 'Сайт для бизнеса', href: '/business-website-development' }, { label: 'Сайт с системой управления', href: '/website-admin-vladivostok' }, { label: 'Кейсы', href: '/cases' }, ...commonServiceLinks],
     relatedArticles: websiteArticles,
     faq: [
       { question: 'Можно ли заказать разработку сайта в Уссурийске удалённо?', answer: 'Да. Для разработки сайта обычно достаточно мессенджера, материалов, согласованной структуры и обратной связи.' },
@@ -211,7 +211,7 @@ export const localSeoPages: LocalSeoPage[] = [
     remoteTasks: ['разработка страниц', 'адаптивный интерфейс', 'форма или кнопки связи', 'базовая SEO-структура', 'подключение домена и публикация'],
     personalTasks: ['очно встречаться не обязательно', 'фотографии и тексты можно передать онлайн', 'доступы и запуск согласуются удалённо'],
     relatedMainPage: { label: 'Создание сайтов во Владивостоке', href: '/website-development-vladivostok' },
-    relatedServices: [{ label: 'Цены на сайты', href: '/prices/websites' }, { label: 'Сайт с системой управления', href: '/website-admin-vladivostok' }, ...commonServiceLinks],
+    relatedServices: [{ label: 'Разработка сайта-каталога', href: '/catalog-website-development' }, { label: 'Цены на сайты', href: '/prices/websites' }, { label: 'Сайт с системой управления', href: '/website-admin-vladivostok' }, ...commonServiceLinks],
     relatedArticles: websiteArticles,
     faq: [
       { question: 'Можно ли сделать сайт для Находки без встречи?', answer: 'Да, разработка сайта может идти полностью удалённо: все материалы и правки удобно передавать онлайн.' },

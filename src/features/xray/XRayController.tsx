@@ -26,7 +26,7 @@ export function XRayController() {
         aria-label="Открыть X-RAY и посмотреть код страницы"
       >
         <span aria-hidden="true" className="font-mono text-blue-300">&lt;/&gt;</span>
-        X-RAY
+        <span className="hidden sm:inline">X-RAY</span>
       </button>
     );
   }

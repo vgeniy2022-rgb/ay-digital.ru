@@ -182,13 +182,14 @@ export const projectCases: ProjectCase[] = [
     ],
     imageAlt: 'Интерфейс каталога морского оборудования с поиском, фильтрами и панелью управления',
     relatedServices: [
-      { label: 'Онлайн-сервисы', href: '/services' },
-      { label: 'Создание сайтов', href: '/website-development-vladivostok' },
+      { label: 'Разработка сайта-каталога', href: '/catalog-website-development' },
+      { label: 'Разработка веб-приложения', href: '/web-application-development' },
       { label: 'Сайт с системой управления', href: '/website-admin-vladivostok' },
     ],
     relatedArticles: [
       { label: 'Что такое сайт с админкой', href: '/useful/what-is-admin-website' },
       { label: 'Когда нужна автоматизация бизнеса', href: '/useful/when-business-needs-automation' },
+      { label: 'Сколько стоит интернет-магазин', href: '/useful/ecommerce-development-cost' },
       { label: 'Что такое MVP', href: '/useful/what-is-mvp' },
     ],
     published: true,

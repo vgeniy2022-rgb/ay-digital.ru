@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { AsiaStory, DigitalTransition } from '../components/web-studio/AsiaStory';
 import { ChapterNavigation } from '../components/web-studio/ChapterNavigation';
 import { CityTimeline } from '../components/web-studio/CityTimeline';
-import { DevelopmentProcess, IndustriesMarquee, OwnershipStory, StudioFaqAndLinks, WhyWebsiteStory } from '../components/web-studio/DevelopmentProcess';
+import { DevelopmentProcess, IndustriesMarquee, OwnershipStory, WhyWebsiteStory } from '../components/web-studio/DevelopmentProcess';
 import { PortStory } from '../components/web-studio/PortStory';
 import { PortfolioChapter } from '../components/web-studio/PortfolioChapter';
 import { StudioCapabilities } from '../components/web-studio/StudioCapabilities';
 import { StudioFinale } from '../components/web-studio/StudioFinale';
+import { StudioFaqAndLinks, type StudioFaqItem } from '../components/web-studio/StudioFaqAndLinks';
 import { StudioProgress } from '../components/web-studio/StudioProgress';
 import { WebStudioHero } from '../components/web-studio/WebStudioHero';
 import { WebsiteCalculator } from '../components/web-studio/WebsiteCalculator';
@@ -23,7 +24,7 @@ import '../styles/webStudio.css';
 
 const page = seoLandingPages.find((item) => item.slug === 'website-development-vladivostok');
 
-function websiteStudioStructuredData() {
+function websiteStudioStructuredData(faq: StudioFaqItem[]) {
   if (!page) return [];
 
   return [
@@ -62,7 +63,7 @@ function websiteStudioStructuredData() {
     {
       '@context': 'https://schema.org',
       '@type': 'FAQPage',
-      mainEntity: page.faq.map((item) => ({
+      mainEntity: faq.map((item) => ({
         '@type': 'Question',
         name: item.question,
         acceptedAnswer: {
@@ -97,6 +98,9 @@ export function WebStudioPage() {
 
   const relatedServices = page.relatedServices || page.links;
   const relatedArticles = page.relatedArticles || [];
+  const visibleFaq = page.faq
+    .filter((item) => !item.question.toLocaleLowerCase('ru').startsWith('можно обратиться, если '))
+    .slice(0, 10);
 
   return (
     <article className="studio-page" ref={rootRef}>
@@ -104,7 +108,7 @@ export function WebStudioPage() {
         title={page.seoTitle}
         description={page.seoDescription}
         canonicalPath={page.path}
-        structuredData={websiteStudioStructuredData()}
+        structuredData={websiteStudioStructuredData(visibleFaq)}
       />
       <StudioProgress activeChapter={activeChapter} />
       <WebStudioHero telegramUrl={data.site.telegramUrl} />
@@ -130,7 +134,7 @@ export function WebStudioPage() {
       <DevelopmentProcess />
       <IndustriesMarquee />
       <StudioFaqAndLinks
-        faq={page.faq}
+        faq={visibleFaq}
         relatedServices={relatedServices}
         relatedArticles={relatedArticles}
       />

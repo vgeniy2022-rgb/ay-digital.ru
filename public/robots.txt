@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://ay-digital-ru.vercel.app/sitemap.xml
+Sitemap: https://sitevl.tech/sitemap.xml

@@ -1,9 +1,49 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/lab/os", "destination": "/lab/modern-os", "permanent": true },
+    { "source": "/lab/website-builder", "destination": "/lab/builder", "permanent": true },
+    { "source": "/lab/admin-demo", "destination": "/lab", "permanent": true },
+    { "source": "/lab/architecture", "destination": "/lab", "permanent": true },
+    { "source": "/lab/web-evolution", "destination": "/lab", "permanent": true },
+    { "source": "/lab/seo", "destination": "/lab", "permanent": true },
+    { "source": "/cart", "destination": "/services", "permanent": true },
+    { "source": "/checkout", "destination": "/contacts", "permanent": true },
+    { "source": "/order-success", "destination": "/contacts", "permanent": true },
+    { "source": "/services/:slug", "destination": "/services", "permanent": true }
+  ],
   "rewrites": [
+    { "source": "/studio/project/:projectId", "destination": "/studio" },
+    { "source": "/studio/preview/:projectId", "destination": "/studio" }
+  ],
+  "headers": [
     {
-      "source": "/(.*)",
-      "destination": "/"
+      "source": "/admin",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/studio",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/studio/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/lab",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow" }]
+    },
+    {
+      "source": "/lab/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow" }]
+    },
+    {
+      "source": "/brief",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow" }]
+    },
+    {
+      "source": "/changelog",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow" }]
     }
   ]
 }

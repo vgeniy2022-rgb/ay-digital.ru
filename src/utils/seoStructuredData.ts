@@ -36,7 +36,7 @@ export function createBaseStructuredData() {
       '@type': 'Person',
       '@id': absoluteUrl('/#person'),
       name: siteConfig.specialistName,
-      jobTitle: 'Частный IT-специалист',
+      jobTitle: 'Частный веб-разработчик и IT-специалист',
       url: siteConfig.siteUrl,
       telephone: siteConfig.phone,
       sameAs: [siteConfig.telegramUrl],
@@ -46,7 +46,7 @@ export function createBaseStructuredData() {
     },
     {
       '@context': 'https://schema.org',
-      '@type': ['LocalBusiness', 'ProfessionalService'],
+      '@type': 'ProfessionalService',
       '@id': businessId,
       name: `${siteConfig.specialistName} / ${siteConfig.siteName}`,
       url: siteConfig.siteUrl,
@@ -60,12 +60,6 @@ export function createBaseStructuredData() {
         { '@type': 'City', name: 'Уссурийск' },
         { '@type': 'City', name: 'Находка' },
       ],
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: siteConfig.city,
-        addressRegion: 'Приморский край',
-        addressCountry: 'RU',
-      },
       contactPoint,
     },
     {

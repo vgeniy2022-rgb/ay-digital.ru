@@ -89,6 +89,11 @@ export const xrayServiceSlugs = [
   'data-transfer-vladivostok',
   'phone-setup-vladivostok',
   'website-admin-vladivostok',
+  'business-website-development',
+  'landing-development',
+  'catalog-website-development',
+  'online-store-development',
+  'web-application-development',
 ] as const;
 
 export const xrayArticleSlugs = [
@@ -120,6 +125,9 @@ export const xrayArticleSlugs = [
   'website-for-small-business',
   'company-website-structure',
   'diy-or-developer-website',
+  'how-to-order-website',
+  'website-or-mobile-app',
+  'ecommerce-development-cost',
 ] as const;
 
 export const xrayPriceSlugs = ['websites', 'mobile-apps', 'programs', 'devices', 'phones', 'pc'] as const;

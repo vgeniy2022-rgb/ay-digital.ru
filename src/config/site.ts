@@ -1,10 +1,9 @@
-const configuredSiteUrl = import.meta.env.VITE_SITE_URL?.trim();
-const runtimeSiteUrl = typeof window !== 'undefined' ? window.location.origin : '';
+import { PUBLIC_SITE_ORIGIN } from './publicOrigin.mjs';
 
 export const siteConfig = {
   siteName: 'SITEVL',
   specialistName: 'Александр',
-  siteUrl: (configuredSiteUrl || runtimeSiteUrl).replace(/\/$/, ''),
+  siteUrl: PUBLIC_SITE_ORIGIN,
   defaultTitle: 'SITEVL — создание сайтов и цифровых решений во Владивостоке',
   defaultDescription:
     'SITEVL — создание сайтов и цифровых решений во Владивостоке: сайты для бизнеса, компьютерная помощь, настройка техники и удалённая работа.',

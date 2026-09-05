@@ -22,6 +22,8 @@ import { SpecialistStatus } from '../components/SpecialistStatus';
 import { CasePreviewCard } from '../components/TrustBlocks';
 import { featuredCases } from '../data/cases';
 import { editorialMedia } from '../data/editorialMedia';
+import { pageMeta } from '../data/pageMeta';
+import { getPriceDirection } from '../data/priceDirections';
 import { useSiteData } from '../hooks/useSiteData';
 import '../styles/home.css';
 
@@ -29,10 +31,10 @@ const commercialDirections = [
   {
     number: '01',
     eyebrow: 'САЙТЫ',
-    title: 'Разработка сайтов',
-    subtitle: 'Для бизнеса, услуг и цифровых продуктов',
-    text: 'Профессиональный сайт с понятной структурой, адаптацией под устройства и продуманным путём до обращения.',
-    price: 'от 19 900 ₽',
+    title: 'Создание сайтов под ключ',
+    subtitle: 'Для бизнеса, компаний и специалистов',
+    text: 'Разработка сайта с понятной структурой, мобильной версией, базовой SEO-подготовкой и продуманным путём до заявки.',
+    price: getPriceDirection('websites')?.packages[0]?.price || 'Цена после обсуждения',
     href: '/website-development-vladivostok',
     visual: 'websites' as const,
     icon: Globe2,
@@ -43,7 +45,7 @@ const commercialDirections = [
     title: 'Мобильные приложения',
     subtitle: 'iOS и Android',
     text: 'Разработка мобильных продуктов для бизнеса, сервисов и собственных проектов — от первой версии до запуска.',
-    price: 'от 49 900 ₽',
+    price: getPriceDirection('mobile-apps')?.packages[0]?.price || 'Цена после обсуждения',
     href: '/mobile-apps',
     visual: 'mobile-apps' as const,
     icon: Smartphone,
@@ -70,7 +72,7 @@ const capabilityItems = [
 
 export function HomePage() {
   const { data } = useSiteData();
-  const { faq, homeHero, quickStats, reviews, site } = data;
+  const { faq, quickStats, reviews, site } = data;
 
   return (
     <PageTransition>
@@ -87,12 +89,14 @@ export function HomePage() {
         <div className="home-cinematic-hero__shade" />
         <Container className="home-cinematic-hero__content">
           <Reveal>
-            <p className="home-cinematic-hero__eyebrow">SITEVL · Владивосток</p>
-            <h1>Создаю сайты и цифровые продукты для бизнеса</h1>
-            <p className="home-cinematic-hero__lead">{homeHero.description}</p>
+            <p className="home-cinematic-hero__eyebrow">SITEVL · ВЛАДИВОСТОК И УДАЛЁННО</p>
+            <h1>{pageMeta.home.title}</h1>
+            <p className="home-cinematic-hero__lead">
+              Проектирую и разрабатываю цифровые продукты напрямую, без менеджеров: от первой структуры до запуска, проверки и поддержки после публикации.
+            </p>
             <div className="home-cinematic-hero__actions">
-              <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--primary" to="/website-development-vladivostok">Обсудить проект</ButtonLink>
-              <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--ai" to="/ai-website" variant="secondary">Создать AI-концепцию</ButtonLink>
+              <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--primary" to="/website-development-vladivostok">Заказать разработку сайта</ButtonLink>
+              <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--ai" to="/ai-website" variant="secondary">Получить AI-концепт сайта</ButtonLink>
               <ButtonLink className="home-cinematic-hero__action home-cinematic-hero__action--works" to="/cases" variant="secondary" aria-label="Смотреть работы">
                 <span className="home-cinematic-hero__works-label home-cinematic-hero__works-label--desktop">Смотреть работы</span>
                 <span className="home-cinematic-hero__works-label home-cinematic-hero__works-label--mobile">Работы</span>
@@ -153,12 +157,16 @@ export function HomePage() {
           <Reveal className="home-capabilities__grid">
             <div>
               <p className="home-kicker">Сайт под задачу</p>
-              <h2>Не шаблон ради шаблона, а инструмент для реальной задачи</h2>
-              <p>Показываю услуги, цены, реальные работы и следующий шаг. Если информация меняется регулярно, добавляю систему управления контентом.</p>
+              <h2>От лендинга до каталога и веб-сервиса</h2>
+              <p>Сайт помогает показать услуги, цены и реальные работы, а затем приводит человека к понятному действию. Если информация меняется регулярно, добавляю систему управления контентом.</p>
               <div className="home-capabilities__list">
                 {capabilityItems.map((item) => <span key={item}><Check aria-hidden="true" />{item}</span>)}
               </div>
-              <ButtonLink to="/website-development-vladivostok" variant="secondary">Как создаётся сайт</ButtonLink>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <ButtonLink to="/website-development-vladivostok" variant="secondary">Как создаётся сайт</ButtonLink>
+                <ButtonLink to="/business-website-development" variant="secondary">Сайт для бизнеса</ButtonLink>
+                <ButtonLink to="/prices/websites" variant="secondary">Цены на сайты</ButtonLink>
+              </div>
             </div>
             <div className="home-capabilities__visual">
               <EditorialPhoto media={editorialMedia.webStudioCapture} aspect="landscape" priority />

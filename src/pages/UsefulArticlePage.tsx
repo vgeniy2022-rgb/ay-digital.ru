@@ -16,9 +16,21 @@ import {
   MacSecurityIllustration,
   ScamsIllustration,
 } from '../components/UsefulIllustrations';
+import { getPriceDirection } from '../data/priceDirections';
 import { UsefulArticle, usefulArticles } from '../data/useful';
 import { getUsefulArticleMedia, getUsefulSecondaryMedia } from '../data/editorialMedia';
 import { useSiteData } from '../hooks/useSiteData';
+
+const websitePricePackageIds: Partial<Record<string, readonly string[]>> = {
+  'website-development-cost': ['start', 'landing', 'business', 'store'],
+  'how-to-order-website': ['start', 'landing', 'managed', 'business'],
+  'ecommerce-development-cost': ['catalog', 'store'],
+};
+
+function readingTimeToIsoDuration(readingTime: string) {
+  const minutes = Number.parseInt(readingTime, 10);
+  return `PT${Number.isFinite(minutes) && minutes > 0 ? minutes : 1}M`;
+}
 
 function createArticleSchema(article: UsefulArticle) {
   return {
@@ -30,7 +42,7 @@ function createArticleSchema(article: UsefulArticle) {
     inLanguage: 'ru-RU',
     datePublished: article.publishedAt,
     dateModified: article.updatedAt,
-    timeRequired: article.readingTime,
+    timeRequired: readingTimeToIsoDuration(article.readingTime),
     image: absoluteUrl(siteConfig.defaultOgImage),
     author: {
       '@type': 'Person',
@@ -227,6 +239,48 @@ function DirectAnswerBlock({ article }: { article: UsefulArticle }) {
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Короткий ответ</p>
             <p className="mt-4 max-w-4xl text-xl font-extrabold leading-8 text-ink sm:text-2xl">{article.directAnswer}</p>
           </article>
+        </Reveal>
+      </Container>
+    </section>
+  );
+}
+
+function WebsitePriceSummary({ article }: { article: UsefulArticle }) {
+  const packageIds = websitePricePackageIds[article.slug];
+
+  if (!packageIds) return null;
+
+  const direction = getPriceDirection('websites');
+  const packages = packageIds
+    .map((packageId) => direction?.packages.find((item) => item.id === packageId))
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+
+  if (!direction || packages.length === 0) return null;
+
+  return (
+    <section className="pb-8" id="price-summary">
+      <Container>
+        <Reveal>
+          <div className="rounded-premium border border-line bg-white/82 p-6 shadow-glass sm:p-8">
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Быстрый ориентир</p>
+            <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-4xl">Актуальная стартовая стоимость</h2>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-muted">
+              Это варианты из единого прайса SITEVL. Точный состав и итоговая стоимость зависят от структуры, материалов и функций проекта.
+            </p>
+            <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {packages.map((item) => (
+                <article className="rounded-3xl border border-line bg-slate-50 p-5" key={item.id ?? item.name}>
+                  <h3 className="text-lg font-extrabold leading-tight text-ink">{item.name}</h3>
+                  <p className="mt-3 text-2xl font-extrabold text-accent">{item.price}</p>
+                  <p className="mt-3 text-sm leading-6 text-muted">{item.fit}</p>
+                </article>
+              ))}
+            </div>
+            {direction.disclaimer ? <p className="mt-6 max-w-4xl text-sm leading-6 text-muted">{direction.disclaimer}</p> : null}
+            <div className="mt-6">
+              <ButtonLink to={direction.path} variant="secondary">Все цены на разработку сайтов</ButtonLink>
+            </div>
+          </div>
         </Reveal>
       </Container>
     </section>
@@ -454,6 +508,7 @@ export function UsefulArticlePage() {
         </Container>
       </section>
       <DirectAnswerBlock article={article} />
+      <WebsitePriceSummary article={article} />
       {article.slug === 'data-transfer' || article.slug === 'safe-data-transfer' ? <DataTransferPhotoGuide /> : null}
       {article.warning && (
         <section className="pb-8">

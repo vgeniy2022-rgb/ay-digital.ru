@@ -91,15 +91,15 @@ export function Footer() {
             <span>SITEVL · Владивосток</span>
           </div>
           <p className="mt-4 text-sm font-semibold text-slate-400">Владивосток · выезд по городу · удалённо</p>
-          <p className="mt-5 max-w-5xl text-xs leading-5 text-slate-500">
+          <p className="mt-5 max-w-5xl text-xs leading-5 text-slate-400">
             Информация на сайте носит справочный характер. Цены ориентировочные и не являются публичной офертой. Точная стоимость и сроки согласуются индивидуально перед началом работы.
           </p>
           {status === 'ready' && stats ? (
-            <p className="mt-3 text-xs leading-5 text-slate-500" aria-label="Анонимная статистика посещений SITEVL">
+            <p className="mt-3 text-xs leading-5 text-slate-400" aria-label="Анонимная статистика посещений SITEVL">
               За всё время: {formatMetric(stats.visits, 'посещение', 'посещения', 'посещений')} · {formatMetric(stats.uniqueVisitors, 'посетитель', 'посетителя', 'посетителей')}
             </p>
           ) : null}
-          <p className="mt-2 max-w-5xl text-xs leading-5 text-slate-500">
+          <p className="mt-2 max-w-5xl text-xs leading-5 text-slate-400">
             Аудит сайта является предварительной проверкой заметных рисков и не является юридическим заключением.
           </p>
         </div>

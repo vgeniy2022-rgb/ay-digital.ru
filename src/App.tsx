@@ -1,5 +1,5 @@
 import { AnimatePresence } from 'framer-motion';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { SeoHead } from './components/SeoHead';
 import { AppLayout } from './layouts/AppLayout';
@@ -38,6 +38,16 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => 
 const StudioProjectsPage = lazy(() => import('./features/site-builder/pages/StudioProjectsPage').then((module) => ({ default: module.StudioProjectsPage })));
 const StudioEditorPage = lazy(() => import('./features/site-builder/pages/StudioEditorPage').then((module) => ({ default: module.StudioEditorPage })));
 const StudioPreviewPage = lazy(() => import('./features/site-builder/pages/StudioPreviewPage').then((module) => ({ default: module.StudioPreviewPage })));
+
+function PublicRouteScrollReset({ pathname, hash }: { pathname: string; hash: string }) {
+  useEffect(() => {
+    if (!hash) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
+  }, [hash, pathname]);
+
+  return null;
+}
 
 export default function App() {
   const location = useLocation();
@@ -94,8 +104,9 @@ export default function App() {
 
   return (
     <AppLayout>
+      <PublicRouteScrollReset pathname={location.pathname} hash={location.hash} />
       <AnimatePresence mode="wait">
-        <Suspense fallback={<div className="min-h-[50vh]" />}>
+        <Suspense fallback={<div className="min-h-screen" />}>
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<HomePage />} />
             <Route path="/mobile-apps" element={<MobileAppsPage />} />

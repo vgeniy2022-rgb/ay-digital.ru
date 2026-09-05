@@ -1,4 +1,5 @@
 import { ArrowUpRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Service } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
 
@@ -62,13 +63,22 @@ export function ServiceCard({ service }: ServiceCardProps) {
         <p className="mt-5 text-sm leading-6 text-muted">{service.outcome}</p>
       ) : null}
       <div className="mt-auto grid grid-cols-1 gap-2 pt-7">
+        {service.path !== '/services' ? (
+          <Link
+            className="inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-line bg-white px-4 text-sm font-extrabold text-ink shadow-glass transition hover:-translate-y-0.5 hover:border-slate-300 hover:text-accent"
+            to={service.path}
+          >
+            Подробнее
+            <ArrowUpRight className="h-4 w-4" />
+          </Link>
+        ) : null}
         <a
           className="inline-flex min-h-11 w-full min-w-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-line bg-white px-4 text-sm font-extrabold text-accent shadow-glass transition hover:-translate-y-0.5 hover:border-slate-300 hover:text-ink"
           href={data.site.telegramUrl}
           target="_blank"
           rel="noreferrer"
         >
-          {service.buttonText || 'Подробнее'}
+          {service.buttonText || 'Обсудить задачу'}
           <ArrowUpRight className="h-4 w-4" />
         </a>
       </div>

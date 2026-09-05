@@ -1,14 +1,16 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import { resolvePublicOrigin } from './src/config/publicOrigin.mjs';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  if (!env.VITE_SITE_URL && !process.env.VITE_SITE_URL) {
-    throw new Error('VITE_SITE_URL must be set before building SITEVL.');
-  }
+  const publicOrigin = resolvePublicOrigin(process.env.VITE_SITE_URL || env.VITE_SITE_URL);
 
   return {
-    plugins: [react()],
+    plugins: [react(), {
+      name: 'sitevl-public-origin',
+      transformIndexHtml: { order: 'pre', handler: (html) => html.replaceAll('%VITE_SITE_URL%', publicOrigin) },
+    }],
     build: {
       rollupOptions: {
         output: {

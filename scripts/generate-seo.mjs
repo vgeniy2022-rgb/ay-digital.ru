@@ -1,16 +1,25 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { resolveSiteUrl } from './site-env.mjs';
+import { siteConfig } from '../src/config/site.ts';
+import { publishedCases } from '../src/data/cases.ts';
+import { localSeoPages } from '../src/data/localSeo.ts';
+import { pageMeta } from '../src/data/pageMeta.ts';
+import { priceDirections } from '../src/data/priceDirections.ts';
+import { routeSeo } from '../src/data/routeSeo.ts';
+import { seoLandingPages } from '../src/data/seoLandingPages.ts';
+import { usefulArticles, usefulIndexMeta } from '../src/data/useful.ts';
+import { structuredPrice } from '../src/utils/structuredPrice.ts';
 
 const rootDir = process.cwd();
 const distDir = join(rootDir, 'dist');
 const publicDir = join(rootDir, 'public');
 const siteUrl = resolveSiteUrl(rootDir);
-const lastmod = new Date().toISOString().slice(0, 10);
 const defaultImage = `${siteUrl}/og-image.jpg`;
-const phone = '+79241308626';
-const specialistName = 'Александр';
-const siteName = 'SITEVL';
+const phone = siteConfig.phone;
+const specialistName = siteConfig.specialistName;
+const siteName = siteConfig.siteName;
+const telegramUrl = siteConfig.telegramUrl;
 
 const baseRoutes = [
   {
@@ -286,7 +295,211 @@ const technicalRoutes = [
   },
 ];
 
-const routes = [...baseRoutes, ...priceRoutes, ...usefulRoutes, ...caseRoutes, ...localRoutes, ...landingRoutes, ...technicalRoutes];
+const baseH1 = {
+  '/': pageMeta.home.title,
+  '/services': pageMeta.services.title,
+  '/mobile-apps': 'Разработка мобильных приложений для iOS и Android',
+  '/ai-website': 'Соберите концепцию сайта за несколько минут',
+  '/prices': 'Понятные стартовые цены',
+  '/cases': pageMeta.cases.title,
+  '/about': pageMeta.about.title,
+  '/contacts': 'Свяжитесь удобным способом',
+  '/useful': usefulIndexMeta.title,
+  '/primorsky-krai': 'IT-услуги во Владивостоке и удалённо по Приморскому краю',
+  '/process': 'Спокойный процесс с понятными шагами',
+  '/privacy': 'Политика обработки персональных данных',
+  '/terms': 'Условия оказания услуг',
+};
+
+const baseStaticContent = {
+  '/': {
+    intro: 'SITEVL проектирует и разрабатывает сайты и мобильные приложения для бизнеса во Владивостоке и удалённо. Работа идёт напрямую со специалистом: от структуры и первого прототипа до проверки, публикации и понятной передачи результата.',
+    sections: [
+      { title: 'Разработка сайтов под задачу', text: 'Можно начать с компактного сайта, лендинга или многостраничного сайта компании. Для большого ассортимента подойдёт каталог или интернет-магазин, а для регулярных изменений — система управления контентом.' },
+      { title: 'Мобильные приложения iOS и Android', text: 'Первая версия мобильного продукта строится вокруг главного пользовательского сценария. Платформы, серверная часть, роли и интеграции выбираются после обсуждения задачи, а не добавляются формально.' },
+      { title: 'Стоимость и следующий шаг', text: 'Стартовые пакеты опубликованы в едином разделе цен. До начала работы фиксируются состав проекта, материалы, сроки и ограничения. Для предварительного обсуждения можно получить AI-концепт или сразу описать задачу.' },
+    ],
+    links: [
+      { label: 'Создание сайтов во Владивостоке', href: '/website-development-vladivostok' },
+      { label: 'Цены на разработку сайтов', href: '/prices/websites' },
+      { label: 'Разработка мобильного приложения', href: '/mobile-apps' },
+      { label: 'Получить AI-концепт сайта', href: '/ai-website' },
+      { label: 'Частный веб-разработчик', href: '/about' },
+    ],
+  },
+  '/services': {
+    intro: 'На одной странице собраны направления SITEVL: сайты, приложения, системы управления, компьютерная помощь и настройка техники. Для каждой самостоятельной задачи есть отдельная страница с составом работы, ограничениями и релевантной ценой.',
+    sections: [
+      { title: 'Сайты и цифровые продукты', text: 'Разработка сайта начинается с цели: представить бизнес, запустить рекламу, показать каталог, принимать заказы или автоматизировать процесс. Поэтому лендинг, сайт компании, магазин и веб-приложение не смешиваются в одно обещание.' },
+      { title: 'Техника и данные', text: 'Сохраняются отдельные направления по настройке Windows и MacBook, установке программ, переносу данных, телефонам и сборке ПК во Владивостоке. Формат — очный или удалённый — определяется по реальной задаче.' },
+    ],
+    links: [
+      { label: 'Разработка лендинга', href: '/landing-development' },
+      { label: 'Сайт для бизнеса', href: '/business-website-development' },
+      { label: 'Разработка сайта-каталога', href: '/catalog-website-development' },
+      { label: 'Создание интернет-магазина', href: '/online-store-development' },
+      { label: 'Разработка веб-приложения', href: '/web-application-development' },
+    ],
+  },
+  '/mobile-apps': {
+    intro: 'Разработка мобильного приложения для бизнеса начинается с пользовательского сценария и полезной первой версии. Проект может быть предназначен для iOS, Android или двух платформ; серверная часть, аккаунты и интеграции оцениваются по составу продукта.',
+    sections: [
+      { title: 'Что можно разработать', text: 'Информационное приложение, каталог, внутренний инструмент, сервис записи, кабинет клиента или MVP нового продукта. Количество экранов не заменяет проектирование состояний, ошибок и реального пути пользователя.' },
+      { title: 'Как проходит работа', text: 'После обсуждения задачи определяются платформы, роли, данные и границы первой версии. Затем готовятся сценарии, интерфейс, рабочая сборка и план проверки. Публикация в магазинах и сторонние сервисы согласуются отдельно.' },
+    ],
+    links: [
+      { label: 'Цены на мобильные приложения', href: '/prices/mobile-apps' },
+      { label: 'Сайт или мобильное приложение', href: '/useful/website-or-mobile-app' },
+      { label: 'Что такое MVP', href: '/useful/what-is-mvp' },
+    ],
+  },
+  '/ai-website': {
+    intro: 'AI-концепт помогает быстро сформулировать структуру будущего сайта, варианты подачи и предварительный объём проекта. Результат остаётся концепцией: его можно проверить, отредактировать и использовать как основу для разговора о разработке.',
+    sections: [
+      { title: 'Что получает пользователь', text: 'Концепция включает структуру, черновые тексты, адаптивный прототип и оценку по действующему прайсу SITEVL. Генератор не публикует сайт автоматически и не подменяет согласование фактов о бизнесе.' },
+      { title: 'Приватность и заявка', text: 'Контакты передаются только при добровольной отправке формы. Сгенерированные пользовательские варианты не превращаются в массовые индексируемые страницы.' },
+    ],
+    links: [
+      { label: 'Создание сайтов', href: '/website-development-vladivostok' },
+      { label: 'Цены на сайты', href: '/prices/websites' },
+      { label: 'Политика обработки данных', href: '/privacy' },
+    ],
+  },
+  '/prices': {
+    intro: 'Здесь собраны актуальные стартовые цены SITEVL по всем направлениям. Отдельные страницы раскрывают пакеты сайтов, мобильных приложений, установки программ, настройки устройств, переноса данных и сборки ПК.',
+    sections: [
+      { title: 'Как читать цены', text: 'Стартовая стоимость показывает базовый состав. Итоговая сумма зависит от страниц, функций, материалов, интеграций и срочности; точный объём подтверждается до начала работы.' },
+      { title: 'Без скрытого второго прайса', text: 'Коммерческие страницы и AI-концепт используют эту же архитектуру цен. Если значения меняются, основной источник остаётся один.' },
+    ],
+    links: [
+      { label: 'Цены на разработку сайтов', href: '/prices/websites' },
+      { label: 'Цены на мобильные приложения', href: '/prices/mobile-apps' },
+      { label: 'Сколько стоит создание сайта', href: '/useful/website-development-cost' },
+    ],
+  },
+  '/about': {
+    intro: 'Проекты выполняет Александр — частный веб-разработчик и IT-специалист во Владивостоке. Клиент общается напрямую с человеком, который разбирает задачу, проектирует структуру, пишет код, проверяет результат и отвечает за согласованный объём.',
+    sections: [
+      { title: 'Работа без цепочки менеджеров', text: 'Вопросы по структуре, срокам, правкам и техническим ограничениям обсуждаются напрямую. До старта фиксируется, что входит в проект, какие материалы нужны и кому принадлежат домен и доступы.' },
+      { title: 'Технологии и ответственность', text: 'Для веб-проектов используются React, TypeScript, Vite, Supabase и API там, где они действительно нужны. После запуска передаются согласованные доступы и объясняется порядок поддержки и дальнейших изменений.' },
+    ],
+    links: [
+      { label: 'Заказать разработку сайта', href: '/website-development-vladivostok' },
+      { label: 'Посмотреть реальные кейсы', href: '/cases' },
+      { label: 'Получить AI-концепт сайта', href: '/ai-website' },
+    ],
+  },
+  '/useful': {
+    intro: 'Библиотека SITEVL помогает разобраться в выборе сайта, приложения и техники до покупки или обращения. Материалы дают короткий ответ, затем чек-листы, ограничения и ссылки на релевантную услугу или актуальный прайс.',
+    sections: [
+      { title: 'Сайты и цифровые продукты', text: 'Материалы объясняют стоимость разработки, выбор исполнителя, структуру сайта компании, систему управления, MVP и разницу между сайтом и мобильным приложением.' },
+      { title: 'Техника, данные и безопасность', text: 'Отдельные инструкции посвящены Windows, MacBook, SSD, Wi-Fi, переносу данных, смартфонам, цифровой гигиене и защите от мошенников.' },
+    ],
+    links: [
+      { label: 'Сколько стоит сайт', href: '/useful/website-development-cost' },
+      { label: 'Как выбрать разработчика сайта', href: '/useful/how-to-choose-website-developer' },
+      { label: 'Как заказать сайт', href: '/useful/how-to-order-website' },
+    ],
+  },
+};
+
+const sourceRoutes = [
+  ...priceDirections.map((source) => ({
+    path: source.path,
+    title: source.seoTitle,
+    description: source.seoDescription,
+    h1: source.title,
+    priority: 0.72,
+    changefreq: 'weekly',
+    schemaType: 'OfferCatalog',
+    sourceKind: 'price',
+    source,
+  })),
+  ...usefulArticles.map((source) => ({
+    path: source.path,
+    title: source.seoTitle,
+    description: source.seoDescription,
+    h1: source.title,
+    priority: 0.64,
+    changefreq: 'monthly',
+    type: 'article',
+    schemaType: 'Article',
+    lastmod: source.updatedAt,
+    sourceKind: 'article',
+    source,
+  })),
+  ...publishedCases.map((source) => ({
+    path: source.path,
+    title: source.seoTitle,
+    description: source.seoDescription,
+    h1: source.title,
+    priority: 0.68,
+    changefreq: 'monthly',
+    type: 'article',
+    schemaType: 'CreativeWork',
+    lastmod: source.date,
+    sourceKind: 'case',
+    source,
+  })),
+  ...localSeoPages.map((source) => ({
+    path: source.path,
+    title: source.title,
+    description: source.description,
+    h1: source.h1,
+    city: source.city,
+    serviceType: source.serviceType === 'website-development' ? 'Создание сайтов' : 'Компьютерная помощь',
+    priority: 0.7,
+    changefreq: 'monthly',
+    schemaType: 'LocalService',
+    sourceKind: 'local',
+    source,
+  })),
+  ...seoLandingPages.map((source) => ({
+    path: source.path,
+    title: source.seoTitle,
+    description: source.seoDescription,
+    h1: source.title,
+    priority: source.path === '/website-development-vladivostok' ? 0.92 : 0.82,
+    changefreq: 'weekly',
+    schemaType: 'Service',
+    sourceKind: 'landing',
+    source,
+  })),
+];
+
+function assertUniqueRoutePaths(label, routeList) {
+  const paths = routeList.map((route) => route.path);
+  const duplicates = [...new Set(paths.filter((path, index) => paths.indexOf(path) !== index))];
+  if (duplicates.length) {
+    throw new Error(`[seo] ${label} содержит дубли маршрутов: ${duplicates.join(', ')}`);
+  }
+}
+
+assertUniqueRoutePaths('Исходные SEO-данные', sourceRoutes);
+
+const sourceByPath = new Map(sourceRoutes.map((route) => [route.path, route]));
+const legacyRoutes = [...baseRoutes, ...priceRoutes, ...usefulRoutes, ...caseRoutes, ...localRoutes, ...landingRoutes, ...technicalRoutes]
+  .map((route) => {
+    const routeSource = sourceByPath.get(route.path);
+    const baseSource = routeSeo[route.path];
+    if (route.path === '/useful') {
+      return { ...route, title: usefulIndexMeta.title, description: usefulIndexMeta.description, h1: usefulIndexMeta.title };
+    }
+    if (routeSource) return { ...route, ...routeSource };
+    if (baseSource) {
+      return {
+        ...route,
+        title: baseSource.title,
+        description: baseSource.description,
+        noindex: Boolean(baseSource.noindex),
+        h1: baseH1[route.path] || route.title,
+      };
+    }
+    return { ...route, h1: baseH1[route.path] || route.title };
+  });
+const knownPaths = new Set(legacyRoutes.map((route) => route.path));
+const routes = [...legacyRoutes, ...sourceRoutes.filter((route) => !knownPaths.has(route.path))];
+assertUniqueRoutePaths('Итоговый route manifest', routes);
 const sitemapRoutes = routes.filter((route) => !route.noindex && route.path !== '/admin');
 
 function escapeHtml(value) {
@@ -321,7 +534,7 @@ function baseStructuredData(route) {
     contactType: 'customer support',
     areaServed: 'RU-PRI',
     availableLanguage: ['ru'],
-    url: 'https://t.me/AYDigitaLRu',
+    url: telegramUrl,
   };
 
   return [
@@ -333,7 +546,7 @@ function baseStructuredData(route) {
       url: siteUrl,
       logo: `${siteUrl}/favicon.svg`,
       image: defaultImage,
-      sameAs: ['https://t.me/AYDigitaLRu'],
+      sameAs: [telegramUrl],
       contactPoint,
     },
     {
@@ -341,17 +554,17 @@ function baseStructuredData(route) {
       '@type': 'Person',
       '@id': `${siteUrl}/#person`,
       name: specialistName,
-      jobTitle: 'Частный IT-специалист',
+      jobTitle: 'Частный веб-разработчик и IT-специалист',
       url: siteUrl,
       telephone: phone,
-      sameAs: ['https://t.me/AYDigitaLRu'],
+      sameAs: [telegramUrl],
       worksFor: { '@id': `${siteUrl}/#identity` },
-      areaServed: { '@type': 'City', name: 'Владивосток' },
+      areaServed: { '@type': 'City', name: siteConfig.city },
       knowsAbout: ['создание сайтов', 'веб-приложения', 'компьютерная помощь', 'Windows', 'MacBook', 'перенос данных', 'настройка телефонов', 'подбор техники Apple, Samsung и Xiaomi'],
     },
     {
       '@context': 'https://schema.org',
-      '@type': ['LocalBusiness', 'ProfessionalService'],
+      '@type': 'ProfessionalService',
       '@id': `${siteUrl}/#local-business`,
       name: `${specialistName} / ${siteName}`,
       url: siteUrl,
@@ -359,18 +572,12 @@ function baseStructuredData(route) {
       image: defaultImage,
       priceRange: '₽₽',
       areaServed: [
-        { '@type': 'City', name: 'Владивосток' },
+        { '@type': 'City', name: siteConfig.city },
         { '@type': 'AdministrativeArea', name: 'Приморский край' },
         { '@type': 'City', name: 'Артём' },
         { '@type': 'City', name: 'Уссурийск' },
         { '@type': 'City', name: 'Находка' },
       ],
-      address: {
-        '@type': 'PostalAddress',
-        addressLocality: 'Владивосток',
-        addressRegion: 'Приморский край',
-        addressCountry: 'RU',
-      },
       contactPoint,
     },
     {
@@ -412,6 +619,130 @@ const websiteStudioFaq = [
 
 function routeStructuredData(route) {
   const url = absoluteUrl(route.path);
+
+  if (route.path === '/') return null;
+
+  if (route.sourceKind === 'landing') {
+    return [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name: route.source.title,
+        serviceType: route.source.eyebrow,
+        description: route.source.seoDescription,
+        url,
+        provider: { '@id': `${siteUrl}/#person` },
+        areaServed: { '@type': 'City', name: 'Владивосток' },
+      },
+      ...(route.source.faq?.length ? [{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: route.source.faq.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: { '@type': 'Answer', text: item.answer },
+        })),
+      }] : []),
+    ];
+  }
+
+  if (route.sourceKind === 'local') {
+    return [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name: route.source.h1,
+        serviceType: route.serviceType,
+        description: route.source.description,
+        url,
+        provider: { '@id': `${siteUrl}/#person` },
+        areaServed: { '@type': 'City', name: route.source.city },
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: route.source.faq.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: { '@type': 'Answer', text: item.answer },
+        })),
+      },
+    ];
+  }
+
+  if (route.sourceKind === 'price') {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'OfferCatalog',
+      name: `${route.source.title}: пакеты и цены`,
+      url,
+      itemListElement: route.source.packages.map((item) => ({
+        '@type': 'Offer',
+        name: item.name,
+        description: item.fit,
+        ...structuredPrice(item.price),
+      })),
+    };
+  }
+
+  if (route.sourceKind === 'article') {
+    const minutes = Number(route.source.readingTime.match(/\d+/)?.[0]) || 10;
+    return [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: route.source.title,
+        description: route.source.seoDescription,
+        url,
+        inLanguage: 'ru-RU',
+        datePublished: route.source.publishedAt,
+        dateModified: route.source.updatedAt,
+        timeRequired: `PT${minutes}M`,
+        image: defaultImage,
+        author: { '@id': `${siteUrl}/#person` },
+        publisher: { '@id': `${siteUrl}/#identity` },
+        mainEntityOfPage: url,
+      },
+      ...(route.source.faq?.length ? [{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: route.source.faq.map((item) => ({
+          '@type': 'Question',
+          name: item.question,
+          acceptedAnswer: { '@type': 'Answer', text: item.answer },
+        })),
+      }] : []),
+      ...(route.source.relatedServices?.length ? [{
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Услуги по теме материала',
+        itemListElement: route.source.relatedServices.map((item, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          item: { '@type': 'Service', name: item.label, url: absoluteUrl(item.href) },
+        })),
+      }] : []),
+    ];
+  }
+
+  if (route.sourceKind === 'case') {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'CreativeWork',
+      headline: route.source.title,
+      name: route.source.title,
+      description: route.source.seoDescription,
+      url,
+      inLanguage: 'ru-RU',
+      datePublished: route.source.date,
+      dateModified: route.source.date,
+      image: defaultImage,
+      author: { '@id': `${siteUrl}/#person` },
+      publisher: { '@id': `${siteUrl}/#identity` },
+      mainEntityOfPage: url,
+    };
+  }
+
   if (route.schemaType === 'Service') {
     const service = {
       '@context': 'https://schema.org',
@@ -493,7 +824,7 @@ function routeStructuredData(route) {
         url,
         inLanguage: 'ru-RU',
         datePublished: '2026-08-05',
-        dateModified: lastmod,
+        ...(route.lastmod ? { dateModified: route.lastmod } : {}),
         timeRequired: 'PT10M',
         image: defaultImage,
         author: { '@id': `${siteUrl}/#person` },
@@ -536,7 +867,7 @@ function routeStructuredData(route) {
       url,
       inLanguage: 'ru-RU',
       datePublished: '2026-08-05',
-      dateModified: lastmod,
+      ...(route.lastmod ? { dateModified: route.lastmod } : {}),
       image: defaultImage,
       author: { '@id': `${siteUrl}/#person` },
       publisher: { '@id': `${siteUrl}/#identity` },
@@ -556,6 +887,7 @@ function routeStructuredData(route) {
 
 function jsonLd(route) {
   return [...baseStructuredData(route), routeStructuredData(route)].flat()
+    .filter(Boolean)
     .map((item) => `<script type="application/ld+json" data-seo-json-ld="true">${JSON.stringify(item)}</script>`)
     .join('\n    ');
 }
@@ -566,24 +898,18 @@ function routeHeading(route) {
 
 function renderWebsiteStudioFallback(route) {
   const crumbs = breadcrumbItems(route.path);
-  const websiteTypes = [
-    ['Сайт для старта', 'от 19 900 ₽', 'Компактный сайт для специалиста, услуги или небольшого проекта.'],
-    ['Лендинг', 'от 24 900 ₽', 'Одностраничный сайт под конкретное предложение, рекламу или сбор заявок.'],
-    ['Сайт с системой управления', 'от 34 900 ₽', 'Самостоятельное обновление согласованного содержимого без правки кода.'],
-    ['Бизнес-сайт', 'от 44 900 ₽', 'Связанные страницы услуг, цен, кейсов, полезных материалов и контактов.'],
-    ['Сайт-каталог', 'от 59 900 ₽', 'Категории, карточки, поиск, фильтры, документы и заявки.'],
-    ['Интернет-магазин', 'от 79 900 ₽', 'Каталог, корзина, оформление заказа и управление товарами.'],
-    ['Индивидуальный веб-сервис', 'от 139 900 ₽', 'Нестандартный интерфейс, собственная логика, API и интеграции.'],
-  ];
+  const websiteTypes = priceDirections
+    .find((direction) => direction.slug === 'websites')
+    ?.packages.map((item) => [item.name, item.price, item.fit]) || [];
   const process = ['Разговор', 'Структура', 'Концепция', 'Разработка', 'Контент', 'Проверка', 'Публикация'];
 
-  return `<div id="root"><main style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f4f7fb;background:#05080e;">
+  return `<!-- SEO_STATIC_FALLBACK_START --><main style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#f4f7fb;background:#05080e;">
       <nav aria-label="Хлебные крошки" style="max-width:1180px;margin:0 auto;padding:24px 20px;color:#9aaabe;font-size:14px;">
         ${crumbs.map((item, index) => `${index > 0 ? '<span aria-hidden="true" style="margin:0 8px;color:#526174;">/</span>' : ''}<a href="${escapeHtml(item.href)}" style="color:#b8c8d9;text-decoration:none;">${escapeHtml(item.label)}</a>`).join('')}
       </nav>
       <section style="max-width:1180px;margin:0 auto;padding:96px 20px 110px;">
         <p style="margin:0 0 16px;color:#78b7f3;font-size:13px;font-weight:800;">SITEVL · ВЛАДИВОСТОК</p>
-        <h1 style="max-width:820px;margin:0;font-size:52px;line-height:1;letter-spacing:0;">Создаю самописные сайты для бизнеса</h1>
+        <h1 style="max-width:820px;margin:0;font-size:52px;line-height:1;letter-spacing:0;">${escapeHtml(route.h1 || routeHeading(route))}</h1>
         <p style="max-width:720px;margin:24px 0 0;color:#c7dbef;font-size:22px;line-height:1.45;font-weight:650;">От компактного сайта до каталога, системы управления и индивидуального веб-сервиса.</p>
         <p style="max-width:720px;margin:18px 0 0;color:#a9b5c5;font-size:17px;line-height:1.7;">Работаю лично, без шаблонного подхода. Структура, дизайн и логика проекта подбираются под конкретную задачу бизнеса во Владивостоке или удалённо.</p>
         <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;">
@@ -629,11 +955,106 @@ function renderWebsiteStudioFallback(route) {
         <p style="max-width:620px;margin:20px auto 0;color:#a9b5c5;line-height:1.7;">Разработка сайта полностью может проходить удалённо. Поэтому география клиента почти не ограничивает проект.</p>
         <a href="https://t.me/AYDigitaLRu" style="display:inline-block;margin-top:28px;border-radius:999px;padding:14px 20px;color:#07101b;background:#edf6ff;text-decoration:none;font-weight:750;">Написать в Telegram</a>
       </section>
-    </main></div>`;
+    </main><!-- SEO_STATIC_FALLBACK_END -->`;
+}
+
+function renderList(items = []) {
+  if (!items.length) return '';
+  return `<ul style="display:grid;gap:9px;margin:18px 0 0;padding-left:20px;color:#344054;line-height:1.65;">${items.map((item) => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+}
+
+function renderCards(items = []) {
+  if (!items.length) return '';
+  return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:24px;">${items.map((item) => `<article style="border:1px solid #e4e7ec;border-radius:18px;padding:20px;background:#fff;"><h3 style="margin:0;font-size:19px;line-height:1.25;">${escapeHtml(item.title || item.name)}</h3>${item.price ? `<strong style="display:block;margin-top:10px;color:#175cd3;">${escapeHtml(item.price)}</strong>` : ''}${item.description || item.fit ? `<p style="margin:12px 0 0;color:#475467;line-height:1.6;">${escapeHtml(item.description || item.fit)}</p>` : ''}${renderList(item.items || item.includes || [])}</article>`).join('')}</div>`;
+}
+
+function renderFaq(items = []) {
+  if (!items.length) return '';
+  return `<section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;line-height:1.15;">Частые вопросы</h2><div style="display:grid;gap:10px;margin-top:22px;">${items.map((item) => `<details style="border:1px solid #e4e7ec;border-radius:16px;padding:16px 18px;background:#fff;"><summary style="cursor:pointer;font-weight:750;">${escapeHtml(item.question)}</summary><p style="margin:12px 0 0;color:#475467;line-height:1.65;">${escapeHtml(item.answer)}</p></details>`).join('')}</div></section>`;
+}
+
+function renderLinks(items = []) {
+  const normalized = items.filter((item) => item?.href?.startsWith('/'));
+  if (!normalized.length) return '';
+  return `<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:22px;">${normalized.map((item) => `<a href="${escapeHtml(item.href)}" style="border:1px solid #d0d5dd;border-radius:999px;padding:11px 16px;color:#175cd3;text-decoration:none;font-weight:700;">${escapeHtml(item.label)}</a>`).join('')}</div>`;
+}
+
+function renderArticleContent(source) {
+  return `${source.directAnswer ? `<section style="border-radius:20px;padding:24px;background:#eff8ff;"><p style="margin:0;color:#175cd3;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;">Короткий ответ</p><p style="margin:12px 0 0;font-size:21px;font-weight:750;line-height:1.5;">${escapeHtml(source.directAnswer)}</p></section>` : ''}
+    ${source.sections.map((section) => `<section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;line-height:1.15;">${escapeHtml(section.title)}</h2>${section.description ? `<p style="max-width:820px;margin:16px 0 0;color:#475467;line-height:1.7;">${escapeHtml(section.description)}</p>` : ''}${renderCards(section.cards || [])}${(section.checklist || []).map((list) => `<h3 style="margin:24px 0 0;font-size:21px;">${escapeHtml(list.title)}</h3>${renderList(list.items)}`).join('')}${renderList(section.tips || [])}</section>`).join('')}
+    ${source.advice?.length ? `<section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Практический чек-лист</h2>${renderList(source.advice)}</section>` : ''}
+    ${source.mistakes?.length ? `<section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Частые ошибки</h2>${renderCards(source.mistakes)}</section>` : ''}
+    ${renderFaq(source.faq)}
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:28px;">Продолжить по теме</h2>${renderLinks([...(source.relatedArticles || []), ...(source.relatedServices || [])])}</section>`;
+}
+
+function renderLandingContent(route) {
+  const source = route.source;
+  const packageIdByPath = {
+    '/landing-development': 'landing',
+    '/business-website-development': 'business',
+    '/website-admin-vladivostok': 'managed',
+    '/catalog-website-development': 'catalog',
+    '/online-store-development': 'store',
+    '/web-application-development': 'web-service',
+  };
+  const websitePricing = priceDirections.find((direction) => direction.slug === 'websites');
+  const selectedPackageId = packageIdByPath[route.path];
+  const selectedPackages = route.path === '/website-development-vladivostok'
+    ? websitePricing?.packages || []
+    : websitePricing?.packages.filter((item) => item.id === selectedPackageId) || [];
+
+  return `<p style="max-width:820px;margin:20px 0 0;color:#344054;font-size:18px;line-height:1.7;">${escapeHtml(source.intro)}</p>
+    ${source.serviceIncludes?.length ? `<section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Что входит</h2>${renderCards(source.serviceIncludes)}</section>` : ''}
+    ${source.sections.map((section) => `<section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;line-height:1.15;">${escapeHtml(section.title)}</h2>${section.text ? `<p style="max-width:820px;margin:16px 0 0;color:#475467;line-height:1.7;">${escapeHtml(section.text)}</p>` : ''}${renderList(section.items || [])}</section>`).join('')}
+    ${source.neededWhen?.length ? `<section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Кому подходит</h2>${renderList(source.neededWhen)}</section>` : ''}
+    ${source.processSteps?.length ? `<section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Как проходит работа</h2>${renderList(source.processSteps)}</section>` : ''}
+    ${selectedPackages.length ? `<section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Ориентир по стоимости</h2>${renderCards(selectedPackages)}${renderLinks([{ label: 'Все цены на разработку сайтов', href: '/prices/websites' }])}</section>` : ''}
+    ${renderFaq(source.faq)}
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:28px;">Связанные услуги и материалы</h2>${renderLinks([...(source.relatedServices || []), ...(source.relatedArticles || []), ...(source.links || [])])}</section>`;
+}
+
+function renderLocalContent(source) {
+  return `<p style="max-width:820px;margin:20px 0 0;color:#344054;font-size:18px;line-height:1.7;">${escapeHtml(source.intro)}</p>
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Формат работы</h2><p style="max-width:820px;margin:16px 0 0;color:#475467;line-height:1.7;">${escapeHtml(source.format)}</p></section>
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">С какими задачами можно обратиться</h2>${renderList(source.taskExamples)}</section>
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Что можно решить удалённо</h2>${renderList(source.remoteTasks)}</section>
+    ${renderFaq(source.faq)}
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:28px;">Полезные ссылки</h2>${renderLinks([source.relatedMainPage, ...source.relatedServices, ...source.relatedArticles])}</section>`;
+}
+
+function renderPriceContent(source) {
+  return `<p style="max-width:820px;margin:20px 0 0;color:#344054;font-size:18px;line-height:1.7;">${escapeHtml(source.description)}</p>
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Пакеты и стартовые цены</h2>${renderCards(source.packages)}</section>
+    ${source.sections.map((section) => `<section style="padding-top:42px;"><h2 style="margin:0;font-size:28px;">${escapeHtml(section.title)}</h2>${renderList(section.items)}</section>`).join('')}
+    ${source.disclaimer ? `<p style="margin:32px 0 0;border-radius:16px;padding:18px;background:#f2f4f7;color:#475467;line-height:1.6;">${escapeHtml(source.disclaimer)}</p>` : ''}`;
+}
+
+function renderCaseContent(source) {
+  return `<p style="max-width:820px;margin:20px 0 0;color:#344054;font-size:18px;line-height:1.7;">${escapeHtml(source.shortDescription)}</p>
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Задача</h2><p style="max-width:820px;margin:16px 0 0;color:#475467;line-height:1.7;">${escapeHtml(source.task)}</p></section>
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Что реализовано</h2>${renderList(source.workCompleted)}</section>
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;">Результат</h2>${renderList(source.result)}</section>
+    <section style="padding-top:42px;"><h2 style="margin:0;font-size:28px;">Связанные услуги</h2>${renderLinks([...(source.relatedServices || []), ...(source.relatedArticles || [])])}</section>`;
+}
+
+function renderSourceContent(route) {
+  if (route.sourceKind === 'landing') return renderLandingContent(route);
+  if (route.sourceKind === 'article') return renderArticleContent(route.source);
+  if (route.sourceKind === 'local') return renderLocalContent(route.source);
+  if (route.sourceKind === 'price') return renderPriceContent(route.source);
+  if (route.sourceKind === 'case') return renderCaseContent(route.source);
+  const baseContent = baseStaticContent[route.path];
+  if (baseContent) {
+    return `<p style="max-width:820px;margin:20px 0 0;color:#344054;font-size:18px;line-height:1.7;">${escapeHtml(baseContent.intro)}</p>
+      ${baseContent.sections.map((section) => `<section style="padding-top:42px;"><h2 style="margin:0;font-size:32px;line-height:1.15;">${escapeHtml(section.title)}</h2><p style="max-width:820px;margin:16px 0 0;color:#475467;line-height:1.7;">${escapeHtml(section.text)}</p></section>`).join('')}
+      <section style="padding-top:42px;"><h2 style="margin:0;font-size:28px;">Полезные ссылки</h2>${renderLinks(baseContent.links)}</section>`;
+  }
+  return '';
 }
 
 function renderStaticFallback(route) {
-  if (route.path === '/website-development-vladivostok') {
+  if (route.path === '/website-development-vladivostok' && !route.sourceKind) {
     return renderWebsiteStudioFallback(route);
   }
 
@@ -645,19 +1066,22 @@ function renderStaticFallback(route) {
     { label: 'Контакты', href: '/contacts' },
   ].filter((link) => link.href !== route.path);
 
-  return `<div id="root"><main style="max-width:1120px;margin:0 auto;padding:48px 20px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111827;background:#fff;">
+  const sourceContent = renderSourceContent(route);
+
+  return `<!-- SEO_STATIC_FALLBACK_START --><main style="max-width:1120px;margin:0 auto;padding:48px 20px 96px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111827;background:#fff;">
       <nav aria-label="Хлебные крошки" style="font-size:14px;color:#667085;margin-bottom:32px;">
         ${crumbs.map((item, index) => `${index > 0 ? '<span aria-hidden="true" style="margin:0 8px;">/</span>' : ''}<a href="${escapeHtml(item.href)}" style="color:#475467;text-decoration:none;">${escapeHtml(item.label)}</a>`).join('')}
       </nav>
       <section>
         <p style="margin:0 0 12px;color:#2563eb;font-size:15px;font-weight:700;">SITEVL</p>
-        <h1 style="max-width:880px;margin:0 0 18px;font-size:clamp(36px,7vw,72px);line-height:.95;letter-spacing:-.02em;">${escapeHtml(routeHeading(route))}</h1>
+        <h1 style="max-width:880px;margin:0 0 18px;font-size:clamp(36px,7vw,72px);line-height:.95;letter-spacing:-.02em;">${escapeHtml(route.h1 || routeHeading(route))}</h1>
         <p style="max-width:760px;margin:0 0 28px;color:#475467;font-size:20px;line-height:1.55;">${escapeHtml(route.description)}</p>
         <div style="display:flex;flex-wrap:wrap;gap:12px;">
           ${helpfulLinks.map((link) => `<a href="${escapeHtml(link.href)}" style="border:1px solid #d0d5dd;border-radius:999px;padding:12px 18px;color:#111827;text-decoration:none;font-weight:700;">${escapeHtml(link.label)}</a>`).join('')}
         </div>
       </section>
-    </main></div>`;
+      ${sourceContent}
+    </main><!-- SEO_STATIC_FALLBACK_END -->`;
 }
 
 function replaceOrInsertMeta(html, selectorPattern, replacement, before = '<title>') {
@@ -692,7 +1116,15 @@ function renderHtml(baseHtml, route) {
   html = replaceOrInsertMeta(html, /<meta\s+name="twitter:image:alt"\s+content="[^"]*"\s*\/>/, `<meta name="twitter:image:alt" content="${escapeHtml(route.title)}" />`);
   html = html.replace(/\n\s*<script type="application\/ld\+json" data-seo-json-ld="true">.*?<\/script>/gs, '');
   html = html.replace('</head>', `    ${jsonLd(route)}\n  </head>`);
-  html = html.replace(/<div id="root"><\/div>/, renderStaticFallback(route));
+  const staticFallback = renderStaticFallback(route);
+  if (html.includes('<!-- SEO_STATIC_FALLBACK_START -->')) {
+    html = html.replace(
+      /<!-- SEO_STATIC_FALLBACK_START -->[\s\S]*?<!-- SEO_STATIC_FALLBACK_END -->/,
+      staticFallback,
+    );
+  } else {
+    html = html.replace(/<div id="root"><\/div>/, `<div id="root">${staticFallback}</div>`);
+  }
 
   return html;
 }
@@ -713,8 +1145,7 @@ function renderSitemap() {
   const rows = sitemapRoutes
     .map((route) => `  <url>
     <loc>${absoluteUrl(route.path)}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${route.changefreq}</changefreq>
+${route.lastmod ? `    <lastmod>${route.lastmod}</lastmod>\n` : ''}    <changefreq>${route.changefreq}</changefreq>
     <priority>${route.priority.toFixed(2)}</priority>
   </url>`)
     .join('\n');
@@ -738,6 +1169,16 @@ Sitemap: ${siteUrl}/sitemap.xml
 const baseHtml = readFileSync(join(distDir, 'index.html'), 'utf8');
 routes.forEach((route) => writeRouteHtml(baseHtml, route));
 
+const notFoundHtml = renderHtml(baseHtml, {
+  path: '/404',
+  title: 'Страница не найдена — SITEVL',
+  description: 'Такой страницы на SITEVL нет. Перейдите к услугам, ценам, кейсам или полезным материалам.',
+  h1: 'Страница не найдена',
+  noindex: true,
+  schemaType: 'WebPage',
+});
+writeFileSync(join(distDir, '404.html'), notFoundHtml);
+
 const sitemap = renderSitemap();
 writeFileSync(join(publicDir, 'sitemap.xml'), sitemap);
 writeFileSync(join(distDir, 'sitemap.xml'), sitemap);
@@ -753,8 +1194,11 @@ writeFileSync(
       path: route.path,
       title: route.title,
       description: route.description,
+      h1: route.h1 || routeHeading(route),
       noindex: Boolean(route.noindex),
       schemaType: route.schemaType || 'WebPage',
+      sourceKind: route.sourceKind || 'base',
+      ...(route.lastmod ? { lastmod: route.lastmod } : {}),
     })),
     null,
     2,

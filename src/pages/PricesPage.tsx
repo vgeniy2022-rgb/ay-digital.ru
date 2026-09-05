@@ -15,6 +15,7 @@ import { localSeoLinks } from '../data/localSeoLinks';
 import { priceDirections } from '../data/priceDirections';
 import { PriceGroup } from '../data/site';
 import { useSiteData } from '../hooks/useSiteData';
+import { structuredPrice } from '../utils/structuredPrice';
 
 const tabs = [
   { label: 'Все', key: 'all' },
@@ -44,11 +45,6 @@ function getCompactIncludes(item: PriceGroup['items'][number]) {
   return ['состав согласуем', 'цена до старта', 'понятный результат'];
 }
 
-function numericStartingPrice(value: string) {
-  const match = value.match(/\d[\d\s]*/);
-  return match ? Number(match[0].replace(/\s/g, '')) : undefined;
-}
-
 function createOfferCatalogSchema(groups: PriceGroup[]) {
   return {
     '@context': 'https://schema.org',
@@ -62,8 +58,7 @@ function createOfferCatalogSchema(groups: PriceGroup[]) {
         '@type': 'Offer',
         name: item.name,
         description: item.description,
-        priceCurrency: 'RUB',
-        ...(numericStartingPrice(item.price) ? { price: numericStartingPrice(item.price) } : {}),
+        ...structuredPrice(item.price),
         category: group.title,
         availability: 'https://schema.org/InStock',
         offeredBy: {

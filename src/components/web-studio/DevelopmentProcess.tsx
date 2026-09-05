@@ -1,6 +1,5 @@
 import {
   ArrowDown,
-  ArrowUpRight,
   BarChart3,
   Check,
   CircleDollarSign,
@@ -17,7 +16,6 @@ import {
   UserRoundCheck,
   Workflow,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { studioIndustries, studioProcess, whyWebsitePoints } from '../../data/webStudio';
 import { StudioEyebrow, StudioHeading } from './StudioPrimitives';
 
@@ -160,49 +158,6 @@ export function IndustriesMarquee() {
               <i><Globe2 /></i>
             </span>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-type StudioFaqAndLinksProps = {
-  faq: { question: string; answer: string }[];
-  relatedServices: { label: string; href: string }[];
-  relatedArticles: { label: string; href: string }[];
-};
-
-export function StudioFaqAndLinks({ faq, relatedServices, relatedArticles }: StudioFaqAndLinksProps) {
-  return (
-    <section className="studio-faq" aria-labelledby="studio-faq-title">
-      <div className="studio-shell">
-        <StudioHeading
-          eyebrow="Перед началом"
-          title="Вопросы о создании сайта"
-          description="Короткие ответы про стоимость, сроки, материалы, управление контентом, публикацию и удалённую работу."
-        />
-        <div className="studio-faq__grid">
-          {faq.map((item) => (
-            <details key={item.question}>
-              <summary>{item.question}<span aria-hidden="true">+</span></summary>
-              <p>{item.answer}</p>
-            </details>
-          ))}
-        </div>
-
-        <div className="studio-related">
-          <div>
-            <h3>Связанные услуги</h3>
-            {relatedServices.map((item) => (
-              <Link to={item.href} key={item.href}>{item.label}<ArrowUpRight aria-hidden="true" /></Link>
-            ))}
-          </div>
-          <div>
-            <h3>Полезные материалы</h3>
-            {relatedArticles.map((item) => (
-              <Link to={item.href} key={item.href}>{item.label}<ArrowUpRight aria-hidden="true" /></Link>
-            ))}
-          </div>
         </div>
       </div>
     </section>

@@ -43,7 +43,7 @@ export function CasesPage() {
       />
       <PageHero
         eyebrow={pageMeta.cases.eyebrow}
-        title="Кейсы и реальные проекты"
+        title={pageMeta.cases.title}
         description="Здесь собраны опубликованные проекты, которые можно описывать фактами: что было нужно, что реализовано, какие технологии использовались и какой результат подготовлен."
       />
 

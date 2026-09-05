@@ -29,6 +29,17 @@ const categoryLabels: Record<string, string> = {
   'Приложения и прототипы': 'Мобильные приложения и цифровые продукты',
 };
 
+const commercialDirections = [
+  { title: 'Сайт для бизнеса', description: 'Многостраничный сайт компании с услугами, кейсами, ценами и понятным путём до обращения.', href: '/business-website-development' },
+  { title: 'Лендинг', description: 'Одностраничный сайт под конкретную услугу, продукт, мероприятие или рекламную кампанию.', href: '/landing-development' },
+  { title: 'Сайт-каталог', description: 'Категории, карточки, поиск, фильтры, документы и заявки без обязательной онлайн-оплаты.', href: '/catalog-website-development' },
+  { title: 'Интернет-магазин', description: 'Каталог товаров, корзина, оформление заказа и согласованное управление витриной.', href: '/online-store-development' },
+  { title: 'Веб-приложение', description: 'Личный кабинет, онлайн-сервис, база данных, роли пользователей и интеграции.', href: '/web-application-development' },
+  { title: 'Система управления', description: 'Сайт, на котором владелец самостоятельно обновляет согласованные тексты, цены и фотографии.', href: '/website-admin-vladivostok' },
+  { title: 'Мобильное приложение', description: 'Разработка продукта для iOS и Android: от первой версии до сервиса для бизнеса.', href: '/mobile-apps' },
+  { title: 'Цены на сайты', description: 'Актуальные пакеты и стартовая стоимость из единой системы цен SITEVL.', href: '/prices/websites' },
+] as const;
+
 function createServicesSchema(services: ReturnType<typeof useSiteData>['data']['services']) {
   return {
     '@context': 'https://schema.org',
@@ -73,6 +84,28 @@ export function ServicesPage() {
     <PageTransition>
       <SeoHead structuredData={createServicesSchema(services)} />
       <PageHero {...pageMeta.services} />
+      <section className="pb-12 sm:pb-16">
+        <Container>
+          <Reveal>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Цифровые продукты</p>
+            <h2 className="mt-3 max-w-4xl text-3xl font-extrabold leading-tight sm:text-5xl">Выберите формат под задачу бизнеса</h2>
+            <p className="mt-5 max-w-3xl text-base leading-7 text-muted">
+              На страницах направлений собраны состав работы, ограничения, примеры подходящих задач и ссылки на актуальные цены.
+            </p>
+          </Reveal>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {commercialDirections.map((item, index) => (
+              <Reveal className="h-full" delay={index * 0.03} key={item.href}>
+                <Link className="group flex h-full flex-col rounded-premium border border-line bg-white/84 p-6 shadow-glass transition hover:-translate-y-1 hover:border-slate-300 hover:shadow-soft" to={item.href}>
+                  <h3 className="text-xl font-extrabold leading-tight text-ink">{item.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-muted">{item.description}</p>
+                  <span className="mt-auto pt-5 text-sm font-extrabold text-accent transition group-hover:text-ink">Подробнее →</span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </Container>
+      </section>
       <section className="pb-12">
         <Container>
           <Reveal>

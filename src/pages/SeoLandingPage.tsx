@@ -124,6 +124,7 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
     caseItem.relatedServices.some((service) => service.href === currentPage.path || currentPage.links.some((link) => link.href === service.href)),
   );
   const heroMedia = getServiceCategoryMedia(`${currentPage.title} ${currentPage.eyebrow}`);
+  const isWebsiteProductPage = currentPage.priceGroupTitles.includes('Сайты');
 
   return (
     <PageTransition>
@@ -145,7 +146,14 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
               <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">{currentPage.description}</p>
               <p className="mt-5 max-w-2xl text-base leading-7 text-graphite">{currentPage.intro}</p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <ButtonLink to="/services">Выбрать услугу</ButtonLink>
+                <ButtonLink to={isWebsiteProductPage ? '/ai-website' : '/services'}>
+                  {isWebsiteProductPage ? 'Получить AI-концепт сайта' : 'Выбрать услугу'}
+                </ButtonLink>
+                {isWebsiteProductPage ? (
+                  <ButtonLink to="/prices/websites" variant="secondary">
+                    Цены на разработку
+                  </ButtonLink>
+                ) : null}
                 <ButtonLink href={data.site.telegramUrl} variant="secondary" showArrow={false}>
                   <MessageCircle className="h-4 w-4 text-accent" />
                   Связаться
@@ -250,12 +258,12 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
         <section className="py-10 sm:py-14">
           <Container>
             <Reveal>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Как это обычно формулируют</p>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Подход к задаче</p>
               <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">
-                С чем можно написать обычными словами
+                Как определить подходящий формат
               </h2>
               <p className="mt-5 max-w-3xl text-base leading-7 text-muted">
-                Не обязательно знать точный термин. Достаточно описать ситуацию так, как вы её видите.
+                Не обязательно заранее знать технический термин. Опишите задачу и ожидаемый результат — этого достаточно для первого обсуждения.
               </p>
             </Reveal>
             <div className="mt-8 grid gap-5 lg:grid-cols-2">
@@ -264,13 +272,6 @@ export function SeoLandingPage({ page }: SeoLandingPageProps) {
                   <article className="h-full rounded-premium border border-line bg-white/84 p-6 shadow-glass">
                     <h3 className="text-xl font-extrabold leading-tight">{group.title}</h3>
                     <p className="mt-3 text-sm leading-6 text-muted">{group.answer}</p>
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      {group.phrases.map((phrase) => (
-                        <span className="rounded-full bg-slate-50 px-3 py-2 text-xs font-bold leading-5 text-graphite" key={phrase}>
-                          {phrase}
-                        </span>
-                      ))}
-                    </div>
                   </article>
                 </Reveal>
               ))}

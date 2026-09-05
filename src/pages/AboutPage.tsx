@@ -12,11 +12,13 @@ import { AuthorCard, CasePreviewCard, TrustPrinciples } from '../components/Trus
 import { absoluteUrl, siteConfig } from '../config/site';
 import { featuredCases } from '../data/cases';
 import { editorialMedia } from '../data/editorialMedia';
+import { pageMeta } from '../data/pageMeta';
 import { useSiteData } from '../hooks/useSiteData';
 
 const directions = [
   'создание сайтов',
   'веб-приложения',
+  'мобильные приложения',
   'компьютерная помощь',
   'Windows',
   'MacBook',
@@ -32,9 +34,9 @@ const taskGroups = [
 ];
 
 const processSteps = ['вы описываете задачу', 'я уточняю детали', 'обсуждаем объём работы', 'согласуем формат и сроки', 'я выполняю работу и объясняю, что сделано'];
-const technologies = ['React', 'Vite', 'TypeScript', 'Supabase', 'Google Apps Script', 'Windows', 'macOS'];
+const technologies = ['React', 'Vite', 'TypeScript', 'Supabase', 'Swift', 'SwiftUI', 'Google Apps Script', 'Windows', 'macOS'];
 const faq = [
-  { question: 'Вы работаете как частный специалист?', answer: 'Да. На сайте указаны услуги частного IT-специалиста, а не официального сервисного центра или представительства брендов.' },
+  { question: 'Я буду общаться напрямую с разработчиком?', answer: 'Да. Задачу, структуру, стоимость, правки и запуск вы обсуждаете напрямую со мной, без передачи проекта между менеджерами.' },
   { question: 'В каком регионе можно обратиться?', answer: 'Основной регион — Владивосток. Часть задач можно обсудить и выполнить удалённо.' },
   { question: 'С какими устройствами помогаете?', answer: 'Можно обратиться по Windows, macOS, MacBook, iPhone, Android и подбору техники Apple, Samsung и Xiaomi.' },
   { question: 'Можно ли заранее понять стоимость?', answer: 'Перед началом я уточняю задачу и объём работы. Цены на сайте ориентировочные, финальная стоимость зависит от деталей.' },
@@ -48,7 +50,7 @@ function personSchema() {
     '@type': 'Person',
     '@id': `${siteConfig.siteUrl}/#person`,
     name: siteConfig.specialistName,
-    jobTitle: 'Частный IT-специалист',
+    jobTitle: 'Частный веб-разработчик и IT-специалист',
     url: absoluteUrl('/about'),
     telephone: siteConfig.phone,
     sameAs: [siteConfig.telegramUrl],
@@ -66,6 +68,21 @@ function personSchema() {
   };
 }
 
+function faqSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+}
+
 export function AboutPage() {
   const [isPortraitVisible, setIsPortraitVisible] = useState(Boolean(businessPortraitUrl));
   const { data } = useSiteData();
@@ -73,10 +90,10 @@ export function AboutPage() {
   return (
     <PageTransition>
       <SeoHead
-        title="О специалисте — Александр, частный IT-специалист во Владивостоке"
-        description="Александр — частный IT-специалист во Владивостоке: сайты, веб-приложения, компьютерная помощь, Windows, MacBook, перенос данных, телефоны и подбор техники."
+        title="Частный веб-разработчик во Владивостоке — Александр | SITEVL"
+        description="Разработка сайтов, веб-приложений и мобильных продуктов напрямую со специалистом: без менеджеров, с понятными этапами, стоимостью и поддержкой."
         canonicalPath="/about"
-        structuredData={personSchema()}
+        structuredData={[personSchema(), faqSchema()]}
       />
 
       <section className="relative overflow-hidden py-16 sm:py-20">
@@ -86,10 +103,10 @@ export function AboutPage() {
             <Reveal>
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Обо мне</p>
               <h1 className="mt-5 max-w-4xl text-4xl font-extrabold leading-[1.03] text-ink sm:text-6xl">
-                Александр — частный IT-специалист
+                {pageMeta.about.title}
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">
-                Помогаю с сайтами, веб-приложениями, компьютерами, MacBook, Windows, переносом данных, настройкой телефонов и выбором техники. Работаю лично во Владивостоке и удалённо.
+                Разрабатываю сайты, веб-приложения и мобильные продукты, а также помогаю с техникой. Работаю лично во Владивостоке и удалённо: вы обсуждаете задачу, решения и правки напрямую со мной, без менеджеров.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                 <ButtonLink href={data.site.telegramUrl} showArrow={false}>
@@ -97,6 +114,7 @@ export function AboutPage() {
                   Написать в Telegram
                 </ButtonLink>
                 <ButtonLink to="/website-development-vladivostok" variant="secondary">Создание сайтов</ButtonLink>
+                <ButtonLink to="/ai-website" variant="secondary">Получить AI-концепт</ButtonLink>
                 <ButtonLink to="/cases" variant="secondary">Смотреть кейсы</ButtonLink>
               </div>
             </Reveal>
@@ -130,6 +148,27 @@ export function AboutPage() {
               </div>
             </Reveal>
           </div>
+
+          <Reveal className="mt-8">
+            <section className="rounded-premium border border-line bg-ink p-7 text-white shadow-soft sm:p-8">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-blue-200">Прямая работа</p>
+              <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight">Один специалист отвечает за проект от структуры до запуска</h2>
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                <article className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                  <h3 className="text-lg font-extrabold">Без менеджеров</h3>
+                  <p className="mt-2 text-sm leading-6 text-blue-50">Вопросы по интерфейсу, логике, срокам и правкам не теряются между участниками.</p>
+                </article>
+                <article className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                  <h3 className="text-lg font-extrabold">Проверяемый результат</h3>
+                  <p className="mt-2 text-sm leading-6 text-blue-50">До начала фиксируем состав работы, а перед передачей проверяем страницы, сценарии, формы и адаптивность.</p>
+                </article>
+                <article className="rounded-3xl border border-white/10 bg-white/5 p-5">
+                  <h3 className="text-lg font-extrabold">После запуска</h3>
+                  <p className="mt-2 text-sm leading-6 text-blue-50">30 дней технической гарантии входят в запуск. Дальнейшая поддержка SITEVL Care подключается только по желанию.</p>
+                </article>
+              </div>
+            </section>
+          </Reveal>
         </Container>
       </section>
 

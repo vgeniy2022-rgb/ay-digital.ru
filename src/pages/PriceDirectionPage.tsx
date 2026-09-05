@@ -10,11 +10,16 @@ import { SitevlCare } from '../components/SitevlCare';
 import { absoluteUrl, siteConfig } from '../config/site';
 import { getPriceDirection } from '../data/priceDirections';
 import { useSiteData } from '../hooks/useSiteData';
+import { structuredPrice } from '../utils/structuredPrice';
 
-function numericStartingPrice(value: string) {
-  const match = value.match(/\d[\d\s]*/);
-  return match ? Number(match[0].replace(/\s/g, '')) : undefined;
-}
+const websiteProductLinks = [
+  { label: 'Сайт для бизнеса', href: '/business-website-development' },
+  { label: 'Разработка лендинга', href: '/landing-development' },
+  { label: 'Создание сайта-каталога', href: '/catalog-website-development' },
+  { label: 'Разработка интернет-магазина', href: '/online-store-development' },
+  { label: 'Веб-приложение и онлайн-сервис', href: '/web-application-development' },
+  { label: 'Получить AI-концепт сайта', href: '/ai-website' },
+] as const;
 
 function createDirectionSchema(direction: NonNullable<ReturnType<typeof getPriceDirection>>) {
   return [
@@ -39,8 +44,7 @@ function createDirectionSchema(direction: NonNullable<ReturnType<typeof getPrice
         '@type': 'Offer',
         name: item.name,
         description: item.fit,
-        priceCurrency: 'RUB',
-        ...(numericStartingPrice(item.price) ? { price: numericStartingPrice(item.price) } : {}),
+        ...structuredPrice(item.price),
         availability: 'https://schema.org/InStock',
       })),
     },
@@ -53,8 +57,7 @@ function createDirectionSchema(direction: NonNullable<ReturnType<typeof getPrice
         '@type': 'Offer',
         name: item.name,
         description: item.fit,
-        priceCurrency: 'RUB',
-        ...(numericStartingPrice(item.price) ? { price: numericStartingPrice(item.price) } : {}),
+        ...structuredPrice(item.price),
         availability: 'https://schema.org/InStock',
       })),
     },
@@ -145,6 +148,28 @@ export function PriceDirectionPage() {
           </div>
         </Container>
       </section>
+
+      {direction.slug === 'websites' ? (
+        <section className="py-12 sm:py-16">
+          <Container>
+            <Reveal>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-accent">Форматы сайтов</p>
+              <h2 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight sm:text-5xl">Подробнее о каждом формате</h2>
+              <p className="mt-5 max-w-3xl text-base leading-7 text-muted">Сравните назначение, состав и ограничения продукта перед выбором пакета.</p>
+            </Reveal>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {websiteProductLinks.map((item, index) => (
+                <Reveal delay={index * 0.03} key={item.href}>
+                  <Link className="flex min-h-20 items-center justify-between gap-4 rounded-3xl border border-line bg-white/84 px-5 py-4 text-sm font-extrabold text-ink shadow-glass transition hover:-translate-y-0.5 hover:border-slate-300 hover:text-accent" to={item.href}>
+                    {item.label}
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          </Container>
+        </section>
+      ) : null}
 
       <section className="py-12 sm:py-16">
         <Container>

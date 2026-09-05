@@ -23,6 +23,7 @@ import { Reveal } from '../components/Reveal';
 import { SitevlCare } from '../components/SitevlCare';
 import { SeoHead } from '../components/SeoHead';
 import { absoluteUrl, siteConfig } from '../config/site';
+import { getPriceDirection } from '../data/priceDirections';
 import { useSiteData } from '../hooks/useSiteData';
 import '../styles/mobile-apps.css';
 
@@ -61,9 +62,17 @@ const stages = [
 const faq = [
   ['Что входит в стартовую стоимость?', 'Небольшая первая версия с несколькими основными экранами, навигацией и тестовой сборкой. Точный состав фиксируется после обсуждения.'],
   ['Можно сделать приложение сразу для iOS и Android?', 'Да. Архитектура выбирается под функционал, сроки и требования конкретного продукта; единая кодовая база подходит не каждому проекту.'],
-  ['Входит ли серверная часть в цену от 49 900 ₽?', 'Нет. Аккаунты, синхронизация, база данных, система управления и серверная инфраструктура оцениваются отдельно.'],
+  ['Входит ли серверная часть в стартовую стоимость?', 'Нет. Аккаунты, синхронизация, база данных, система управления и серверная инфраструктура оцениваются отдельно.'],
   ['Вы публикуете приложение в магазинах?', 'Подготовку и сопровождение публикации можно обсудить отдельно. Решение о выпуске зависит от требований App Store и Google Play и аккаунтов владельца продукта.'],
+  ['Сколько времени занимает разработка?', 'Срок зависит от количества экранов, платформ, серверной части и интеграций. Сначала фиксируем границы первой версии, затем составляем этапы и календарный план.'],
+  ['Можно заказать приложение из другого города?', 'Да. Разработку для Владивостока и других городов можно вести удалённо: обсуждение, прототип, промежуточные сборки и правки передаются онлайн.'],
+  ['Кому принадлежат аккаунты и материалы проекта?', 'Аккаунты публикации и сторонних сервисов оформляются на владельца продукта. Состав передаваемых материалов, исходного кода и доступов согласуется до начала разработки.'],
+  ['Что происходит после запуска?', 'В течение 30 дней действует бесплатная техническая гарантия на реализованный функционал. Дальнейшее сопровождение SITEVL Care подключается только по желанию.'],
 ] as const;
+
+const mobilePriceDirection = getPriceDirection('mobile-apps');
+const mobileStartingPrice = mobilePriceDirection?.packages[0]?.price || 'по расчёту';
+const mobileLowPrice = Number(mobileStartingPrice.match(/\d[\d\s]*/)?.[0].replace(/\s/g, '')) || undefined;
 
 const mobileAppsSchema = {
   '@context': 'https://schema.org',
@@ -73,8 +82,29 @@ const mobileAppsSchema = {
   description: 'Разработка мобильных продуктов для бизнеса, сервисов и собственных проектов во Владивостоке и удалённо.',
   url: absoluteUrl('/mobile-apps'),
   provider: { '@type': 'Person', name: siteConfig.specialistName, url: siteConfig.siteUrl },
-  areaServed: { '@type': 'City', name: siteConfig.city },
-  offers: { '@type': 'Offer', priceCurrency: 'RUB', price: '49900', availability: 'https://schema.org/InStock' },
+  areaServed: [
+    { '@type': 'City', name: siteConfig.city },
+    { '@type': 'Country', name: 'Россия' },
+  ],
+  offers: mobileLowPrice ? {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'RUB',
+    lowPrice: mobileLowPrice,
+    offerCount: mobilePriceDirection?.packages.length,
+  } : undefined,
+};
+
+const mobileAppsFaqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map(([question, answer]) => ({
+    '@type': 'Question',
+    name: question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: answer,
+    },
+  })),
 };
 
 export function MobileAppsPage() {
@@ -83,10 +113,10 @@ export function MobileAppsPage() {
   return (
     <PageTransition>
       <SeoHead
-        title="Разработка мобильных приложений для iOS и Android — SITEVL"
-        description="Разработка мобильных приложений для бизнеса и цифровых сервисов во Владивостоке: iOS, Android, MVP и продукты с серверной частью. От 49 900 ₽."
+        title="Разработка мобильных приложений iOS и Android | SITEVL"
+        description={`Разработка мобильных приложений для бизнеса на iOS и Android во Владивостоке и удалённо. MVP, серверная часть и запуск — ${mobileStartingPrice}.`}
         canonicalPath="/mobile-apps"
-        structuredData={mobileAppsSchema}
+        structuredData={[mobileAppsSchema, mobileAppsFaqSchema]}
       />
 
       <section className="apps-hero">
@@ -94,8 +124,8 @@ export function MobileAppsPage() {
           <Reveal>
             <p className="apps-kicker">SITEVL · МОБИЛЬНЫЕ ПРОДУКТЫ</p>
             <h1>Разработка мобильных приложений для iOS и Android</h1>
-            <p className="apps-hero__lead">Мобильные продукты для бизнеса, цифровых сервисов и собственных проектов — от структуры первой версии до рабочей сборки.</p>
-            <div className="apps-hero__price"><small>Стартовая стоимость</small><strong>от 49 900 ₽</strong><span>Точная цена зависит от экранов, логики, платформ и интеграций.</span></div>
+            <p className="apps-hero__lead">Создаю приложения для бизнеса на iPhone, iPad и Android во Владивостоке и удалённо — от структуры первой версии до рабочей сборки и плана публикации.</p>
+            <div className="apps-hero__price"><small>Стартовая стоимость</small><strong>{mobileStartingPrice}</strong><span>Точная цена зависит от экранов, логики, платформ и интеграций.</span></div>
             <div className="apps-hero__actions">
               <ButtonLink to="/brief?projectType=mobile-app">Обсудить приложение</ButtonLink>
               <ButtonLink to="/prices/mobile-apps" variant="secondary">Смотреть цены</ButtonLink>
@@ -142,7 +172,7 @@ export function MobileAppsPage() {
 
       <section className="apps-section apps-pricing-teaser">
         <Container>
-          <Reveal><div className="apps-pricing-teaser__panel"><div><p className="apps-kicker">СТОИМОСТЬ</p><h2>Первая версия — от 49 900 ₽</h2><p>Цена становится точной после согласования экранов, платформы, серверной части и интеграций. Никакие функции не добавляются в смету автоматически.</p></div><div><Link to="/prices/mobile-apps">Все пакеты и цены</Link><Link to="/brief?projectType=mobile-app">Рассчитать проект</Link></div></div></Reveal>
+          <Reveal><div className="apps-pricing-teaser__panel"><div><p className="apps-kicker">СТОИМОСТЬ</p><h2>Первая версия — {mobileStartingPrice}</h2><p>Цена становится точной после согласования экранов, платформы, серверной части и интеграций. Состав и границы первой версии фиксируются до начала разработки.</p></div><div><Link to="/prices/mobile-apps">Все пакеты и цены</Link><Link to="/brief?projectType=mobile-app">Рассчитать проект</Link></div></div></Reveal>
         </Container>
       </section>
 

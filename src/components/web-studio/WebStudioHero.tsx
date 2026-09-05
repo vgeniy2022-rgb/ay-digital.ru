@@ -26,14 +26,14 @@ export function WebStudioHero({ telegramUrl }: WebStudioHeroProps) {
         <div className="studio-shell studio-hero-story__content" data-hero-copy>
           <div className="studio-hero-story__copy">
             <StudioEyebrow>SITEVL · ВЛАДИВОСТОК</StudioEyebrow>
-            <h1>Создаю самописные сайты для бизнеса</h1>
-            <p className="studio-hero-story__lead">От простой визитки до каталога, админ-панели и индивидуального веб-сервиса.</p>
+            <h1>Создание сайтов во Владивостоке под ключ</h1>
+            <p className="studio-hero-story__lead">Разработка лендингов, сайтов для бизнеса, каталогов, интернет-магазинов и веб-сервисов.</p>
             <p className="studio-hero-story__description">
-              Работаю лично, без шаблонного подхода. Структура, дизайн и логика проекта подбираются под конкретную задачу.
+              Работаю напрямую, без менеджеров. Структура, дизайн и функции подбираются под задачу бизнеса, а весь проект можно согласовать удалённо.
             </p>
             <div className="studio-hero-story__actions">
-              <StudioButton href={telegramUrl} target="_blank" rel="noreferrer">Обсудить сайт</StudioButton>
-              <StudioButton href="#portfolio" tone="secondary">Посмотреть примеры</StudioButton>
+              <StudioButton href={telegramUrl} target="_blank" rel="noreferrer">Заказать разработку сайта</StudioButton>
+              <StudioButton href="/ai-website" tone="secondary">Получить AI-концепт</StudioButton>
             </div>
             <div className="studio-hero-story__location">
               <MapPin aria-hidden="true" className="h-4 w-4" />
