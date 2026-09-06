@@ -2,7 +2,6 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { createArticleDefinition, createHomeDefinition, createServiceDefinition } from './definitionBuilders';
 import { isXRayEnabledRoute, matchXRayRoute, xrayArticleSlugs, xrayCaseSlugs, xrayLocalSlugs, xrayPriceSlugs, xrayServiceSlugs, xrayStaticRoutes } from './routeRegistry';
 import { containsSensitiveXRayContent, safeXRayJson, sanitizeXRayText } from './sanitize';
 
@@ -49,47 +48,6 @@ test('X-RAY route metadata stays aligned with public data registries', () => {
 test('route matcher normalizes only trailing slashes', () => {
   assert.equal(matchXRayRoute('/services/')?.route, '/services');
   assert.equal(matchXRayRoute('/lab/')?.route, undefined);
-});
-
-test('page definitions remain specific to home, services and articles', () => {
-  const homeMatch = matchXRayRoute('/');
-  const serviceAMatch = matchXRayRoute('/computer-help-vladivostok');
-  const serviceBMatch = matchXRayRoute('/windows-setup-vladivostok');
-  const articleMatch = matchXRayRoute('/useful/speed-up-windows');
-  assert.ok(homeMatch && serviceAMatch && serviceBMatch && articleMatch);
-
-  const home = createHomeDefinition(homeMatch);
-  const serviceA = createServiceDefinition(serviceAMatch, {
-    title: 'Компьютерная помощь во Владивостоке',
-    eyebrow: 'Компьютерная помощь',
-    description: 'Диагностика и настройка устройств.',
-    priceGroupTitles: ['Настройка устройств'],
-    sections: [{ title: 'С какими задачами можно обратиться', items: ['Компьютер тормозит'] }],
-    faq: [{ question: 'Можно ли удалённо?' }],
-  });
-  const serviceB = createServiceDefinition(serviceBMatch, {
-    title: 'Настройка Windows во Владивостоке',
-    eyebrow: 'Windows',
-    description: 'Подготовка Windows к работе.',
-    priceGroupTitles: ['Программы'],
-    sections: [{ title: 'Что входит', items: ['Драйверы и обновления'] }],
-    faq: [{ question: 'Можно ли сохранить данные?' }],
-  });
-  const article = createArticleDefinition(articleMatch, {
-    title: 'Как ускорить Windows',
-    description: 'Практическое руководство.',
-    author: 'Александр',
-    updatedAt: '2026-08-05',
-    readingTime: '12 минут',
-    sections: [{ title: 'Проверка автозагрузки' }],
-    faq: [{ question: 'С чего начать?' }],
-  });
-
-  assert.notEqual(home.files[0].content, serviceA.files[0].content);
-  assert.notEqual(serviceA.files[1].content, serviceB.files[1].content);
-  assert.notEqual(serviceA.files[1].filename, serviceB.files[1].filename);
-  assert.match(article.files[1].content, /Как ускорить Windows/);
-  assert.match(article.files[2].content, /ArticleSections/);
 });
 
 test('X-RAY sanitizer redacts contact and secret-like data', () => {

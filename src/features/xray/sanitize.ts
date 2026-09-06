@@ -8,7 +8,11 @@ export function sanitizeXRayText(value: string) {
   return value
     .replace(EMAIL, '[email скрыт]')
     .replace(PHONE, '[телефон скрыт]')
-    .replace(/(Bearer\s+)[A-Za-z0-9._~-]+/gi, '$1[скрыто]');
+    .replace(/(Bearer\s+)[A-Za-z0-9._~-]+/gi, '$1[скрыто]')
+    .replace(/\b(?:AIza[\w-]{20,}|sk-[\w-]{16,}|eyJ[\w.-]{24,})\b/g, '[ключ скрыт]')
+    .replace(/\bSV-[A-Z0-9]{6}\b/g, '[visitor ID скрыт]')
+    .replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, '[ID скрыт]')
+    .replace(/\b(?:token|secret|password|api[_-]?key|authorization)\s*[:=]\s*[^\s,;<>]+/gi, '[закрытые данные]');
 }
 
 export function safeXRayJson(value: unknown) {

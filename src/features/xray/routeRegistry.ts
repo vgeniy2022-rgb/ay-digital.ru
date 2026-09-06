@@ -146,6 +146,10 @@ function normalizePathname(pathname: string) {
   return pathname.replace(/\/+$/, '') || '/';
 }
 
+export function isPrivateXRayRoute(pathname: string) {
+  return ['/ai-website', '/brief', '/contacts'].includes(normalizePathname(pathname));
+}
+
 function slugFrom(pathname: string, prefix = '/') {
   return pathname.slice(prefix.length);
 }
