@@ -18,7 +18,7 @@ import visitorHandler from '../../../api/visitor-events.mjs';
 import ownerHandler from '../../../api/visitor-owner.mjs';
 // @ts-expect-error Vercel middleware ESM.
 import middleware from '../../../middleware.js';
-import { contactChannel, safeSource, trackVisitorAction } from './visitorIntelligence';
+import { contactChannel, safeSource, trackVisitorAction, trackVisitorPage } from './visitorIntelligence';
 import { createRedisHarness } from './visitorRedisHarness';
 
 const safari = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Version/18.0 Mobile/15E148 Safari/604.1';
@@ -233,4 +233,21 @@ test('V3 client: category-only events deduplicate; channel/route allowlist; no s
   const client = (await Promise.all(['visitorIntelligence.ts', 'SiteAnalyticsProvider.tsx'].map(file => readFile(new URL(file, import.meta.url), 'utf8')))).join('\n');
   assert.doesNotMatch(client, /VISITOR_ATTRIBUTION_SECRET|TELEGRAM_BOT_TOKEN|x-vercel-ip|geolocation|fingerprint|\.value\b|keyCode/);
   assert.match(client, /removeEventListener/);
+});
+
+test('V3 client: new ad document can reach an existing session; SPA rerenders retain dedup ID', async (t) => {
+  const values = () => { const map = new Map<string, string>(); return { getItem: (k: string) => map.get(k) || null, setItem: (k: string, v: string) => { map.set(k, v); } }; };
+  const bodies: Record<string, string>[] = [];
+  t.mock.method(globalThis, 'fetch', async (_input: unknown, init: RequestInit) => { bodies.push(JSON.parse(String(init.body))); return Response.json({ accepted: true }); });
+  const local = values(); const session = values();
+  const args = ['/prices', 'default', '', local, session, safari, '', 'sitevl.tech'] as const;
+  await trackVisitorPage(...args); await trackVisitorPage(...args);
+  const nextDocument = await import(new URL('./visitorIntelligence.ts?qaDocument=next', import.meta.url).href);
+  await nextDocument.trackVisitorPage(...args);
+  const pages = bodies.filter(e => e.event === 'page_view');
+  assert.equal(pages[0].eventId, pages[1].eventId);
+  assert.notEqual(pages[0].eventId, pages[2].eventId);
+  assert.equal(new Set(pages.map(e => e.visitorId)).size, 1);
+  assert.equal(new Set(pages.map(e => e.sessionId)).size, 1);
+  assert.equal(bodies.filter(e => e.event === 'session_start').length, 1);
 });

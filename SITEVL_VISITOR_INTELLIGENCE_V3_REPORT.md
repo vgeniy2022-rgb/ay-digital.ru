@@ -96,7 +96,7 @@ V3 counters: humanVisits, uniqueHumanVisitors, knownBotVisits, likelyBotVisits, 
 
 Отдельно сохранена последовательная история. `brief_start` — первый реальный выбор в существующем Brief; значения выбора не отправляются в аналитику. `brief_complete` не равен заявке. Нажатие messenger не означает отправку сообщения. `lead_created` возникает только после существующего server-side сохранения lead и подтверждённой session binding.
 
-SPA: существующий navigation key + path, стабильные event IDs и серверная дедупликация; rerender/resize не являются page views. Для engagement/contact — один очищаемый listener, allowlist категории, никаких текстов/координат/клавиш.
+SPA: navigation key + path + случайный scope текущего документа, стабильные event IDs и серверная дедупликация; rerender/resize не являются page views. Полная загрузка нового документа даёт настоящий новый page view в прежней сессии: это необходимо, чтобы React Router `default` не подавил свежую рекламную атрибуцию при возвращении на уже открытую страницу. Visitor/session numbers не меняются из-за reload. Для engagement/contact — один очищаемый listener, allowlist категории, никаких текстов/координат/клавиш.
 
 Read-only: существующий `/api/visitor-owner?view=traffic`, только с корректным Bearer `VISITOR_OWNER_API_TOKEN`. Без секрета endpoint остаётся 404, без авторизации — 401. Публичная CRM/аналитическая страница не создавалась. На production owner secret до этой задачи отсутствовал; он не создавался автоматически. Для будущего приложения владелец может самостоятельно добавить этот server-side secret и использовать защищённый backend, не класть токен в публичный frontend.
 
@@ -108,7 +108,7 @@ Read-only: существующий `/api/visitor-owner?view=traffic`, толь�
 
 ## Проверки до релиза
 
-- `npm test`: **179 PASS, 0 fail, 0 skip** (включая 12 новых групп V3).
+- `npm test`: **180 PASS, 0 fail, 0 skip** (включая 13 новых групп V3).
 - `npm run lint`: PASS.
 - `npx tsc -b --pretty false`: PASS.
 - `npm run build`: PASS.
@@ -129,7 +129,7 @@ Read-only: существующий `/api/visitor-owner?view=traffic`, толь�
 - Commit: `65265de5aacd726b9d15b1fb76742e90e1d52e72`, отправлен в `origin/main`.
 - Deployment: `dpl_HDtty6XGaTQxT6xUqnNcNXnXf6xs`, https://ay-digital-qa3ccd6r3-vgeniy.vercel.app — **READY**, production, Git integration.
 - Aliases подтверждены Vercel: `sitevl.tech`, `www.sitevl.tech`, `sitevl-ru.vercel.app`, `ay-digital-ru.vercel.app`.
-- После release review дополнительно ужесточена проверка base64url-подписи (не-ASCII не вызывает ошибку сравнения), IPv6 zone IDs отбрасываются, channel сохраняется в contact-click history. Повторный gate и финальный deployment для этих небольших изменений фиксируются в итоговом сообщении; основной функциональный production QA ниже выполнен на указанном V3 release.
+- После release review дополнительно ужесточена проверка base64url-подписи (не-ASCII не вызывает ошибку сравнения), IPv6 zone IDs отбрасываются, channel сохраняется в contact-click history. Этот patch опубликован как `7716f936c3607453bf53e7e6dcb18ac681a1307e`, deployment `dpl_Ao9y7qPbFL41GHaPbGqWG59pUJDe` — READY. Финальная клиентская поправка document-scope предотвращает потерю атрибуции повторного входа; её отдельный регрессионный тест входит в 180 PASS. Финальный commit/deployment подтверждается в итоговом сообщении; основной функциональный production QA ниже выполнен на первом V3 release.
 
 ### Реальный production API → Redis → Telegram
 

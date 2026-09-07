@@ -8,6 +8,7 @@ export const VISITOR_SESSION_SOURCE_KEY = 'sitevl-visitor-session-source';
 type StorageLike = Pick<Storage, 'getItem' | 'setItem'>;
 type VisitorEvent = Record<string, string>;
 const startingSessions = new WeakMap<StorageLike, Promise<{ visitorId: string; sessionId: string }>>();
+let pageDocumentScope = '';
 
 function readStorage(storage: StorageLike, key: string) {
   try { return storage.getItem(key); } catch { return null; }
@@ -119,7 +120,11 @@ function ensureActionSession(path: string, local: StorageLike, session: StorageL
 
 export async function trackVisitorPage(path: string, navigationKey: string, search: string, local: StorageLike, session: StorageLike, userAgent: string, referrer: string, currentHost: string) {
   const { visitorId, sessionId } = await ensureVisitorSession(path, search, local, session, userAgent, referrer, currentHost);
-  return postVisitorEvent({ event: 'page_view', visitorId, sessionId, eventId: eventIdFor(session, `page:${navigationKey || 'initial'}:${path}`), path });
+  // React Router reuses "default" after a full document navigation. A new
+  // document must reach the server (including a fresh signed ad cookie), while
+  // rerenders of the same SPA navigation keep the same dedup ID.
+  pageDocumentScope ||= createAnonymousId('event');
+  return postVisitorEvent({ event: 'page_view', visitorId, sessionId, eventId: eventIdFor(session, `page:${pageDocumentScope}:${navigationKey || 'initial'}:${path}`), path });
 }
 
 export async function trackVisitorExperiment(experimentId: LabExperimentId, eventId: string, path: string, local: StorageLike, session: StorageLike) {
