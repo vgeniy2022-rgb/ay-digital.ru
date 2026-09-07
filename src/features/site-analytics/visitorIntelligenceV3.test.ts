@@ -61,6 +61,7 @@ test('V3: attribution is an explicit old-host assumption, not all traffic; no op
   assert.equal(legacyAttribution(old, 'https://t.me/ad').paid, true);
   const signed = signAttribution(legacyAttribution(old), env, 1000000);
   assert.equal(verifyAttribution(signed + 'x', env, 1000000), null);
+  assert.equal(verifyAttribution(signed.split('.')[0] + '.' + 'я'.repeat(43), env, 1000000), null);
   assert.equal(verifyAttribution(signed, env, 3000000), null);
   assert.equal(verifyAttribution(signed, env, 0), null);
   const invalid = legacyRedirect(new Request(`https://sitevl.tech/prices?${ATTRIBUTION_QUERY}=invalid&next=https://evil.example`), env);
@@ -158,6 +159,7 @@ test('V3 real Redis: paid funnel persists beyond cookie, deduplicates, links lea
   assert.equal(p.visitor.visitorNumber, '1'); assert.equal(p.session.classification, 'human');
   assert.match(p.visitor.classificationReason, /visible-reader.*heuristic-not-proof/);
   assert.equal(JSON.parse(p.session.attribution).campaign, AD_CAMPAIGN);
+  assert.deepEqual(p.history.filter((e: { event: string }) => e.event === 'contact_click').map((e: { channel: string }) => e.channel), ['telegram', 'whatsapp']);
   let summary = await readTrafficSummary(options);
   for (const key of FUNNEL_ACTIONS) assert.equal(summary.counters[key], 1, key);
   assert.equal(summary.counters.paidAdUniqueVisitors, 1);

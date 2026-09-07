@@ -30,7 +30,7 @@ export function requestHeader(request, name) {
 export function trustedRequestIp(request, environment = process.env) {
   if (environment.VERCEL !== '1') return '';
   const raw = requestHeader(request, 'x-vercel-forwarded-for').trim();
-  if (raw.length > 64 || !isIP(raw)) return '';
+  if (raw.length > 64 || raw.includes('%') || !isIP(raw)) return '';
   return isIP(raw) === 6 ? new URL(`http://[${raw}]`).hostname.slice(1, -1) : raw;
 }
 
@@ -157,7 +157,7 @@ export function signAttribution(attribution, environment = process.env, now = Da
 export function verifyAttribution(token, environment = process.env, now = Date.now()) {
   if (!attributionConfigured(environment) || typeof token !== 'string' || token.length > 1800) return null;
   const [payload, mac, extra] = token.split('.');
-  if (!payload || !mac || extra) return null;
+  if (!payload || !/^[A-Za-z0-9_-]+$/.test(payload) || !/^[A-Za-z0-9_-]{43}$/.test(mac || '') || extra) return null;
   const expected = createHmac('sha256', environment.VISITOR_ATTRIBUTION_SECRET).update(`sitevl-ad-v3:${payload}`).digest('base64url');
   if (mac.length !== expected.length || !timingSafeEqual(Buffer.from(mac), Buffer.from(expected))) return null;
   try {

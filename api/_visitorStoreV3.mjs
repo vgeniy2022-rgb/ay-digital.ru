@@ -20,6 +20,7 @@ end
 redis.call('HSET', KEYS[1], 'classification', redis.call('HGET', KEYS[7], 'classification'), 'classificationReason', redis.call('HGET', KEYS[7], 'classificationReason'))
 history.classification = redis.call('HGET', KEYS[7], 'classification')
 if event.signal then history.signal = event.signal end
+if event.channel then history.channel = event.channel end
 if metadata.geo then
   local geo = cjson.encode(metadata.geo)
   redis.call('HSET', KEYS[7], 'geo', geo)

@@ -120,11 +120,50 @@ Read-only: существующий `/api/visitor-owner?view=traffic`, толь�
 
 Тесты используют настоящий изолированный Redis через Unix socket (без TCP/persistence). Telegram в unit/integration тестах перехватывается локально, это не доказательство доставки реального сообщения. Проверены signed redirect/path/query/cookie, explicit-other-source, поддельный/просроченный token, все crawler families, обычное чтение, reverse+forward DNS/timeout/cache/spoof, coarse geo/invalid/missing, отсутствие bot human numbers, публичные SITE/LAB guards, paid funnel dedup, возвращение/late attribution, lead linkage, owner auth, клиентские allowlists.
 
-Браузерный локальный QA подтвердил: настоящий интерфейс открывается без page errors, SPA-переходы главная → услуги → кейсы → цены → контакты → LAB принадлежат одному visitorNumber / session, paid источник сохраняется; счётчики шагов не дублируются. Полная фиксация lead выполнялась только в изолированном тесте, не в production.
+Браузерный локальный QA подтвердил: настоящий интерфейс открывается без page errors, SPA-переходы главная → услуги → кейсы → цены → контакты → LAB → Modern OS → Brief принадлежат одному visitorNumber / session, paid источник сохраняется; счётчики шагов не дублируются. Первый выбор в Brief даёт один `brief_start`, без передачи ответа. На viewport 390×844 нет горизонтального overflow. Полная фиксация lead выполнялась только в изолированном тесте, не в production.
 
 ## Production release / QA
 
-Заполняется фактическими результатами после Git release. Локальный PASS не считается подтверждением deployment или реальной Telegram-доставки.
+Основной V3 release:
+
+- Commit: `65265de5aacd726b9d15b1fb76742e90e1d52e72`, отправлен в `origin/main`.
+- Deployment: `dpl_HDtty6XGaTQxT6xUqnNcNXnXf6xs`, https://ay-digital-qa3ccd6r3-vgeniy.vercel.app — **READY**, production, Git integration.
+- Aliases подтверждены Vercel: `sitevl.tech`, `www.sitevl.tech`, `sitevl-ru.vercel.app`, `ay-digital-ru.vercel.app`.
+- После release review дополнительно ужесточена проверка base64url-подписи (не-ASCII не вызывает ошибку сравнения), IPv6 zone IDs отбрасываются, channel сохраняется в contact-click history. Повторный gate и финальный deployment для этих небольших изменений фиксируются в итоговом сообщении; основной функциональный production QA ниже выполнен на указанном V3 release.
+
+### Реальный production API → Redis → Telegram
+
+Выполнен один контролируемый тестовый визит, без AI-заявки и без отправки формы:
+
+1. `https://sitevl-ru.vercel.app/?src=telegram-vl-1&utm_campaign=old-ad` → **307 → 307 → 200** на основном домене.
+2. Подтверждены path/query, установка HttpOnly-cookie, удаление внутреннего параметра, canonical `https://sitevl.tech/`.
+3. Реальный POST `session_start` через existing `/api/visitor-events`: **202 accepted**, затем `page_view /prices` **без cookie атрибуции**: **202 accepted**.
+4. В существующем production Redis прочитаны `source=paid-ad`, `campaign=telegram-vl-old-ad`, `entryHost=sitevl-ru.vercel.app`, единая session binding, история `/ → /prices` и флаг `v3Funnel:view_prices=1`. География действительно пришла от production Vercel, `geoPrecision=approximate`.
+5. Сервер вернул `notification=sent` для обоих событий — Telegram API подтвердил отправку. Это не подтверждение прочтения владельцем сообщения.
+6. Тест получил visitorNumber **69**, visitNumber **256**. Удалены **только 11 ключей этого случайного QA-профиля/сессии** и его запись в index; проверено `remainingOwnedKeys=0`. В одной защищённой Lua-транзакции вычтен только вклад QA в V3 counters. Публичные SITE/LAB counters не затрагивались этим тестом, реальные данные не удалялись.
+7. Общие visitor/visit sequences **не откатывались**: номера 69/256 после удаления QA не переиспользуются. Global rate buckets не уменьшаются, истекают штатно. Два тестовых Telegram-уведомления остаются в чате; server-side Secret токена недоступен для выгрузки, удаление сообщений не выполнялось. **Реальных тестовых lead: 0**.
+
+Доступ к Redis для QA использовал окружение уже привязанного Vercel-проекта только внутри дочернего процесса. Значения не печатались и не сохранялись в Git. Vercel не разрешил выгрузку Secret-значений — это штатная защита; production сам подтвердил доступность ключей.
+
+### Production smoke / SEO
+
+| Проверка | Фактический результат |
+| --- | --- |
+| `/api/visitor-events` | 200; version=3, configured=true, telegramConfigured=true, attributionConfigured=true, ipAssistEnabled=false |
+| `/`, `/prices`, `/services`, `/cases`, `/mobile-apps`, `/privacy` | 200, self-canonical `sitevl.tech` |
+| `/lab`, `/lab/modern-os` | 200, прежний noindex сохранён |
+| `/ai-website` | 200, canonical `sitevl.tech/ai-website` |
+| `/sitemap.xml` | 200, 73 URLs основного домена, старого host нет |
+| `/robots.txt` | 200, sitemap основного домена, старого host нет |
+| `www.sitevl.tech` | Прежний 308 → `sitevl.tech` |
+| `ay-digital-ru.vercel.app` | 200, без нового принудительного redirect |
+| `/api/site-stats`, `/api/lab-stats` | 200, прежняя публичная aggregate schema |
+| `/api/visitor-owner?view=traffic` без auth | 404: owner secret не задан, частная аналитика не раскрывается |
+| Vercel runtime error scan, новый deployment, последние 20 минут | 0 error entries на момент проверки |
+
+Отдельный чистый браузер прошёл реальную старую ссылку `/prices?src=telegram-vl-1&utm_campaign=old-ad`: финальный URL сохраняет параметры, canonical их не содержит, служебная cookie недоступна JS. Browser smoke выполняется с блокировкой только API-записей тестовым init script вне репозитория, чтобы после контролируемого теста не добавлять лишних посетителей/уведомлений. Это не изменение production-кода.
+
+Проверка настоящего Google Search Console fetch владельцем не запускалась. Отсечение Google-InspectionTool и forward/reverse DNS подтверждены автоматическими тестами; реальное появление такого краулера будет классифицировано по доверенному IP запроса. Gemini, платежи и реальные lead submissions в этой задаче не тестировались и не изменялись.
 
 ## Первичные источники
 
