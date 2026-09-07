@@ -1,5 +1,6 @@
 import { isLabStatsStorageConfigured } from './_labStatsCore.mjs';
 import { authorizeOwnerRequest, readVisitor } from './_visitorIntelligenceCore.mjs';
+import { readTrafficSummary } from './_visitorStoreV3.mjs';
 
 const json = (response, status, payload) => {
   response.statusCode = status;
@@ -15,6 +16,6 @@ export default async function handler(request, response) {
   if (!authorizeOwnerRequest(request.headers?.authorization)) return json(response, 401, { error: 'Требуется авторизация владельца.' });
   if (!isLabStatsStorageConfigured()) return json(response, 503, { error: 'Хранилище временно недоступно.' });
   const visitorId = typeof request.query?.visitorId === 'string' ? request.query.visitorId : '';
-  try { return json(response, 200, await readVisitor(visitorId)); }
+  try { return json(response, 200, request.query?.view === 'traffic' ? await readTrafficSummary() : await readVisitor(visitorId)); }
   catch { return json(response, 400, { error: 'Некорректный visitor ID.' }); }
 }

@@ -9,7 +9,7 @@ import { SeoHead } from '../components/SeoHead';
 import { builderBusinesses, businessStructures } from '../data/lab';
 import { useSiteData } from '../hooks/useSiteData';
 import { ensureLabIdentity } from '../features/lab/analytics/labAnalytics';
-import { trackVisitorBriefCompleted } from '../features/site-analytics/visitorIntelligence';
+import { trackVisitorAction, trackVisitorBriefCompleted } from '../features/site-analytics/visitorIntelligence';
 
 type BriefAnswers = {
   projectType: string;
@@ -119,6 +119,7 @@ export function BriefPage() {
 
   const choose = (value: string) => {
     if (!question) return;
+    void trackVisitorAction('brief_started', '/brief', '', window.localStorage, window.sessionStorage);
     if (question.multiple) { const current = new Set(selectedValues); if (current.has(value)) current.delete(value); else current.add(value); setAnswers((state) => ({ ...state, [question.key]: [...current].join(',') })); return; }
     setAnswers((state) => ({ ...state, [question.key]: value }));
   };

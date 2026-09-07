@@ -1,6 +1,8 @@
 import { timingSafeEqual } from 'node:crypto';
 import { redisPipeline } from './_labStatsCore.mjs';
 import { commitVisitorEvent, LINK_LEAD_SCRIPT, V2_NAMESPACE } from './_visitorStoreV2.mjs';
+import { V3_STATS_KEY, recordBotVisit } from './_visitorStoreV3.mjs';
+import { isHumanTraffic, geoLabel } from './_trafficPolicyV3.mjs';
 
 export const VISITOR_NAMESPACE = 'sitevl:visitor:v1';
 export const VISITOR_EVENT_TYPES = Object.freeze([
@@ -9,6 +11,9 @@ export const VISITOR_EVENT_TYPES = Object.freeze([
   'experiment_start',
   'ai_concept_created',
   'brief_completed',
+  'brief_started',
+  'contact_click',
+  'engagement',
 ]);
 
 const VISITOR_PATTERN = /^(?:SV-[A-F0-9]{6}|visitor-[a-f0-9]{32}|visitor-[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})$/i;
@@ -22,7 +27,7 @@ const DEVICES = new Set(['mobile', 'tablet', 'desktop']);
 const DEVICE_FAMILIES = new Set(['iPhone', 'iPad', 'Android', 'Mac', 'Windows', 'Linux', 'Other']);
 const BROWSERS = new Set(['Safari', 'Chrome', 'Firefox', 'Edge', 'Opera', 'Other']);
 const EXPERIMENTS = new Set(['builder', 'canvas', 'physics', 'modern-os', 'retro']);
-const ALLOWED_KEYS = new Set(['event', 'visitorId', 'sessionId', 'eventId', 'path', 'source', 'referrerHost', 'deviceType', 'deviceFamily', 'browser', 'experimentId', 'conceptId']);
+const ALLOWED_KEYS = new Set(['event', 'visitorId', 'sessionId', 'eventId', 'path', 'source', 'referrerHost', 'deviceType', 'deviceFamily', 'browser', 'experimentId', 'conceptId', 'channel', 'signal']);
 const requestWindows = new Map();
 const MAX_REQUESTS_PER_MINUTE = 40;
 const MAX_GLOBAL_REQUESTS_PER_MINUTE = 600;
@@ -57,7 +62,7 @@ export function normalizePublicPath(value) {
   if (!path.startsWith('/')) return null;
   path = path.split(/[?#]/, 1)[0].replace(/\/{2,}/g, '/');
   if (path.length > 1) path = path.replace(/\/$/, '');
-  if (!SAFE_PATH_PATTERN.test(path) || path.startsWith('/api/') || path.startsWith('/assets/')) return null;
+  if (!SAFE_PATH_PATTERN.test(path) || /^\/(?:api|assets|admin|studio)(?:\/|$)/.test(path)) return null;
   if (/\.[a-z0-9]{2,8}$/i.test(path)) return null;
   return path;
 }
@@ -100,6 +105,15 @@ export function validateVisitorEvent(raw) {
     return { ok: true, value: { ...value, conceptId } };
   }
   if (event === 'brief_completed' && path !== '/brief') return { ok: false, error: 'Некорректное событие Brief.' };
+  if (event === 'brief_started' && path !== '/brief') return { ok: false, error: 'Некорректное событие Brief.' };
+  if (event === 'contact_click') {
+    if (!['telegram', 'whatsapp'].includes(raw.channel)) return { ok: false, error: 'Неизвестный канал связи.' };
+    return { ok: true, value: { ...value, channel: raw.channel } };
+  }
+  if (event === 'engagement') {
+    if (!['visible-reader', 'interaction'].includes(raw.signal)) return { ok: false, error: 'Некорректный сигнал активности.' };
+    return { ok: true, value: { ...value, signal: raw.signal } };
+  }
   return { ok: true, value };
 }
 
@@ -135,6 +149,8 @@ async function checkRedisRate(sessionId, now, options) {
 
 function routeLabel(path) {
   if (path === '/') return 'Главная';
+  if (path === '/services') return 'Услуги';
+  if (path === '/cases' || path.startsWith('/cases/')) return 'Кейсы';
   if (path === '/mobile-apps' || path === '/prices/mobile-apps') return 'Приложения';
   if (path === '/prices' || path.startsWith('/prices/')) return 'Цены';
   if (path === '/ai-website') return 'AI-концепт';
@@ -150,6 +166,7 @@ const experimentLabels = Object.freeze({ builder: 'Конструктор', canv
 const deviceLabels = Object.freeze({ mobile: 'Мобильное устройство', tablet: 'Планшет', desktop: 'Компьютер' });
 
 export function sourceLabel(source = 'direct', referrerHost = '') {
+  if (source === 'paid-ad') return 'Оплаченная реклама';
   if (source.startsWith('telegram')) return 'Telegram';
   if (source.startsWith('vk')) return 'ВКонтакте';
   if (source === 'referral') return referrerHost ? `Переход: ${referrerHost}` : 'Внешний переход';
@@ -197,14 +214,17 @@ export function elapsedLabel(milliseconds) {
 
 export function telegramTextForEvent(event, context, timestamp) {
   const who = `Посетитель #${context.visitorNumber}`;
+  const attribution = parseMetadata(context.attribution);
   if (event.event === 'session_start' && context.newSession) {
-    const lines = [context.isNewVisitor ? '👤 Новый посетитель SITEVL' : '🔁 Посетитель вернулся на SITEVL',
+    const lines = [attribution?.paid ? '📣 Посетитель пришёл с рекламы' : context.isNewVisitor ? '👤 Новый посетитель SITEVL' : '🔁 Посетитель вернулся на SITEVL',
       `Посещение сайта: #${context.visitNumber}`, `Уникальный посетитель: #${context.visitorNumber}`,
       `Сессия посетителя: #${context.sessionNumber}`,
       `Устройство: ${event.deviceFamily !== 'Other' && event.deviceFamily ? event.deviceFamily : deviceLabels[event.deviceType]} · ${event.browser}`,
       `Источник: ${sourceLabel(context.currentSource, context.currentReferrerHost)}`,
       `Рекламная метка: ${!['direct', 'referral'].includes(context.currentSource) ? context.currentSource : 'нет'}`,
       `Вход: ${routeLabel(event.path)}`, `Время: ${vladivostokTime(timestamp)} (Владивосток)`];
+    lines.push(geoLabel(parseMetadata(context.geo)), `Классификация: ${context.classification === 'human' ? 'человек по поведенческим признакам (оценка)' : 'вероятно человек'}`);
+    lines.push(...attributionLines(attribution));
     if (context.isNewVisitor) lines.push('Первый визит.');
     else {
       lines.push(`Первый визит: ${vladivostokTime(context.firstVisit)}`,
@@ -217,6 +237,7 @@ export function telegramTextForEvent(event, context, timestamp) {
     if (context.networkState) lines.push(`IP-assist: ${context.networkState === 'same' ? 'сеть не изменилась' : 'новая сеть'} (вспомогательный признак)`);
     return lines.join('\n');
   }
+  if (context.adArrived && attribution?.paid) return ['📣 Посетитель пришёл с рекламы', `Посещение сайта: #${context.visitNumber}`, `Уникальный посетитель: #${context.visitorNumber}`, `Сессия: #${context.sessionNumber}`, ...attributionLines(attribution), `Финальная страница: ${routeLabel(event.path)}`, geoLabel(parseMetadata(context.geo)), `Время: ${vladivostokTime(timestamp)} (Владивосток)`].join('\n');
   const suffix = `\nПосещение сайта: #${context.visitNumber} · Сессия: #${context.sessionNumber}`;
   if (event.event === 'page_view' && (event.path === '/prices' || event.path.startsWith('/prices/'))) return `🔥 ${who} смотрит цены${suffix}`;
   if (event.event === 'page_view' && event.path === '/ai-website') return `✨ ${who} открыл AI-концепт${suffix}`;
@@ -228,6 +249,7 @@ export function telegramTextForEvent(event, context, timestamp) {
 
 function notifyAction(event, context) {
   if (context.newSession && event.event === 'session_start') return 'session-start';
+  if (context.adArrived) return 'ad-visit';
   if (event.event === 'page_view' && (event.path === '/prices' || event.path.startsWith('/prices/'))) return 'prices';
   if (event.event === 'page_view' && event.path === '/ai-website') return 'ai-website';
   if (event.event === 'page_view' && event.path === '/lab') return 'lab';
@@ -249,6 +271,13 @@ export async function trackVisitorEvent(event, options = {}) {
   const validated = validateVisitorEvent(event);
   if (!validated.ok) throw new Error('invalid visitor event');
   event = validated.value;
+  if (options.traffic && !isHumanTraffic(options.traffic)) {
+    const bot = await trackCrawlerVisit(event.path, options.traffic, options);
+    return { accepted: true, deduplicated: bot.deduplicated, notification: bot.notification, ignored: 'automated-traffic' };
+  }
+  if (event.event === 'session_start' && options.attribution) {
+    event = { ...event, source: options.attribution.source, referrerHost: options.attribution.referrerHost || '' };
+  }
   const nowMs = options.now?.() ?? Date.now();
   if (!checkMemoryRate(event.sessionId, nowMs)) return { accepted: false, rateLimited: true, deduplicated: false, notification: 'skipped' };
   if (!await checkRedisRate(event.sessionId, nowMs, options)) return { accepted: false, rateLimited: true, deduplicated: false, notification: 'skipped' };
@@ -309,6 +338,7 @@ export function buildLeadTelegramSummary(lead, intelligence) {
     `Первый источник: ${sourceLabel(visitor.firstSource, visitor.firstReferrerHost)}`,
     `Текущий источник: ${sourceLabel(session.source, session.referrerHost)}`,
     `Рекламная метка: ${session.source && !['direct', 'referral'].includes(session.source) ? session.source : 'нет'}`, '',
+    ...attributionLines(parseMetadata(session.attribution)), geoLabel(parseMetadata(session.geo)), '',
     'Имя:', lead.contact.name || 'не указано', '',
     'Телефон:', lead.contact.phone || lead.contact.whatsapp || 'не указан', '',
     'Telegram:', lead.contact.telegram || 'не указан', '',
@@ -324,13 +354,14 @@ export function buildLeadTelegramSummary(lead, intelligence) {
 }
 
 export async function linkLeadToVisitor(lead, options = {}) {
+  if (options.traffic && !isHumanTraffic(options.traffic)) return { linked: false, notification: 'skipped', intelligence: null };
   if (!VISITOR_PATTERN.test(lead.visitorId || '') || !SESSION_PATTERN.test(lead.visitorSessionId || '')) return { linked: false, notification: 'skipped', intelligence: null };
   const nowMs = Date.parse(lead.createdAt) || Date.now();
   const timestamp = new Date(nowMs).toISOString();
   const ttl = visitorTtlSeconds(options.environment);
   const keys = visitorKeys(lead.visitorId);
   if (!/^[a-f0-9-]{36}$/i.test(lead.id || '') || !CONCEPT_PATTERN.test(lead.conceptId || '')) return { linked: false, notification: 'skipped', intelligence: null };
-  const result = await redisPipeline([['EVAL', LINK_LEAD_SCRIPT, '4', keys.profile, `${V2_NAMESPACE}:session:${lead.visitorSessionId}`, `${V2_NAMESPACE}:lead:${lead.id}`, keys.history, lead.visitorId, timestamp, lead.id, lead.conceptId, String(ttl)]], options);
+  const result = await redisPipeline([['EVAL', LINK_LEAD_SCRIPT, '5', keys.profile, `${V2_NAMESPACE}:session:${lead.visitorSessionId}`, `${V2_NAMESPACE}:lead:${lead.id}`, keys.history, V3_STATS_KEY, lead.visitorId, timestamp, lead.id, lead.conceptId, String(ttl)]], options);
   if (!Number(result[0]?.result)) return { linked: false, notification: 'skipped', intelligence: null };
   const intelligence = await readVisitor(lead.visitorId, { ...options, sessionId: lead.visitorSessionId });
   const notification = Number(result[0]?.result) === 1 ? (await sendTelegram(buildLeadTelegramSummary(lead, intelligence), options)).status : 'skipped';
@@ -348,4 +379,41 @@ export function authorizeOwnerRequest(headerValue, environment = process.env) {
 
 export function resetVisitorRateLimitsForTests() {
   requestWindows.clear();
+}
+
+function parseMetadata(raw) {
+  if (plainObject(raw)) return raw;
+  try { return raw ? JSON.parse(raw) : null; } catch { return null; }
+}
+
+function attributionLines(attribution) {
+  if (!attribution) return [];
+  return [`Источник перехода: ${sourceLabel(attribution.source)}`,
+    `Кампания: ${attribution.paid ? 'Telegram Владивосток — старая ссылка' : attribution.campaign || 'не указана'}`,
+    `Вход через: ${attribution.entryHost}`,
+    ...(attribution.attributionBasis === 'assumed-old-host' ? ['Атрибуция: предположение по старому рекламному домену, не подтверждённый рекламный клик.'] : [])];
+}
+
+export function botTelegramText(record) {
+  const verified = record.verification === 'verified-dns';
+  const title = record.family === 'Google-InspectionTool' && verified ? '🤖 Google проверяет SITEVL' : '🤖 Робот посетил SITEVL';
+  return [title, `Тип: ${record.family}`, `Страница: ${record.path}`,
+    `Классификация: ${verified ? 'проверенный робот Google' : 'вероятно робот; User-Agent не подтверждён'}`,
+    `Проверка: ${record.verification}`, 'В статистику людей и рекламы не включён.',
+    'Повторные уведомления этого семейства: не чаще одного за 30 минут.',
+    `Время: ${vladivostokTime(record.at)} (Владивосток)`].join('\n');
+}
+
+export async function trackCrawlerVisit(path, traffic, options = {}) {
+  const normalized = normalizePublicPath(path);
+  if (!normalized || isHumanTraffic(traffic)) return { deduplicated: true, notification: 'skipped' };
+  const result = await recordBotVisit(normalized, traffic, options);
+  let notification = 'skipped';
+  if (result.notify) {
+    const now = options.now?.() ?? Date.now();
+    const key = `${VISITOR_NAMESPACE}:telegram-rate:${Math.floor(now / 3600000)}`;
+    const rate = await redisPipeline([['INCR', key], ['EXPIRE', key, '7200']], options);
+    notification = Number(rate[0]?.result) <= MAX_TELEGRAM_NOTIFICATIONS_PER_HOUR ? (await sendTelegram(botTelegramText(result.record), options)).status : 'rate-limited';
+  }
+  return { deduplicated: Boolean(result.deduplicated), notification };
 }

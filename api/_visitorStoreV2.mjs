@@ -1,4 +1,5 @@
 import { redisPipeline } from './_labStatsCore.mjs';
+import { V3_EVENT_LUA, V3_STATS_KEY, funnelAction } from './_visitorStoreV3.mjs';
 
 export const V2_NAMESPACE = 'sitevl:visitor:v2';
 export const SEQUENCE_KEYS = Object.freeze({ visitor: `${V2_NAMESPACE}:visitor-sequence`, visit: `${V2_NAMESPACE}:visit-sequence` });
@@ -87,6 +88,7 @@ if event.event == 'ai_concept_created' then
   redis.call('HSET', KEYS[1], 'generatedAiConcept', '1', 'lastConceptId', event.conceptId)
 end
 if event.event == 'brief_completed' then redis.call('HSET', KEYS[1], 'briefCompleted', '1') end
+${V3_EVENT_LUA}
 redis.call('SADD', KEYS[3], event.path)
 redis.call('RPUSH', KEYS[2], cjson.encode(history))
 redis.call('LTRIM', KEYS[2], '-100', '-1')
@@ -94,14 +96,15 @@ redis.call('ZADD', KEYS[11], now, event.visitorId)
 redis.call('ZREMRANGEBYRANK', KEYS[11], '0', '-5001')
 for _, i in ipairs({1,2,3,11}) do redis.call('EXPIRE', KEYS[i], ttl) end
 redis.call('SET', KEYS[5], '1', 'EX', ttl)
-return cjson.encode({deduplicated=false, context={visitorNumber=tonumber(number), visitNumber=tonumber(visit), sessionNumber=tonumber(ordinal), isNewVisitor=newVisitor, newSession=newSession, firstVisit=firstVisit, previousVisit=redis.call('HGET', KEYS[7], 'previousVisit') or '', firstSource=redis.call('HGET', KEYS[1], 'firstSource') or 'direct', firstReferrerHost=redis.call('HGET', KEYS[1], 'firstReferrerHost') or '', currentSource=redis.call('HGET', KEYS[7], 'source') or 'direct', currentReferrerHost=redis.call('HGET', KEYS[7], 'referrerHost') or '', prior=prior, networkState=networkState}})
+return cjson.encode({deduplicated=false, context={visitorNumber=tonumber(number), visitNumber=tonumber(visit), sessionNumber=tonumber(ordinal), isNewVisitor=newVisitor, newSession=newSession, firstVisit=firstVisit, previousVisit=redis.call('HGET', KEYS[7], 'previousVisit') or '', firstSource=redis.call('HGET', KEYS[1], 'firstSource') or 'direct', firstReferrerHost=redis.call('HGET', KEYS[1], 'firstReferrerHost') or '', currentSource=redis.call('HGET', KEYS[7], 'source') or 'direct', currentReferrerHost=redis.call('HGET', KEYS[7], 'referrerHost') or '', prior=prior, networkState=networkState, classification=redis.call('HGET', KEYS[7], 'classification'), geo=redis.call('HGET', KEYS[7], 'geo') or '', attribution=attributionRaw or '', adArrived=adArrived}})
 `;
 
 export async function commitVisitorEvent(event, flags, ttl, now, options) {
   const base = `sitevl:visitor:v1:${event.visitorId}`;
-  const keys = [base, `${base}:history`, `${base}:pages`, `${base}:experiments`, `sitevl:visitor:v1:event:${event.eventId}`, `sitevl:visitor:v1:session:${event.sessionId}`, `${V2_NAMESPACE}:session:${event.sessionId}`, `${V2_NAMESPACE}:identity:${event.visitorId}`, SEQUENCE_KEYS.visitor, SEQUENCE_KEYS.visit, 'sitevl:visitor:v1:index', `${V2_NAMESPACE}:network:${event.visitorId}`];
+  const keys = [base, `${base}:history`, `${base}:pages`, `${base}:experiments`, `sitevl:visitor:v1:event:${event.eventId}`, `sitevl:visitor:v1:session:${event.sessionId}`, `${V2_NAMESPACE}:session:${event.sessionId}`, `${V2_NAMESPACE}:identity:${event.visitorId}`, SEQUENCE_KEYS.visitor, SEQUENCE_KEYS.visit, 'sitevl:visitor:v1:index', `${V2_NAMESPACE}:network:${event.visitorId}`, V3_STATS_KEY];
   const network = /^[a-f0-9]{64}$/.test(options.networkHash || '') ? options.networkHash : '';
-  const result = await redisPipeline([['EVAL', VISITOR_EVENT_SCRIPT, String(keys.length), ...keys, JSON.stringify(event), new Date(now).toISOString(), String(now), String(ttl), JSON.stringify(flags), network, String(Math.min(ttl, 86400))]], options);
+  const metadata = { classification: options.traffic?.classification || 'likely-human', reason: options.traffic?.reason || 'browser-session', geo: options.geo || undefined, attribution: options.attribution || undefined, funnelAction: funnelAction(event) };
+  const result = await redisPipeline([['EVAL', VISITOR_EVENT_SCRIPT, String(keys.length), ...keys, JSON.stringify(event), new Date(now).toISOString(), String(now), String(ttl), JSON.stringify(flags), network, String(Math.min(ttl, 86400)), JSON.stringify(metadata)]], options);
   return JSON.parse(result[0].result);
 }
 
@@ -116,5 +119,9 @@ redis.call('RPUSH', KEYS[4], cjson.encode({event='lead_created', at=ARGV[2], pat
 redis.call('LTRIM', KEYS[4], '-100', '-1')
 redis.call('EXPIRE', KEYS[1], ARGV[5]); redis.call('EXPIRE', KEYS[4], ARGV[5])
 redis.call('SET', KEYS[3], '1', 'EX', ARGV[5])
+local attribution = redis.call('HGET', KEYS[2], 'attribution')
+if attribution and cjson.decode(attribution).paid == true and redis.call('HSETNX', KEYS[2], 'v3Funnel:lead_created', '1') == 1 then
+  redis.call('HINCRBY', KEYS[5], 'lead_created', 1)
+end
 return 1
 `;

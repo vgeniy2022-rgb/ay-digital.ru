@@ -18,7 +18,8 @@ function writeStorage(storage: StorageLike, key: string, value: string) {
 }
 
 export function safeSource(search: string) {
-  const raw = new URLSearchParams(search).get('src')?.trim().toLowerCase() || '';
+  const params = new URLSearchParams(search);
+  const raw = (params.get('src') || params.get('utm_source'))?.trim().toLowerCase() || '';
   return /^[a-z0-9][a-z0-9_-]{0,63}$/.test(raw) ? raw : '';
 }
 
@@ -70,6 +71,7 @@ async function postVisitorEvent(body: VisitorEvent) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
+      keepalive: true,
       signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) return false;
@@ -89,7 +91,7 @@ export function ensureVisitorSources(search: string, local: StorageLike, session
 
 export async function ensureVisitorSession(path: string, search: string, local: StorageLike, session: StorageLike, userAgent: string, referrer: string, currentHost: string) {
   const { visitorId, sessionId } = ensureLabIdentity(local, session);
-  const marker = `v2:${sessionId}`;
+  const marker = `v3:${sessionId}`;
   if (readStorage(session, VISITOR_SESSION_TRACKED_KEY) === marker) return { visitorId, sessionId };
   const pending = startingSessions.get(session);
   if (pending) return pending;
@@ -136,5 +138,25 @@ export async function trackVisitorBriefCompleted(local: StorageLike, session: St
   const { visitorId, sessionId } = await ensureActionSession('/brief', local, session);
   const accepted = await postVisitorEvent({ event: 'brief_completed', visitorId, sessionId, eventId: eventIdFor(session, 'brief-completed'), path: '/brief' });
   if (accepted) writeStorage(session, marker, 'true');
+  return accepted;
+}
+
+export function contactChannel(href: string) {
+  try {
+    const url = new URL(href);
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
+    if (['t.me', 'telegram.me'].includes(url.hostname)) return 'telegram';
+    if (['wa.me', 'api.whatsapp.com', 'web.whatsapp.com'].includes(url.hostname)) return 'whatsapp';
+  } catch { /* not an external messenger link */ }
+  return null;
+}
+
+export async function trackVisitorAction(event: 'brief_started' | 'contact_click' | 'engagement', path: string, detail: string, local: StorageLike, session: StorageLike) {
+  const key = `v3-action:${event}:${detail}`;
+  if (readStorage(session, key) === 'sent') return true;
+  const { visitorId, sessionId } = await ensureActionSession(path, local, session);
+  const accepted = await postVisitorEvent({ event, visitorId, sessionId, eventId: eventIdFor(session, key), path,
+    ...(event === 'contact_click' ? { channel: detail } : event === 'engagement' ? { signal: detail } : {}) });
+  if (accepted) writeStorage(session, key, 'sent');
   return accepted;
 }

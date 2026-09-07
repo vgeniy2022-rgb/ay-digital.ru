@@ -1,5 +1,6 @@
 import { createLeadSummary, sanitizeAiWebsiteLead } from './_aiLeadValidation.mjs';
 import { isTelegramConfigured, linkLeadToVisitor, telegramConfiguration } from './_visitorIntelligenceCore.mjs';
+import { classifyRequestTraffic } from './_trafficPolicyV3.mjs';
 
 const submissionWindows = new Map();
 
@@ -102,7 +103,7 @@ export default async function handler(request, response) {
     let linked = false;
     let notification = 'failed';
     try {
-      const visitorResult = await linkLeadToVisitor(lead);
+      const visitorResult = await linkLeadToVisitor(lead, { traffic: await classifyRequestTraffic(request) });
       linked = visitorResult.linked;
       notification = linked ? visitorResult.notification : await notifyTelegram(lead);
     } catch {
