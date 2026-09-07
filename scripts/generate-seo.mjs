@@ -543,7 +543,7 @@ function baseStructuredData(route) {
       '@id': `${siteUrl}/#identity`,
       name: siteName,
       url: siteUrl,
-      logo: `${siteUrl}/favicon.svg`,
+      logo: `${siteUrl}${siteConfig.logoImage}`,
       image: defaultImage,
       sameAs: [telegramUrl],
       contactPoint,

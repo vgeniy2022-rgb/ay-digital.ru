@@ -8,6 +8,7 @@ export const siteConfig = {
   defaultDescription:
     'SITEVL — создание сайтов и цифровых решений во Владивостоке: сайты для бизнеса, компьютерная помощь, настройка техники и удалённая работа.',
   defaultOgImage: '/og-image.jpg',
+  logoImage: '/favicon-192x192.png',
   phone: '+79241308626',
   phoneDisplay: '+7 924 130-86-26',
   telegramUrl: 'https://t.me/AYDigitaLRu',

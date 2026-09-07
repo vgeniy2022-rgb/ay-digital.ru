@@ -26,7 +26,7 @@ export function createBaseStructuredData() {
       '@id': identityId,
       name: siteConfig.siteName,
       url: siteConfig.siteUrl,
-      logo: absoluteUrl('/favicon.svg'),
+      logo: absoluteUrl(siteConfig.logoImage),
       image: absoluteUrl(siteConfig.defaultOgImage),
       sameAs: [siteConfig.telegramUrl],
       contactPoint,

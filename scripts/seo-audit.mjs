@@ -173,6 +173,14 @@ sitemapPaths.forEach((pathname) => {
   assert(/<meta\s+name="twitter:title"/.test(html), `отсутствует twitter:title: ${pathname}`);
   assert(/BreadcrumbList/.test(html), `отсутствует BreadcrumbList: ${pathname}`);
 
+  assert(html.includes('type="image/png" sizes="96x96" href="/favicon-96x96.png"'), `отсутствует совместимый PNG favicon в prerender head: ${pathname}`);
+  assert(html.includes('href="/favicon.ico"'), `отсутствует ICO favicon: ${pathname}`);
+  assert(html.includes('rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"'), `отсутствует Apple touch PNG: ${pathname}`);
+  const identities = getJsonLdItems(html).filter((item) => item['@type'] === 'Organization');
+  const websites = getJsonLdItems(html).filter((item) => item['@type'] === 'WebSite');
+  assert(identities.length === 1 && identities[0].name === 'SITEVL' && identities[0].logo === `${siteUrl}/favicon-192x192.png`, `некорректная идентичность или logo SITEVL: ${pathname}`);
+  assert(websites.length === 1 && websites[0].name === 'SITEVL' && websites[0].url === siteUrl, `некорректное имя сайта WebSite: ${pathname}`);
+
   const jsonLdTypes = getJsonLdTypes(html);
   assert(jsonLdTypes.includes('Organization'), `отсутствует Organization JSON-LD: ${pathname}`);
   assert(jsonLdTypes.includes('Person'), `отсутствует Person JSON-LD: ${pathname}`);
