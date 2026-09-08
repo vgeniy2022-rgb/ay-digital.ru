@@ -10,12 +10,21 @@ import { readTrafficSummary } from '../../../api/_visitorStoreV3.mjs';
 import { legacyAttribution, classifyRequestTraffic } from '../../../api/_trafficPolicyV3.mjs';
 // @ts-expect-error Native server ESM.
 import { REASON_CODES, INTEREST_WEIGHTS, coarseBrowser } from '../../../api/_visitorConfidenceV31.mjs';
+// @ts-expect-error Native server ESM.
+import { VISITOR_EVENT_SCRIPT, LINK_LEAD_SCRIPT } from '../../../api/_visitorStoreV2.mjs';
 import { BehaviorAccumulator, dwellBucket } from './visitorBehavior';
 import { createRedisHarness } from './visitorRedisHarness';
 
 const start = (visitorId = 'visitor-' + randomUUID(), sessionId = 'session-' + randomUUID()) => ({ event: 'session_start', visitorId, sessionId, eventId: 'event-' + randomUUID(), path: '/', source: 'direct', referrerHost: '', deviceType: 'desktop', deviceFamily: 'Mac', browser: 'Chrome' });
 const action = (s: ReturnType<typeof start>, event = 'page_view', path = '/', extra = {}) => ({ event, visitorId: s.visitorId, sessionId: s.sessionId, eventId: 'event-' + randomUUID(), path, ...extra });
 const behavior = (overrides = {}) => ({ dwell: 2, scroll: 1, pointer: true, touch: false, keyboard: false, link: true, form: false, ...overrides });
+
+test('V3.1 Upstash compatibility: both scripts copy readonly KEYS before alias resolution', () => {
+  for (const script of [VISITOR_EVENT_SCRIPT, LINK_LEAD_SCRIPT]) {
+    assert.match(script, /local providedKeys = KEYS\s+local KEYS = \{\}\s+for i, key in ipairs\(providedKeys\) do KEYS\[i\] = key end/);
+    assert.ok(script.indexOf('local KEYS = {}') < script.indexOf('KEYS[2] = alias') || script.includes('KEYS[7] ='));
+  }
+});
 
 test('V3.1: synthetic schemas reject scores, client clocks, nested data and arbitrary sources of identity', () => {
   const s = start();

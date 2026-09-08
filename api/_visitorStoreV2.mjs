@@ -8,6 +8,10 @@ export const SEQUENCE_KEYS = Object.freeze({ visitor: `${V2_NAMESPACE}:visitor-s
 // One bounded Redis operation: binding, dedup, number allocation, migration,
 // session count and history commit cannot interleave with another request.
 export const VISITOR_EVENT_SCRIPT = `
+-- Upstash exposes KEYS as readonly; use a private working copy for aliases.
+local providedKeys = KEYS
+local KEYS = {}
+for i, key in ipairs(providedKeys) do KEYS[i] = key end
 local event = cjson.decode(ARGV[1])
 local stamp, now, ttl = ARGV[2], tonumber(ARGV[3]), tonumber(ARGV[4])
 local flags = cjson.decode(ARGV[5])
@@ -162,6 +166,9 @@ export async function commitVisitorEvent(event, flags, ttl, now, options) {
 }
 
 export const LINK_LEAD_SCRIPT = `
+local providedKeys = KEYS
+local KEYS = {}
+for i, key in ipairs(providedKeys) do KEYS[i] = key end
 local bound = redis.call('HGET', KEYS[2], 'visitorId')
 if bound ~= ARGV[1] or redis.call('EXISTS', KEYS[1]) == 0 then return 0 end
 if redis.call('EXISTS', KEYS[3]) == 1 then return 2 end

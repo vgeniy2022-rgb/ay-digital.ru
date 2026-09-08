@@ -4,7 +4,7 @@
 
 ## Статус и границы доказательств
 
-Реализация и локальная проверка **PASS**. Публикация **BLOCKED: исходящее HTTPS/TLS-соединение с GitHub/Vercel перестало работать во время push**. Production QA **NOT TESTED**. Это не заявление о завершённом production PASS.
+Реализация и локальная проверка **PASS**. Повторная публикация готовится после исправления различия Lua sandbox в Upstash. Первый production QA выявил проблему, она исправлена и проверена прямым вызовом на Upstash; временно восстановлена предыдущая рабочая сборка. Итоговый production PASS пока не заявляется.
 
 ZIP с реальными Telegram-уведомлениями не был приложен к доступным материалам: доступны два текстовых ТЗ. Поэтому анализ реальной выгрузки **BLOCKED — нужен ZIP**. Числа из ТЗ не выдаются за результаты самостоятельного анализа. Regression fixtures синтетические, без копирования реальных visitor records. Посетитель №69 из предыдущего отчёта V3 — контролируемая QA-запись, а не подтверждённый клиент; в калибровку реальных клиентов он не включался.
 
@@ -129,7 +129,7 @@ Privacy policy обновлена только под реализованные
 
 ## 10. Проверки
 
-- Финальный release gate: **196/196 тестов, 0 skipped**, `npm run lint`, `npx tsc -b --pretty false`, `npm run build`, `git diff --check` — PASS. Реальный disposable Redis, включая 16 групп V3.1; не mock всей системы. Тесты повторно завершились 196/196 после commit.
+- Финальный release gate после Upstash-исправления: **197/197 тестов, 0 skipped**, `npm run lint`, `npx tsc -b --pretty false`, `npm run build`, `git diff --check` — PASS. Реальный disposable Redis, включая 17 групп V3.1; не mock всей системы.
 - Подтверждены 29/30/31-minute границы, concurrency/new tabs, legacy fallback/номера, immutable V2 historical number, duplicate inactivity, behavior elapsed cap, score spoof rejection, Linux/network burst, рекламные iPhone, переходы counters/Telegram, paid attribution, Google DNS и timeout, organic Google, geo weak signal, 50-page traversal, capped interest, lead alias/дедуп, visibility/batching/cleanup, Redis failure.
 - Дополнительный изолированный тест production-QA cleanup: неверный owner guard останавливает удаление; правильный cleanup удаляет только свой вклад и сохраняет чужой профиль/sequence.
 - Живой локальный браузер: Главная → Кейсы → Цены, один visitor/одна сессия; unknown → likely-human; score 75, interest 25, paid-human flag. Никакие production записи не использованы; Telegram перехвачен локально.
@@ -137,6 +137,14 @@ Privacy policy обновлена только под реализованные
 - Сборка/SEO: 73 sitemap URLs, 87 prerendered HTML, 73 indexable +14 noindex. Известное предупреждение Vite про тяжёлые существующие chunks не скрывалось.
 
 ## 11. Production QA / release
+
+### Обнаруженное и исправленное различие Upstash
+
+После восстановления сети push до `9f4360df642a3d68bf059084a531c7590fa2e79d` прошёл. Deployment `dpl_CUXM1ZqbEXpttKkLXy6w6kZQcfyz` получил READY, `/api/visitor-events` вернул V3.1/configured/telegramConfigured. Однако первый контролируемый POST выявил `Attempt to modify a readonly table`: Upstash считает таблицу Lua `KEYS` read-only, локальный Redis разрешал её изменение.
+
+Production немедленно возвращён на предыдущую рабочую сборку `dpl_T7Q5YX4n8abgSeDZRDqptk7JySb2` через promotion, без rollback/reset Redis. Обе Lua процедуры теперь создают локальную изменяемую копию KEYS перед разрешением analytic-session alias. Прямой scoped вызов исправленного EVAL на Upstash завершился успешно. Добавлен regression test для обоих scripts; полный gate повторён (197/197).
+
+Единственный QA-профиль первой попытки и 10 принадлежащих ему ключей удалены. Его вклад `technicalVisits:1`, `unknownVisits:1` после диагностического EVAL вычтен; отсутствие профиля/сессии проверено. Sequence numbers не откатывались. Реальные заявки не создавались. Ниже сохранена хронология временного сетевого сбоя; финальные результаты повторного QA будут добавлены после READY исправленной версии.
 
 Кодовый commit: `c2a7558a4ccac9d142d78d95ff769f1e95adb69b`.
 
