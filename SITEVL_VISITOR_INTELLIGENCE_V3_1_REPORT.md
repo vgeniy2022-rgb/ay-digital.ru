@@ -4,7 +4,7 @@
 
 ## Статус и границы доказательств
 
-Реализация и локальная проверка готовы. Production QA и идентификаторы релиза будут добавлены после публикации. Это не заявление о завершённом production PASS.
+Реализация и локальная проверка **PASS**. Публикация **BLOCKED: исходящее HTTPS/TLS-соединение с GitHub/Vercel перестало работать во время push**. Production QA **NOT TESTED**. Это не заявление о завершённом production PASS.
 
 ZIP с реальными Telegram-уведомлениями не был приложен к доступным материалам: доступны два текстовых ТЗ. Поэтому анализ реальной выгрузки **BLOCKED — нужен ZIP**. Числа из ТЗ не выдаются за результаты самостоятельного анализа. Regression fixtures синтетические, без копирования реальных visitor records. Посетитель №69 из предыдущего отчёта V3 — контролируемая QA-запись, а не подтверждённый клиент; в калибровку реальных клиентов он не включался.
 
@@ -129,7 +129,7 @@ Privacy policy обновлена только под реализованные
 
 ## 10. Проверки
 
-- Локальные unit/integration: 196 тестов (включая 16 групп V3.1), реальный disposable Redis, не mock всей системы. Финальный release gate повторяется перед push.
+- Финальный release gate: **196/196 тестов, 0 skipped**, `npm run lint`, `npx tsc -b --pretty false`, `npm run build`, `git diff --check` — PASS. Реальный disposable Redis, включая 16 групп V3.1; не mock всей системы. Тесты повторно завершились 196/196 после commit.
 - Подтверждены 29/30/31-minute границы, concurrency/new tabs, legacy fallback/номера, immutable V2 historical number, duplicate inactivity, behavior elapsed cap, score spoof rejection, Linux/network burst, рекламные iPhone, переходы counters/Telegram, paid attribution, Google DNS и timeout, organic Google, geo weak signal, 50-page traversal, capped interest, lead alias/дедуп, visibility/batching/cleanup, Redis failure.
 - Дополнительный изолированный тест production-QA cleanup: неверный owner guard останавливает удаление; правильный cleanup удаляет только свой вклад и сохраняет чужой профиль/sequence.
 - Живой локальный браузер: Главная → Кейсы → Цены, один visitor/одна сессия; unknown → likely-human; score 75, interest 25, paid-human flag. Никакие production записи не использованы; Telegram перехвачен локально.
@@ -138,7 +138,19 @@ Privacy policy обновлена только под реализованные
 
 ## 11. Production QA / release
 
-Пока NOT TESTED: раздел будет заполнен фактическими результатами deployment, controlled QA и очистки. Никакие реальные visitor/lead данные, LAB counters, старые production totals или последовательности не удалялись при реализации.
+Кодовый commit: `c2a7558a4ccac9d142d78d95ff769f1e95adb69b`.
+
+Перед push подтверждены `.vercel/repo.json` и Vercel API: существующий проект `ay-digital-ru`, ID `prj_REyqEPemqb3DbzgR2z7PMPJv0FsL`, Node 24.x, Vite, Git integration `ay-digital.ru`. CLI авторизация работала. Никакой новый проект не создавался.
+
+`git push origin main` завершился exit 128: `LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to github.com:443`. Отдельные ограниченные по времени HTTPS-проверки GitHub API, Vercel API и `sitevl.tech` вернули timeout/HTTP 000; повтор по IPv4 также не установил SSL. Подключённый Vercel reader не дал результата в ограниченный интервал. Изменения VPN/DNS/прокси или системных защит не выполнялись.
+
+Последнее подтверждённое перед потерей связи production deployment: `dpl_T7Q5YX4n8abgSeDZRDqptk7JySb2`, старый V3 commit `8fb650d56a8c4f8c34043d2e274b3aea3ee62be9`. Это **не deployment V3.1**. Новый deployment ID отсутствует. Локальный `origin/main` остаётся на указанном старом SHA; актуальное удалённое состояние после сетевого сбоя проверить не удалось.
+
+Production V3.1, Telegram delivery, Redis confidence transitions и новая cleanup-проверка в production **NOT TESTED**. Никакие production QA visitors/leads в этом ходе не создавались. Реальные visitor/lead данные, LAB counters, старые totals и последовательности не удалялись и не пересчитывались.
+
+Подготовлен отдельный QA-сценарий вне Git: `/tmp/sitevl-v31-production-qa.mjs`. Он создаёт 7 собственных UUID visitors (обычный рекламный +6 burst), проверяет API/Redis и реальные Telegram send statuses, затем атомарно удаляет только подтверждённые собственные записи и их вклад. Перед cleanup проверяются ownership/binding, полнота списка сессий и отсутствие leads; sequence keys не меняются. Локальный тест этого cleanup прошёл. Для границ 29/31 минут скрипт сдвигает только серверное поле неактивности своего QA-профиля: это seeded boundary test, **не заявление о реальном 31-минутном ожидании**. Реальные лиды не отправляются; положительный Google DNS сценарий проверен изолированно без подделки production IP.
+
+После восстановления соединения: повторно проверить remote main → push существующих локальных commits → дождаться READY того же проекта → выполнить контролируемый QA и cleanup → проверить `/`, `/services`, `/prices`, `/cases`, `/lab`, старую рекламную ссылку, API конфигурацию, canonical/sitemap/robots → дополнить этот отчёт фактическими production результатами. Telegram secrets уже были настроены на сервере; их повторная передача в чат не нужна.
 
 ## Остаточные ограничения
 
