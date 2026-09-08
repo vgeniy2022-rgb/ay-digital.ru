@@ -1,8 +1,9 @@
 import { timingSafeEqual } from 'node:crypto';
 import { redisPipeline } from './_labStatsCore.mjs';
 import { commitVisitorEvent, LINK_LEAD_SCRIPT, V2_NAMESPACE } from './_visitorStoreV2.mjs';
-import { V3_STATS_KEY, recordBotVisit } from './_visitorStoreV3.mjs';
-import { isHumanTraffic, geoLabel } from './_trafficPolicyV3.mjs';
+import { recordBotVisit } from './_visitorStoreV3.mjs';
+import { V31_NAMESPACE, V31_STATS_KEY, INTEREST_WEIGHTS } from './_visitorConfidenceV31.mjs';
+import { isAutomatedTraffic, geoLabel } from './_trafficPolicyV3.mjs';
 
 export const VISITOR_NAMESPACE = 'sitevl:visitor:v1';
 export const VISITOR_EVENT_TYPES = Object.freeze([
@@ -14,6 +15,7 @@ export const VISITOR_EVENT_TYPES = Object.freeze([
   'brief_started',
   'contact_click',
   'engagement',
+  'behavior',
 ]);
 
 const VISITOR_PATTERN = /^(?:SV-[A-F0-9]{6}|visitor-[a-f0-9]{32}|visitor-[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12})$/i;
@@ -27,7 +29,7 @@ const DEVICES = new Set(['mobile', 'tablet', 'desktop']);
 const DEVICE_FAMILIES = new Set(['iPhone', 'iPad', 'Android', 'Mac', 'Windows', 'Linux', 'Other']);
 const BROWSERS = new Set(['Safari', 'Chrome', 'Firefox', 'Edge', 'Opera', 'Other']);
 const EXPERIMENTS = new Set(['builder', 'canvas', 'physics', 'modern-os', 'retro']);
-const ALLOWED_KEYS = new Set(['event', 'visitorId', 'sessionId', 'eventId', 'path', 'source', 'referrerHost', 'deviceType', 'deviceFamily', 'browser', 'experimentId', 'conceptId', 'channel', 'signal']);
+const ALLOWED_KEYS = new Set(['event', 'visitorId', 'sessionId', 'eventId', 'path', 'source', 'referrerHost', 'deviceType', 'deviceFamily', 'browser', 'experimentId', 'conceptId', 'channel', 'signal', 'behavior']);
 const requestWindows = new Map();
 const MAX_REQUESTS_PER_MINUTE = 40;
 const MAX_GLOBAL_REQUESTS_PER_MINUTE = 600;
@@ -69,7 +71,8 @@ export function normalizePublicPath(value) {
 
 function normalizeSource(value) {
   const source = clean(value, 64).toLowerCase();
-  return SOURCE_PATTERN.test(source) ? source : 'direct';
+  // Reserved source is assigned only from the server-verified attribution token.
+  return source !== 'paid-ad' && SOURCE_PATTERN.test(source) ? source : 'direct';
 }
 
 function normalizeReferrerHost(value) {
@@ -90,6 +93,15 @@ export function validateVisitorEvent(raw) {
   if (!path) return { ok: false, error: 'Некорректный маршрут.' };
 
   const value = { event, visitorId, sessionId, eventId, path };
+  if (event !== 'behavior' && raw.behavior !== undefined) return { ok: false, error: 'Некорректное поле активности.' };
+  if (event === 'behavior') {
+    const b = raw.behavior;
+    const kinds = ['pointer', 'touch', 'keyboard', 'link', 'form'];
+    if (!plainObject(b) || Object.keys(b).some(key => !['dwell', 'scroll', ...kinds].includes(key)) ||
+      !Number.isInteger(b.dwell) || b.dwell < 0 || b.dwell > 4 || !Number.isInteger(b.scroll) || b.scroll < 0 || b.scroll > 4 ||
+      kinds.some(key => typeof b[key] !== 'boolean')) return { ok: false, error: 'Некорректные агрегаты активности.' };
+    return { ok: true, value: { ...value, behavior: { dwell: b.dwell, scroll: b.scroll, ...Object.fromEntries(kinds.map(key => [key, b[key]])) } } };
+  }
   if (event === 'session_start') {
     if (!DEVICES.has(raw.deviceType) || !BROWSERS.has(raw.browser)) return { ok: false, error: 'Некорректные технические данные.' };
     if (raw.deviceFamily !== undefined && !DEVICE_FAMILIES.has(raw.deviceFamily)) return { ok: false, error: 'Некорректное семейство устройства.' };
@@ -135,7 +147,7 @@ function checkMemoryRate(sessionId, now) {
 }
 
 async function checkRedisRate(sessionId, now, options) {
-  const key = `${VISITOR_NAMESPACE}:rate:${sessionId}`;
+  const key = `${VISITOR_NAMESPACE}:rate:${sessionId}:${Math.floor(now / 60_000)}`;
   const globalKey = `${VISITOR_NAMESPACE}:global-rate:${Math.floor(now / 60_000)}`;
   const commands = [['INCR', key], ['EXPIRE', key, '60'], ['INCR', globalKey], ['EXPIRE', globalKey, '120']];
   // A generous, short-lived network limit supplements IDs; it never merges visitors behind NAT.
@@ -215,15 +227,34 @@ export function elapsedLabel(milliseconds) {
 export function telegramTextForEvent(event, context, timestamp) {
   const who = `Посетитель #${context.visitorNumber}`;
   const attribution = parseMetadata(context.attribution);
-  if (event.event === 'session_start' && context.newSession) {
-    const lines = [attribution?.paid ? '📣 Посетитель пришёл с рекламы' : context.isNewVisitor ? '👤 Новый посетитель SITEVL' : '🔁 Посетитель вернулся на SITEVL',
-      `Посещение сайта: #${context.visitNumber}`, `Уникальный посетитель: #${context.visitorNumber}`,
+  if (context.burstNotify) return ['⚙️ Пачка похожих визитов SITEVL',
+    `Не менее ${context.burstSize} новых анонимных ID за 10 секунд.`,
+    'Совпали несколько укрупнённых признаков. Это сигнал, не доказательство автоматизации.',
+    'Не считаются людьми без дополнительных поведенческих признаков. Рекламные визиты не объединяются.',
+    'Повторное сообщение этой группы — не чаще раза в 30 минут.',
+    `Время: ${vladivostokTime(timestamp)} (Владивосток)`].join('\n');
+  const confidence = context.classification === 'human' ? 'высокая, эвристическая' : context.classification === 'likely-human' ? 'средняя, эвристическая' : context.classification === 'likely-bot' ? 'низкая; вероятна автоматизация' : 'недостаточно данных';
+  if (context.humanTransition || context.interestTransition) return [
+    context.interestTransition === 'hot' ? `🔥 Горячий посетитель #${context.visitorNumber}` : context.interestTransition === 'warm' ? `♨️ Тёплый посетитель #${context.visitorNumber}` : `👤 Вероятный человек — посетитель #${context.visitorNumber}`,
+    `Визит: #${context.visitNumber} · Сессия: #${context.sessionNumber}`,
+    `Источник: ${sourceLabel(context.currentSource, context.currentReferrerHost)}`,
+    ...attributionLines(attribution), geoLabel(parseMetadata(context.geo)),
+    `Устройство: ${context.deviceFamily} · ${context.browser}`,
+    `Human confidence: ${confidence}. Не статистическая вероятность.`,
+    ...(context.humanTransition ? ['Порог поведенческих признаков достигнут впервые в этой сессии.'] : []),
+    `Коммерческий интерес: ${context.interestScore}/100 (баллы действий, не вероятность покупки).`,
+    `Путь: ${context.journey || routeLabel(event.path)}`,
+    context.hasLead ? 'В сохранённой истории есть заявка.' : 'Заявка в этой истории пока не отправлена.',
+    `Время: ${vladivostokTime(timestamp)} (Владивосток)`].join('\n');
+  if (context.newSession && context.initialNotify) {
+    const lines = [context.isNewVisitor ? '❔ Новый визит SITEVL' : '❔ Повторный визит SITEVL',
+      `Посещение сайта: #${context.visitNumber}`, `Анонимный посетитель: #${context.visitorNumber}`,
       `Сессия посетителя: #${context.sessionNumber}`,
-      `Устройство: ${event.deviceFamily !== 'Other' && event.deviceFamily ? event.deviceFamily : deviceLabels[event.deviceType]} · ${event.browser}`,
+      `Устройство: ${context.deviceFamily || deviceLabels[event.deviceType]} · ${context.browser}`,
       `Источник: ${sourceLabel(context.currentSource, context.currentReferrerHost)}`,
       `Рекламная метка: ${!['direct', 'referral'].includes(context.currentSource) ? context.currentSource : 'нет'}`,
       `Вход: ${routeLabel(event.path)}`, `Время: ${vladivostokTime(timestamp)} (Владивосток)`];
-    lines.push(geoLabel(parseMetadata(context.geo)), `Классификация: ${context.classification === 'human' ? 'человек по поведенческим признакам (оценка)' : 'вероятно человек'}`);
+    lines.push(geoLabel(parseMetadata(context.geo)), `Human confidence: ${confidence}. Номер ID не является счётчиком людей.`);
     lines.push(...attributionLines(attribution));
     if (context.isNewVisitor) lines.push('Первый визит.');
     else {
@@ -237,24 +268,36 @@ export function telegramTextForEvent(event, context, timestamp) {
     if (context.networkState) lines.push(`IP-assist: ${context.networkState === 'same' ? 'сеть не изменилась' : 'новая сеть'} (вспомогательный признак)`);
     return lines.join('\n');
   }
-  if (context.adArrived && attribution?.paid) return ['📣 Посетитель пришёл с рекламы', `Посещение сайта: #${context.visitNumber}`, `Уникальный посетитель: #${context.visitorNumber}`, `Сессия: #${context.sessionNumber}`, ...attributionLines(attribution), `Финальная страница: ${routeLabel(event.path)}`, geoLabel(parseMetadata(context.geo)), `Время: ${vladivostokTime(timestamp)} (Владивосток)`].join('\n');
-  const suffix = `\nПосещение сайта: #${context.visitNumber} · Сессия: #${context.sessionNumber}`;
+  if (context.newSession) return '';
+  if (context.adArrived && attribution?.paid) return ['📣 Рекламный источник визита', `Посещение сайта: #${context.visitNumber}`, `Анонимный посетитель: #${context.visitorNumber}`, `Сессия: #${context.sessionNumber}`, ...attributionLines(attribution), `Human confidence: ${confidence}`, `Финальная страница: ${routeLabel(event.path)}`, geoLabel(parseMetadata(context.geo)), `Время: ${vladivostokTime(timestamp)} (Владивосток)`].join('\n');
+  if (context.classification === 'likely-bot') return '';
+  const suffix = `\nПосещение сайта: #${context.visitNumber} · Сессия: #${context.sessionNumber}\nИсточник: ${sourceLabel(context.currentSource, context.currentReferrerHost)}\nHuman confidence: ${confidence}`;
   if (event.event === 'page_view' && (event.path === '/prices' || event.path.startsWith('/prices/'))) return `🔥 ${who} смотрит цены${suffix}`;
   if (event.event === 'page_view' && event.path === '/ai-website') return `✨ ${who} открыл AI-концепт${suffix}`;
   if (event.event === 'page_view' && event.path === '/lab') return `🔬 ${who} открыл LAB${suffix}`;
   if (event.event === 'experiment_start') return `🎮 ${who} запустил ${experimentLabels[event.experimentId] || event.experimentId}${suffix}`;
   if (event.event === 'ai_concept_created') return `✨ ${who} создал AI-концепт ${event.conceptId}${suffix}`;
+  if (event.event === 'page_view' && event.path === '/contacts') return `☎️ ${who} открыл контакты${suffix}`;
+  if (event.event === 'contact_click') return `💬 ${who} нажал ${event.channel === 'telegram' ? 'Telegram' : 'WhatsApp'}${suffix}`;
+  if (event.event === 'brief_started') return `📝 ${who} начал бриф${suffix}`;
+  if (event.event === 'brief_completed') return `📝 ${who} заполнил бриф${suffix}`;
   return '';
 }
 
 function notifyAction(event, context) {
-  if (context.newSession && event.event === 'session_start') return 'session-start';
+  if (context.burstNotify) return 'burst';
+  if (context.interestTransition) return `interest-${context.interestTransition}`;
+  if (context.humanTransition) return 'human-transition';
+  if (context.newSession) return context.initialNotify ? 'session-start' : '';
   if (context.adArrived) return 'ad-visit';
   if (event.event === 'page_view' && (event.path === '/prices' || event.path.startsWith('/prices/'))) return 'prices';
   if (event.event === 'page_view' && event.path === '/ai-website') return 'ai-website';
   if (event.event === 'page_view' && event.path === '/lab') return 'lab';
   if (event.event === 'experiment_start') return `experiment-${event.experimentId}`;
   if (event.event === 'ai_concept_created') return 'ai-concept-created';
+  if (event.event === 'page_view' && event.path === '/contacts') return 'contacts';
+  if (event.event === 'contact_click') return `contact-${event.channel}`;
+  if (event.event === 'brief_started' || event.event === 'brief_completed') return event.event;
   return '';
 }
 
@@ -271,10 +314,11 @@ export async function trackVisitorEvent(event, options = {}) {
   const validated = validateVisitorEvent(event);
   if (!validated.ok) throw new Error('invalid visitor event');
   event = validated.value;
-  if (options.traffic && !isHumanTraffic(options.traffic)) {
+  if (isAutomatedTraffic(options.traffic)) {
     const bot = await trackCrawlerVisit(event.path, options.traffic, options);
     return { accepted: true, deduplicated: bot.deduplicated, notification: bot.notification, ignored: 'automated-traffic' };
   }
+  if (event.event === 'session_start' && options.browser) event = { ...event, ...options.browser };
   if (event.event === 'session_start' && options.attribution) {
     event = { ...event, source: options.attribution.source, referrerHost: options.attribution.referrerHost || '' };
   }
@@ -287,13 +331,19 @@ export async function trackVisitorEvent(event, options = {}) {
   if (committed.conflict || committed.sessionRequired) return { accepted: false, conflict: true, notification: 'skipped' };
   if (committed.deduplicated) return { accepted: true, rateLimited: false, deduplicated: true, notification: 'skipped' };
   const context = committed.context;
+  if (context.humanTransition || context.interestTransition) {
+    const state = await readVisitor(event.visitorId, { ...options, sessionId: event.sessionId });
+    const labels = state.history.filter(item => item.event === 'page_view').map(item => routeLabel(item.path));
+    context.journey = labels.filter((label, i) => i === 0 || label !== labels[i - 1]).slice(-8).join(' → ');
+    context.hasLead = Number(state.visitor.leads) > 0;
+  }
 
   let notification = 'skipped';
   const action = notifyAction(event, context);
   const text = telegramTextForEvent(event, context, timestamp);
   if (action && text) {
     const telegramRateKey = `${VISITOR_NAMESPACE}:telegram-rate:${Math.floor(nowMs / 3_600_000)}`;
-    const notifyClaim = await redisPipeline([['SET', `${V2_NAMESPACE}:notify:${event.sessionId}:${action}`, '1', 'NX', 'EX', String(ttl)]], options);
+    const notifyClaim = await redisPipeline([['SET', `${V31_NAMESPACE}:notify:${context.visitNumber}:${action}`, '1', 'NX', 'EX', String(ttl)]], options);
     if (notifyClaim[0]?.result === 'OK') {
       const telegramRate = await redisPipeline([['INCR', telegramRateKey], ['EXPIRE', telegramRateKey, '7200']], options);
       notification = Number(telegramRate[0]?.result || 0) <= MAX_TELEGRAM_NOTIFICATIONS_PER_HOUR ? (await sendTelegram(text, options)).status : 'rate-limited';
@@ -313,7 +363,21 @@ export async function readVisitor(visitorId, options = {}) {
   if (SESSION_PATTERN.test(sessionId || '')) {
     const response = await redisPipeline([['HGETALL', `${V2_NAMESPACE}:session:${sessionId}`]], options);
     const candidate = parseHash(response[0]?.result);
-    if (candidate.visitorId === visitorId) session = candidate;
+    if (candidate.visitorId === visitorId) {
+      session = candidate;
+      if (/^sitevl:visitor:v31:session:\d+$/.test(candidate.v31AnalyticsKey || '')) {
+        const active = await redisPipeline([['HGETALL', candidate.v31AnalyticsKey]], options);
+        const resolved = parseHash(active[0]?.result);
+        if (resolved.visitorId === visitorId) session = { ...resolved, technicalSessionId: sessionId };
+      }
+    }
+  }
+  for (const record of [visitor, session]) {
+    delete record.cohortKey;
+    delete record.networkCohortKey;
+    if (!record.classificationScore && Object.keys(record).length) {
+      record.classification = 'legacy-unknown'; record.classificationReasons = '["legacy-no-score"]';
+    }
   }
   return { visitor, session, history, pages: result[2]?.result || [], experiments: result[3]?.result || [] };
 }
@@ -354,14 +418,14 @@ export function buildLeadTelegramSummary(lead, intelligence) {
 }
 
 export async function linkLeadToVisitor(lead, options = {}) {
-  if (options.traffic && !isHumanTraffic(options.traffic)) return { linked: false, notification: 'skipped', intelligence: null };
+  if (isAutomatedTraffic(options.traffic)) return { linked: false, notification: 'skipped', intelligence: null };
   if (!VISITOR_PATTERN.test(lead.visitorId || '') || !SESSION_PATTERN.test(lead.visitorSessionId || '')) return { linked: false, notification: 'skipped', intelligence: null };
   const nowMs = Date.parse(lead.createdAt) || Date.now();
   const timestamp = new Date(nowMs).toISOString();
   const ttl = visitorTtlSeconds(options.environment);
   const keys = visitorKeys(lead.visitorId);
   if (!/^[a-f0-9-]{36}$/i.test(lead.id || '') || !CONCEPT_PATTERN.test(lead.conceptId || '')) return { linked: false, notification: 'skipped', intelligence: null };
-  const result = await redisPipeline([['EVAL', LINK_LEAD_SCRIPT, '5', keys.profile, `${V2_NAMESPACE}:session:${lead.visitorSessionId}`, `${V2_NAMESPACE}:lead:${lead.id}`, keys.history, V3_STATS_KEY, lead.visitorId, timestamp, lead.id, lead.conceptId, String(ttl)]], options);
+  const result = await redisPipeline([['EVAL', LINK_LEAD_SCRIPT, '5', keys.profile, `${V2_NAMESPACE}:session:${lead.visitorSessionId}`, `${V2_NAMESPACE}:lead:${lead.id}`, keys.history, V31_STATS_KEY, lead.visitorId, timestamp, lead.id, lead.conceptId, String(ttl), String(INTEREST_WEIGHTS.lead_created)]], options);
   if (!Number(result[0]?.result)) return { linked: false, notification: 'skipped', intelligence: null };
   const intelligence = await readVisitor(lead.visitorId, { ...options, sessionId: lead.visitorSessionId });
   const notification = Number(result[0]?.result) === 1 ? (await sendTelegram(buildLeadTelegramSummary(lead, intelligence), options)).status : 'skipped';
@@ -406,7 +470,7 @@ export function botTelegramText(record) {
 
 export async function trackCrawlerVisit(path, traffic, options = {}) {
   const normalized = normalizePublicPath(path);
-  if (!normalized || isHumanTraffic(traffic)) return { deduplicated: true, notification: 'skipped' };
+  if (!normalized || !isAutomatedTraffic(traffic)) return { deduplicated: true, notification: 'skipped' };
   const result = await recordBotVisit(normalized, traffic, options);
   let notification = 'skipped';
   if (result.notify) {

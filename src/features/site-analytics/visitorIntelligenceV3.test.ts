@@ -71,8 +71,8 @@ test('V3: attribution is an explicit old-host assumption, not all traffic; no op
   assert.equal(legacyRedirect(new Request(old, { method: 'POST' }), env), null);
 });
 
-test('V3: Safari and Chrome readers count without any interaction, signatures never do', async () => {
-  for (const ua of [safari, chrome]) assert.equal((await classifyRequestTraffic(request(ua), { environment: {} })).classification, 'likely-human');
+test('V3.1 regression: Safari and Chrome alone are unknown, crawler signatures remain automation', async () => {
+  for (const ua of [safari, chrome]) assert.equal((await classifyRequestTraffic(request(ua), { environment: {} })).classification, 'unknown');
   for (const family of ['Googlebot', 'Google-InspectionTool', 'GoogleOther', 'Bingbot', 'YandexBot', 'Applebot', 'DuckDuckBot', 'TelegramBot', 'GPTBot', 'ClaudeBot', 'AhrefsBot']) {
     assert.ok(crawlerFamily(`${chrome} ${family}/1.0`));
     const traffic = await classifyRequestTraffic(request(`${chrome} ${family}/1.0`), { environment: {} });
@@ -133,7 +133,7 @@ test('V3 real Redis: crawlers get no human profile, sequence or ad counters; not
   assert.equal(summary.counters.humanVisits, 0); assert.equal(summary.counters.uniqueHumanVisitors, 0); assert.equal(summary.counters.paidAdHumanVisits, 0);
   assert.equal(h.telegram.length, 2); assert.match(h.telegram[0], /Google проверяет SITEVL/);
   assert.doesNotMatch(h.telegram.join('\n'), /Уникальный посетитель|Город:|География сети|SV-F3A001|test-only/);
-  assert.ok(Number(await h.command(['TTL', 'sitevl:visitor:v3:bots:recent'])) <= 604800);
+  assert.ok(Number(await h.command(['TTL', 'sitevl:visitor:v31:bots:recent'])) > 0);
   assert.match(botTelegramText(summary.bots[0]), /В статистику людей и рекламы не включён/);
 });
 
@@ -156,19 +156,20 @@ test('V3 real Redis: paid funnel persists beyond cookie, deduplicates, links lea
   const lead = { id: randomUUID(), createdAt: '2026-09-06T02:00:00Z', visitorId: s.visitorId, visitorSessionId: s.sessionId, conceptId: 'SV-AI-V3TEST', contact: { name: 'Isolated unit test' } };
   await linkLeadToVisitor(lead, options); await linkLeadToVisitor(lead, options);
   let p = await readVisitor(s.visitorId, options);
-  assert.equal(p.visitor.visitorNumber, '1'); assert.equal(p.session.classification, 'human');
-  assert.match(p.visitor.classificationReason, /visible-reader.*heuristic-not-proof/);
+  assert.equal(p.visitor.visitorNumber, '1'); assert.equal(p.session.classification, 'unknown');
+  assert.match(p.visitor.classificationReasons, /insufficient-evidence/);
   assert.equal(JSON.parse(p.session.attribution).campaign, AD_CAMPAIGN);
   assert.deepEqual(p.history.filter((e: { event: string }) => e.event === 'contact_click').map((e: { channel: string }) => e.channel), ['telegram', 'whatsapp']);
   let summary = await readTrafficSummary(options);
-  for (const key of FUNNEL_ACTIONS) assert.equal(summary.counters[key], 1, key);
-  assert.equal(summary.counters.paidAdUniqueVisitors, 1);
-  assert.match(h.telegram[0], /Посетитель пришёл с рекламы[\s\S]*iPhone · Safari[\s\S]*Оплаченная реклама[\s\S]*Владивосток · Приморский край · Россия/);
-  const returning = start(s.visitorId); await trackVisitorEvent(returning, options);
+  for (const key of FUNNEL_ACTIONS.filter((key: string) => key !== 'ad_visit')) assert.equal(summary.counters[key], 1, key);
+  assert.equal(summary.counters.paidAdTechnicalVisits, 1);
+  assert.equal(summary.counters.paidAdUniqueHumans, 0);
+  assert.match(h.telegram[0], /Новый визит[\s\S]*iPhone · Safari[\s\S]*Оплаченная реклама[\s\S]*Владивосток · Приморский край · Россия/);
+  const returning = start(s.visitorId); await trackVisitorEvent(returning, { ...options, now: () => h.options.now() + 86400000 });
   p = await readVisitor(s.visitorId, options); summary = await readTrafficSummary(options);
   assert.equal(p.visitor.visitorNumber, '1'); assert.equal(p.session.visitNumber, '2'); assert.equal(p.visitor.sessions, '2');
   assert.equal(p.session.source, 'direct'); assert.equal(p.visitor.firstSource, 'paid-ad');
-  assert.equal(summary.counters.humanVisits, 2); assert.equal(summary.counters.uniqueHumanVisitors, 1); assert.equal(summary.counters.paidAdHumanVisits, 1);
+  assert.equal(summary.counters.humanVisits, 0); assert.equal(summary.counters.unknownVisits, 2); assert.equal(summary.counters.paidAdHumanVisits, 0);
   assert.doesNotMatch(JSON.stringify(p), /x-vercel-forwarded|user-agent|latitude|longitude|test-only/);
 });
 
@@ -179,8 +180,8 @@ test('V3 real Redis: late old-ad entry enriches existing session without renumbe
   const p = await readVisitor(s.visitorId, h.options);
   assert.equal(p.session.visitNumber, '1'); assert.equal(p.visitor.visitorNumber, '1'); assert.equal(p.visitor.firstSource, 'direct');
   assert.equal(p.session.source, 'paid-ad'); assert.equal(p.visitor.currentSource, 'paid-ad');
-  assert.equal((await readTrafficSummary(h.options)).counters.humanVisits, 1);
-  assert.match(h.telegram[1], /пришёл с рекламы[\s\S]*предположение/);
+  assert.equal((await readTrafficSummary(h.options)).counters.unknownVisits, 1);
+  assert.match(h.telegram[1], /Рекламный источник[\s\S]*предположение/);
 });
 
 test('V3 HTTP handlers: crawler JavaScript cannot inflate site, LAB, visitor numbers; owner API requires auth', async (t) => {
@@ -203,7 +204,7 @@ test('V3 HTTP handlers: crawler JavaScript cannot inflate site, LAB, visitor num
     assert.equal(response.statusCode, 401); assert.equal('counters' in response.body, false);
   }
   const owner = responseCapture(); await ownerHandler({ method: 'GET', query: { view: 'traffic' }, headers: { authorization: 'Bearer test-owner-only' } }, owner);
-  assert.equal(owner.statusCode, 200); assert.equal(owner.body.version, 3);
+  assert.equal(owner.statusCode, 200); assert.equal(owner.body.version, '3.1');
 });
 
 test('V3 middleware: ordinary delivery does not query Redis/DNS; crawler processing is deferred', async () => {
@@ -215,14 +216,14 @@ test('V3 middleware: ordinary delivery does not query Redis/DNS; crawler process
   assert.equal(jobs.length, 1); await Promise.all(jobs);
 });
 
-test('V3 client: category-only events deduplicate; channel/route allowlist; no sensitive frontend fields', async (t) => {
+test('V3.1 client: contact categories allow server-session caps; channel/route allowlist; no sensitive frontend fields', async (t) => {
   const values = () => { const map = new Map<string, string>(); return { getItem: (k: string) => map.get(k) || null, setItem: (k: string, v: string) => { map.set(k, v); } }; };
   const bodies: Record<string, string>[] = [];
   t.mock.method(globalThis, 'fetch', async (_input: unknown, init: RequestInit) => { bodies.push(JSON.parse(String(init.body))); return Response.json({ accepted: true }); });
   const local = values(); const session = values();
   await trackVisitorAction('contact_click', '/contacts', 'telegram', local, session);
   await trackVisitorAction('contact_click', '/contacts', 'telegram', local, session);
-  assert.equal(bodies.filter(body => body.event === 'contact_click').length, 1);
+  assert.equal(bodies.filter(body => body.event === 'contact_click').length, 2);
   assert.equal(contactChannel('https://t.me/sitevl?text=private'), 'telegram');
   assert.equal(contactChannel('https://t.me.evil.example/'), null);
   assert.equal(contactChannel('https://wa.me/123?text=private'), 'whatsapp');
@@ -230,7 +231,7 @@ test('V3 client: category-only events deduplicate; channel/route allowlist; no s
   assert.equal(validateVisitorEvent(action(start(), 'contact_click', '/contacts', { channel: 'email' })).ok, false);
   assert.equal(validateVisitorEvent(action(start(), 'engagement', '/', { signal: 'raw-key' })).ok, false);
   for (const key of ['geo', 'classification', 'attribution', 'message', 'ip']) assert.equal(validateVisitorEvent({ ...start(), [key]: 'arbitrary' }).ok, false);
-  const client = (await Promise.all(['visitorIntelligence.ts', 'SiteAnalyticsProvider.tsx'].map(file => readFile(new URL(file, import.meta.url), 'utf8')))).join('\n');
+  const client = (await Promise.all(['visitorIntelligence.ts', 'visitorBehavior.ts', 'SiteAnalyticsProvider.tsx'].map(file => readFile(new URL(file, import.meta.url), 'utf8')))).join('\n');
   assert.doesNotMatch(client, /VISITOR_ATTRIBUTION_SECRET|TELEGRAM_BOT_TOKEN|x-vercel-ip|geolocation|fingerprint|\.value\b|keyCode/);
   assert.match(client, /removeEventListener/);
 });

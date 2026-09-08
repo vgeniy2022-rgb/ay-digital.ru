@@ -4,7 +4,7 @@ import {
   trackLabEvent,
   validateLabTrackBody,
 } from './_labStatsCore.mjs';
-import { classifyRequestTraffic, isHumanTraffic } from './_trafficPolicyV3.mjs';
+import { classifyRequestTraffic, isAutomatedTraffic } from './_trafficPolicyV3.mjs';
 
 const json = (response, status, payload, cacheControl = 'no-store') => {
   response.statusCode = status;
@@ -39,7 +39,7 @@ export default async function handler(request, response) {
   if (!isLabStatsStorageConfigured()) return json(response, 503, { error: 'Статистика временно недоступна.' });
 
   try {
-    if (!isHumanTraffic(await classifyRequestTraffic(request))) return json(response, 202, { accepted: true, ignored: 'automated-traffic' });
+    if (isAutomatedTraffic(await classifyRequestTraffic(request))) return json(response, 202, { accepted: true, ignored: 'automated-traffic' });
     const result = await trackLabEvent(validated.value);
     if (result.rateLimited) return json(response, 429, { error: 'Слишком много событий.' });
     return json(response, 202, { accepted: true, deduplicated: result.deduplicated });

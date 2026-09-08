@@ -1,12 +1,13 @@
 import { createAnonymousId, ensureLabIdentity } from '../lab/analytics/labAnalytics';
 import type { LabExperimentId } from '../lab/core/types';
+import type { BehaviorSummary } from './visitorBehavior';
 
 export const VISITOR_SESSION_TRACKED_KEY = 'sitevl-visitor-session-tracked';
 export const VISITOR_FIRST_SOURCE_KEY = 'sitevl-visitor-first-source';
 export const VISITOR_SESSION_SOURCE_KEY = 'sitevl-visitor-session-source';
 
 type StorageLike = Pick<Storage, 'getItem' | 'setItem'>;
-type VisitorEvent = Record<string, string>;
+type VisitorEvent = Record<string, string | BehaviorSummary>;
 const startingSessions = new WeakMap<StorageLike, Promise<{ visitorId: string; sessionId: string }>>();
 let pageDocumentScope = '';
 
@@ -92,14 +93,14 @@ export function ensureVisitorSources(search: string, local: StorageLike, session
 
 export async function ensureVisitorSession(path: string, search: string, local: StorageLike, session: StorageLike, userAgent: string, referrer: string, currentHost: string) {
   const { visitorId, sessionId } = ensureLabIdentity(local, session);
-  const marker = `v3:${sessionId}`;
+  const marker = `v31:${sessionId}`;
   if (readStorage(session, VISITOR_SESSION_TRACKED_KEY) === marker) return { visitorId, sessionId };
   const pending = startingSessions.get(session);
   if (pending) return pending;
   const { sessionSource } = ensureVisitorSources(search, local, session);
   const promise = postVisitorEvent({
     event: 'session_start', visitorId, sessionId,
-    eventId: eventIdFor(session, 'session-start-v2'), path,
+    eventId: eventIdFor(session, 'session-start-v31'), path,
     source: sessionSource,
     referrerHost: safeReferrerHost(referrer, currentHost),
     deviceType: classifyDevice(userAgent), deviceFamily: classifyDeviceFamily(userAgent), browser: classifyBrowser(userAgent),
@@ -138,12 +139,8 @@ export async function trackAiConceptCreated(conceptId: string, local: StorageLik
 }
 
 export async function trackVisitorBriefCompleted(local: StorageLike, session: StorageLike) {
-  const marker = 'sitevl-visitor-brief-completed';
-  if (readStorage(session, marker) === 'true') return true;
   const { visitorId, sessionId } = await ensureActionSession('/brief', local, session);
-  const accepted = await postVisitorEvent({ event: 'brief_completed', visitorId, sessionId, eventId: eventIdFor(session, 'brief-completed'), path: '/brief' });
-  if (accepted) writeStorage(session, marker, 'true');
-  return accepted;
+  return postVisitorEvent({ event: 'brief_completed', visitorId, sessionId, eventId: createAnonymousId('event'), path: '/brief' });
 }
 
 export function contactChannel(href: string) {
@@ -157,11 +154,15 @@ export function contactChannel(href: string) {
 }
 
 export async function trackVisitorAction(event: 'brief_started' | 'contact_click' | 'engagement', path: string, detail: string, local: StorageLike, session: StorageLike) {
-  const key = `v3-action:${event}:${detail}`;
-  if (readStorage(session, key) === 'sent') return true;
+  // A tab can outlive an analytics session. Dedup/caps belong to that server
+  // session, not to a permanent sessionStorage marker from yesterday.
   const { visitorId, sessionId } = await ensureActionSession(path, local, session);
-  const accepted = await postVisitorEvent({ event, visitorId, sessionId, eventId: eventIdFor(session, key), path,
+  const accepted = await postVisitorEvent({ event, visitorId, sessionId, eventId: createAnonymousId('event'), path,
     ...(event === 'contact_click' ? { channel: detail } : event === 'engagement' ? { signal: detail } : {}) });
-  if (accepted) writeStorage(session, key, 'sent');
   return accepted;
+}
+
+export async function trackVisitorBehavior(path: string, behavior: BehaviorSummary, local: StorageLike, session: StorageLike) {
+  const { visitorId, sessionId } = await ensureActionSession(path, local, session);
+  return postVisitorEvent({ event: 'behavior', visitorId, sessionId, eventId: createAnonymousId('event'), path, behavior });
 }

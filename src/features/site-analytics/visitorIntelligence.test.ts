@@ -90,7 +90,7 @@ test('real Redis: concurrent session starts and reload allocate once and send on
   const p = await readVisitor(event.visitorId, h.options);
   assert.equal(p.visitor.sessions, '1'); assert.equal(p.history.length, 1);
   assert.equal(h.telegram.length, 1);
-  assert.match(h.telegram[0], /Новый посетитель SITEVL[\s\S]*Посещение сайта: #1[\s\S]*Уникальный посетитель: #1[\s\S]*iPhone · Safari/);
+  assert.match(h.telegram[0], /Новый визит SITEVL[\s\S]*Посещение сайта: #1[\s\S]*Анонимный посетитель: #1[\s\S]*iPhone · Safari/);
   assert.equal(h.telegram[0].includes(event.visitorId), false);
   assert.equal(await h.command(['GET', 'sitevl:visitor:v2:visit-sequence']), '1');
 });
@@ -106,11 +106,11 @@ test('real Redis: returning visitor retains number; new session advances visits;
   const p = await readVisitor(first.visitorId, h.options);
   assert.equal(p.visitor.visitorNumber, '1'); assert.equal(p.visitor.sessions, '2'); assert.equal(p.session.visitNumber, '2');
   assert.equal(p.visitor.firstSource, 'telegram-vl-1'); assert.equal(p.session.source, 'direct');
-  assert.match(h.telegram[2], /вернулся[\s\S]*#2[\s\S]*#1[\s\S]*Первый источник: Telegram[\s\S]*Текущий источник: Прямой переход/);
+  assert.match(h.telegram[2], /Повторный визит[\s\S]*#2[\s\S]*#1[\s\S]*Первый источник: Telegram[\s\S]*Текущий источник: Прямой переход/);
   assert.equal(h.telegram.length, 4); assert.match(h.telegram[3], /Посетитель #1 смотрит цены/);
 });
 
-test('real Redis: legacy migration preserves history and session count', async (t) => {
+test('real Redis: legacy migration preserves history; five-day inactivity increments, not rewrites, session count', async (t) => {
   const h = await createRedisHarness(t); if (!h) return;
   const event = start(); const profile = 'sitevl:visitor:v1:' + event.visitorId;
   await h.command(['HSET', profile, 'firstVisit', '2026-01-01T00:00:00Z', 'lastVisit', '2026-09-01T00:00:00Z', 'sessions', '4', 'firstSource', 'telegram-original']);
@@ -118,9 +118,9 @@ test('real Redis: legacy migration preserves history and session count', async (
   await h.command(['SET', 'sitevl:visitor:v1:session:' + event.sessionId, event.visitorId]);
   await trackVisitorEvent(event, h.options);
   const p = await readVisitor(event.visitorId, h.options);
-  assert.equal(p.visitor.sessions, '4'); assert.equal(p.visitor.visitorNumber, '1'); assert.equal(p.history.length, 2);
+  assert.equal(p.visitor.sessions, '5'); assert.equal(p.visitor.visitorNumber, '1'); assert.equal(p.history.length, 2);
   assert.equal(p.visitor.firstSource, 'telegram-original'); assert.equal(p.visitor.pageViews, '1');
-  assert.equal(h.telegram.length, 0);
+  assert.equal(h.telegram.length, 1);
 });
 
 test('real Redis: no rebinding, no IP merge; hash TTL is short and hidden from owner data', async (t) => {

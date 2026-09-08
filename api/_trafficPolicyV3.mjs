@@ -44,6 +44,10 @@ export function isHumanTraffic(traffic) {
   return traffic?.classification === 'human' || traffic?.classification === 'likely-human';
 }
 
+export function isAutomatedTraffic(traffic) {
+  return traffic?.classification === 'known-bot' || traffic?.classification === 'likely-bot';
+}
+
 // Forward-confirmed reverse DNS, bounded to 800ms and 512 hashed cache entries.
 // No raw IP, reverse hostname or UA is persisted or returned to the caller.
 export async function verifyGoogleRequest(ip, options = {}) {
@@ -96,7 +100,7 @@ export async function classifyRequestTraffic(request, options = {}) {
     return { classification: 'likely-bot', family: 'Unknown client', reason: 'non-browser-or-missing-user-agent', verification: 'heuristic' };
   }
   // Reading without clicking is a valid visit. No CAPTCHA or interaction gate.
-  return { classification: 'likely-human', family: '', reason: 'browser-request-no-automation-signature', verification: 'heuristic' };
+  return { classification: 'unknown', family: '', reason: 'insufficient-evidence', verification: 'heuristic' };
 }
 
 function safeGeoName(raw) {

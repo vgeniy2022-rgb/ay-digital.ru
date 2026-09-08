@@ -2,41 +2,32 @@ import { useEffect, useMemo, useRef, useState, type PropsWithChildren } from 're
 import { useLocation } from 'react-router-dom';
 import { ensureSiteVisit, fetchSiteStats, type SiteStats } from './siteAnalytics';
 import { SiteAnalyticsContext, type SiteAnalyticsValue } from './siteAnalyticsContext';
-import { contactChannel, trackVisitorAction, trackVisitorPage } from './visitorIntelligence';
+import { contactChannel, trackVisitorAction, trackVisitorBehavior, trackVisitorPage } from './visitorIntelligence';
+import { observeVisitorBehavior } from './visitorBehavior';
 
 export function SiteAnalyticsProvider({ children }: PropsWithChildren) {
   const location = useLocation();
   const [stats, setStats] = useState<SiteStats | null>(null);
   const [status, setStatus] = useState<SiteAnalyticsValue['status']>('loading');
   const trackedNavigations = useRef(new Set<string>());
+  const behavior = useRef<ReturnType<typeof observeVisitorBehavior> | null>(null);
 
   useEffect(() => {
-    // Only event categories; never inspect input values, text, coordinates or keys.
-    const send = (event: 'contact_click' | 'engagement', detail: string) => {
-      void trackVisitorAction(event, window.location.pathname, detail, window.localStorage, window.sessionStorage);
-    };
-    const click = (event: MouseEvent) => {
-      if (!event.isTrusted) return;
-      send('engagement', 'interaction');
-      const anchor = event.target instanceof Element ? event.target.closest('a[href]') : null;
-      const channel = anchor instanceof HTMLAnchorElement ? contactChannel(anchor.href) : null;
-      if (channel) send('contact_click', channel);
-    };
-    let timer: ReturnType<typeof setTimeout>;
-    const reader = () => {
-      clearTimeout(timer);
-      if (document.visibilityState === 'visible') timer = setTimeout(() => send('engagement', 'visible-reader'), 8000);
-    };
-    document.addEventListener('click', click, true);
-    document.addEventListener('visibilitychange', reader);
-    reader();
-    return () => { clearTimeout(timer); document.removeEventListener('click', click, true); document.removeEventListener('visibilitychange', reader); };
+    const observer = observeVisitorBehavior((path, summary) => {
+      void trackVisitorBehavior(path, summary, window.localStorage, window.sessionStorage);
+    }, (path, href) => {
+      const channel = contactChannel(href);
+      if (channel) void trackVisitorAction('contact_click', path, channel, window.localStorage, window.sessionStorage);
+    });
+    behavior.current = observer;
+    return () => { observer.dispose(); behavior.current = null; };
   }, []);
 
   useEffect(() => {
     const navigationId = `${location.key || 'initial'}:${location.pathname}`;
     if (trackedNavigations.current.has(navigationId)) return;
     trackedNavigations.current.add(navigationId);
+    behavior.current?.navigation(location.pathname);
     void trackVisitorPage(location.pathname, location.key, location.search, window.localStorage, window.sessionStorage, navigator.userAgent, document.referrer, window.location.hostname);
   }, [location.key, location.pathname, location.search]);
 

@@ -13,7 +13,7 @@ const json = (response, status, payload) => {
 };
 
 export default async function handler(request, response) {
-  if (request.method === 'GET') return json(response, 200, { version: 3, configured: isLabStatsStorageConfigured(), telegramConfigured: isTelegramConfigured(), ipAssistEnabled: isIpAssistConfigured(), attributionConfigured: attributionConfigured(), botClassification: true, geoSource: 'vercel-network-approximate', retentionDays: visitorRetentionDays() });
+  if (request.method === 'GET') return json(response, 200, { version: '3.1', configured: isLabStatsStorageConfigured(), telegramConfigured: isTelegramConfigured(), ipAssistEnabled: isIpAssistConfigured(), attributionConfigured: attributionConfigured(), botClassification: true, confidenceModel: 'rule-based-not-probability', sessionWindowMinutes: 30, geoSource: 'vercel-network-approximate', retentionDays: visitorRetentionDays() });
   if (request.method !== 'POST') return json(response, 405, { error: 'Метод не поддерживается.' });
   const rawSize = Number(request.headers?.['content-length'] || 0);
   let parsedSize = 0;
