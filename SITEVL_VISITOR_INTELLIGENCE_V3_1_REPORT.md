@@ -4,7 +4,7 @@
 
 ## Статус и границы доказательств
 
-Реализация и локальная проверка **PASS**. Повторная публикация готовится после исправления различия Lua sandbox в Upstash. Первый production QA выявил проблему, она исправлена и проверена прямым вызовом на Upstash; временно восстановлена предыдущая рабочая сборка. Итоговый production PASS пока не заявляется.
+Реализация, release gate и контролируемый production QA **PASS**. Исправленная V3.1 опубликована на `https://sitevl.tech`. Первый production QA выявил различие Lua sandbox в Upstash; оно исправлено, добавлен regression test, затем повторная проверка на реальном production прошла. Границы доказательств (ZIP, seeded время, отсутствие реального lead и positive Googlebot production test) перечислены ниже.
 
 ZIP с реальными Telegram-уведомлениями не был приложен к доступным материалам: доступны два текстовых ТЗ. Поэтому анализ реальной выгрузки **BLOCKED — нужен ZIP**. Числа из ТЗ не выдаются за результаты самостоятельного анализа. Regression fixtures синтетические, без копирования реальных visitor records. Посетитель №69 из предыдущего отчёта V3 — контролируемая QA-запись, а не подтверждённый клиент; в калибровку реальных клиентов он не включался.
 
@@ -144,21 +144,54 @@ Privacy policy обновлена только под реализованные
 
 Production немедленно возвращён на предыдущую рабочую сборку `dpl_T7Q5YX4n8abgSeDZRDqptk7JySb2` через promotion, без rollback/reset Redis. Обе Lua процедуры теперь создают локальную изменяемую копию KEYS перед разрешением analytic-session alias. Прямой scoped вызов исправленного EVAL на Upstash завершился успешно. Добавлен regression test для обоих scripts; полный gate повторён (197/197).
 
-Единственный QA-профиль первой попытки и 10 принадлежащих ему ключей удалены. Его вклад `technicalVisits:1`, `unknownVisits:1` после диагностического EVAL вычтен; отсутствие профиля/сессии проверено. Sequence numbers не откатывались. Реальные заявки не создавались. Ниже сохранена хронология временного сетевого сбоя; финальные результаты повторного QA будут добавлены после READY исправленной версии.
+Единственный QA-профиль первой попытки и 10 принадлежащих ему ключей удалены. Его вклад `technicalVisits:1`, `unknownVisits:1` после диагностического EVAL вычтен; отсутствие профиля/сессии проверено. Read-only сканирование после очистки: 102 профиля проверены, 0 профилей с номером и незавершённым первым визитом. Содержимое реальных профилей не выводилось и не коммитилось.
 
-Кодовый commit: `c2a7558a4ccac9d142d78d95ff769f1e95adb69b`.
+### Проверенный релиз
+
+- Начальная реализация: `c2a7558a4ccac9d142d78d95ff769f1e95adb69b`.
+- Исправленный код: `2343fdce3cf7470ab5d0b8d8bf722e198cb3a1b4`.
+- Проверенное production deployment: `dpl_FFz9XPJoChe8J9bdwHcBa8PpkJhR` — **READY**.
+- Immutable deployment URL: `https://ay-digital-rf2tajkfc-vgeniy.vercel.app`.
+- Привязки подтверждены: `sitevl.tech`, `www.sitevl.tech`, `sitevl-ru.vercel.app`, `ay-digital-ru.vercel.app`.
+- После QA публикуется отдельное изменение только этого отчёта; исполняемый код остаётся указанным выше. Финальный HEAD/deployment с отчётом проверяется отдельно при передаче результата.
 
 Перед push подтверждены `.vercel/repo.json` и Vercel API: существующий проект `ay-digital-ru`, ID `prj_REyqEPemqb3DbzgR2z7PMPJv0FsL`, Node 24.x, Vite, Git integration `ay-digital.ru`. CLI авторизация работала. Никакой новый проект не создавался.
 
-`git push origin main` завершился exit 128: `LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to github.com:443`. Отдельные ограниченные по времени HTTPS-проверки GitHub API, Vercel API и `sitevl.tech` вернули timeout/HTTP 000; повтор по IPv4 также не установил SSL. Подключённый Vercel reader не дал результата в ограниченный интервал. Изменения VPN/DNS/прокси или системных защит не выполнялись.
+Первый `git push` встретил временный TLS-сбой соединения с GitHub/Vercel. Связь восстановилась, повторный push завершился успешно. Изменения VPN/DNS/прокси или системных защит не выполнялись. Это не текущая блокировка и не ошибка сайта.
 
-Последнее подтверждённое перед потерей связи production deployment: `dpl_T7Q5YX4n8abgSeDZRDqptk7JySb2`, старый V3 commit `8fb650d56a8c4f8c34043d2e274b3aea3ee62be9`. Это **не deployment V3.1**. Новый deployment ID отсутствует. Локальный `origin/main` остаётся на указанном старом SHA; актуальное удалённое состояние после сетевого сбоя проверить не удалось.
+### Контролируемый live QA
 
-Production V3.1, Telegram delivery, Redis confidence transitions и новая cleanup-проверка в production **NOT TESTED**. Никакие production QA visitors/leads в этом ходе не создавались. Реальные visitor/lead данные, LAB counters, старые totals и последовательности не удалялись и не пересчитывались.
+| Проверка | Фактический результат |
+|---|---|
+| `/api/visitor-events` | HTTP 200, `version:"3.1"`, `configured:true`, `telegramConfigured:true`, `sessionWindowMinutes:30`, `attributionConfigured:true` |
+| Старый рекламный hostname | Два штатных 307 перехода; подписанная HttpOnly-атрибуция, `src` сохранён |
+| Новый рекламный QA visitor | `unknown`, источник `paid-ad`, ещё не human |
+| 6 Linux/Chrome ID | Пакет запросов завершён за 5.956s; burst detected; 0 human |
+| Главная → Кейсы → Цены после видимости/взаимодействия | Тот же visitor, 1 сессия, score 78, `likely-human`, interest 25; paid-human flag установлен |
+| Контакты → Telegram | Interest дошёл до hot; дополнительные одинаковые действия ограничены caps |
+| Новый technicalSessionId / подготовленная 29m неактивность | Тот же аналитический visitNumber |
+| Подготовленная 31m неактивность | Новая аналитическая сессия, visitorNumber прежний |
+| Telegram | 8 ответов `sent`, 0 `failed`; секреты не выводились |
+| Owner без токена | HTTP 404, deny-by-default |
+| AI lead validation | HTTP 200, `valid:true`, `stored:false`, `testMode:true` |
 
-Подготовлен отдельный QA-сценарий вне Git: `/tmp/sitevl-v31-production-qa.mjs`. Он создаёт 7 собственных UUID visitors (обычный рекламный +6 burst), проверяет API/Redis и реальные Telegram send statuses, затем атомарно удаляет только подтверждённые собственные записи и их вклад. Перед cleanup проверяются ownership/binding, полнота списка сессий и отсутствие leads; sequence keys не меняются. Локальный тест этого cleanup прошёл. Для границ 29/31 минут скрипт сдвигает только серверное поле неактивности своего QA-профиля: это seeded boundary test, **не заявление о реальном 31-минутном ожидании**. Реальные лиды не отправляются; положительный Google DNS сценарий проверен изолированно без подделки production IP.
+Для 29/31 минут менялось только поле серверной неактивности собственного QA-профиля. Это **seeded production boundary test**, а не натуральное ожидание 31 минуты. Positive Googlebot/Google Inspection DNS проверен в изолированном тесте: production IP не подделывался. Реальная заявка не создавалась: запись/alias linkage проверены на изолированном Redis, production — только существующий режим validate без хранения. Telegram API подтверждает приём сообщения, не его прочтение владельцем.
 
-После восстановления соединения: повторно проверить remote main → push существующих локальных commits → дождаться READY того же проекта → выполнить контролируемый QA и cleanup → проверить `/`, `/services`, `/prices`, `/cases`, `/lab`, старую рекламную ссылку, API конфигурацию, canonical/sitemap/robots → дополнить этот отчёт фактическими production результатами. Telegram secrets уже были настроены на сервере; их повторная передача в чат не нужна.
+### Очистка
+
+За успешную попытку удалены 99 собственных ключей (7 visitors, 8 аналитических визитов, technical bindings, history, event/notification dedup). Из агрегатов атомарно убран только их текущий вклад: technical 8, human 1, unknown 6, likely-bot 1, unique-human 1, paid-technical 1, paid-human 1, paid-unique-human 1 и по одному QA funnel action cases/prices/contacts/Telegram. Вместе с первой диагностической попыткой удалено **109 QA-ключей**. Профили/сессии после cleanup отсутствуют; последовательные номера не уменьшались.
+
+Реальные visitors/leads, LAB counters, public site totals, legacy V3 totals и sequence keys не удалялись и не пересчитывались. Общие краткоживущие rate-limit/cooldown buckets не сбрасывались ради QA. Тестовые Telegram-сообщения могут оставаться в чате: BOT TOKEN намеренно недоступен локальному окружению для удаления сообщений; это не visitor records и не production counters.
+
+Независимая проверка с Redis read-only credential по двум QA-manifest: проверены 146 адресов собственных QA-ключей, оставшихся ключей **0**. Эта проверка не выполняла записей или удаления.
+
+QA-сценарий/manifest остаются вне Git в `/tmp`; реальные Telegram выгрузки или реальные visitor histories в репозиторий не добавлены. Cleanup сначала проверяет ownership/binding, полноту списка сессий, отсутствие leads и отсутствие counter underflow. Неверный guard останавливает все удаления.
+
+### Сайт, SEO и LAB
+
+`/`, `/services`, `/prices`, `/cases`, `/lab`, `/sitemap.xml`, `/robots.txt`, `/api/site-stats`, `/api/lab-stats`, `/api/ai` — HTTP 200. Canonical коммерческих страниц соответствует `https://sitevl.tech` + path; LAB сохранил `noindex, follow`. Robots указывает `https://sitevl.tech/sitemap.xml`. `www.sitevl.tech` и старая рекламная ссылка доходят до основного домена с сохранением src; `ay-digital-ru.vercel.app` продолжает отвечать 200 без принудительной смены origin.
+
+Браузерная smoke-проверка production открыла главную, LAB и Modern OS; meaningful content и элементы управления присутствуют, ошибок браузера не зафиксировано. Для неё все analytics POST блокировались локальным QA-injection, поэтому публичные SITE/LAB totals не засорялись. Реальная цепочка браузер → API → Redis отдельно проверена локально; production server flow — controlled HTTP/Redis test выше. Telegram secrets уже настроены, новые переменные или передача ключей в чат **не нужны**.
 
 ## Остаточные ограничения
 
