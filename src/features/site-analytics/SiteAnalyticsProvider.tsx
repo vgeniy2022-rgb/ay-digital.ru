@@ -7,13 +7,6 @@ import { observeVisitorBehavior } from './visitorBehavior';
 
 export function SiteAnalyticsProvider({ children }: PropsWithChildren) {
   const location = useLocation();
-  // No public counters, visitor session creation or behavior observers in the owner workspace.
-  if (/^\/radar(?:\/|$)/i.test(location.pathname)) return <>{children}</>;
-  return <TrackedSiteAnalyticsProvider>{children}</TrackedSiteAnalyticsProvider>;
-}
-
-function TrackedSiteAnalyticsProvider({ children }: PropsWithChildren) {
-  const location = useLocation();
   const [stats, setStats] = useState<SiteStats | null>(null);
   const [status, setStatus] = useState<SiteAnalyticsValue['status']>('loading');
   const trackedNavigations = useRef(new Set<string>());

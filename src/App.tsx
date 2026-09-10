@@ -38,7 +38,6 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => 
 const StudioProjectsPage = lazy(() => import('./features/site-builder/pages/StudioProjectsPage').then((module) => ({ default: module.StudioProjectsPage })));
 const StudioEditorPage = lazy(() => import('./features/site-builder/pages/StudioEditorPage').then((module) => ({ default: module.StudioEditorPage })));
 const StudioPreviewPage = lazy(() => import('./features/site-builder/pages/StudioPreviewPage').then((module) => ({ default: module.StudioPreviewPage })));
-const RadarPage = lazy(() => import('./features/radar/RadarPage').then((module) => ({ default: module.RadarPage })));
 
 function PublicRouteScrollReset({ pathname, hash }: { pathname: string; hash: string }) {
   useEffect(() => {
@@ -52,10 +51,6 @@ function PublicRouteScrollReset({ pathname, hash }: { pathname: string; hash: st
 
 export default function App() {
   const location = useLocation();
-
-  if (/^\/radar(?:\/|$)/i.test(location.pathname)) {
-    return <Suspense fallback={<div className="min-h-screen bg-[#0e131b]" />}><RadarPage /></Suspense>;
-  }
 
   if (location.pathname === '/studio' || location.pathname.startsWith('/studio/')) {
     const isProjectsRoute = location.pathname === '/studio/projects';
