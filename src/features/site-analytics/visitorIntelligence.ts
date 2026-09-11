@@ -68,6 +68,8 @@ function eventIdFor(session: StorageLike, key: string) {
 }
 
 async function postVisitorEvent(body: VisitorEvent) {
+  // Personal IndexedDB draft identifiers never leave the device, including on reload.
+  if (typeof body.path==='string' && /^\/templates\/(?:customize|owner)(?:\/|$)/.test(body.path)) return false;
   try {
     const response = await fetch('/api/visitor-events', {
       method: 'POST',

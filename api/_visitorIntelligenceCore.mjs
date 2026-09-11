@@ -190,9 +190,11 @@ function vladivostokTime(iso) {
   return new Intl.DateTimeFormat('ru-RU', { timeZone: 'Asia/Vladivostok', dateStyle: 'short', timeStyle: 'medium' }).format(new Date(iso));
 }
 
-async function sendTelegram(text, { fetchImpl = fetch, environment = process.env } = {}) {
+export async function sendTelegram(text, { fetchImpl = fetch, environment = process.env } = {}) {
   const config = telegramConfiguration(environment);
   if (!config.token || !config.chatId) return { status: 'not-configured' };
+  const safeDescription = value => String(value || '').split(config.token).join('[redacted]')
+    .split(config.chatId).join('[redacted]').replace(/https?:\/\/\S+/g, '[url]').slice(0, 300);
   try {
   const response = await fetchImpl(`https://api.telegram.org/bot${encodeURIComponent(config.token)}/sendMessage`, {
     method: 'POST',
@@ -200,10 +202,19 @@ async function sendTelegram(text, { fetchImpl = fetch, environment = process.env
     body: JSON.stringify({ chat_id: config.chatId, text: text.slice(0, 3500), disable_web_page_preview: true }),
     signal: AbortSignal.timeout(10000),
   });
-  if (!response.ok) return { status: 'failed' };
-  const payload = await response.json().catch(() => ({}));
-  return { status: payload.ok === true ? 'sent' : 'failed', messageId: Number(payload?.result?.message_id) || null };
-  } catch { return { status: 'failed' }; }
+  const payload = await response.json().catch(() => null);
+  const sent = response.ok && payload?.ok === true;
+  // Server-only diagnostics, never the request URL, credentials or response.result.
+  return { status: sent ? 'sent' : 'failed', messageId: sent ? Number(payload?.result?.message_id) || null : null,
+    diagnostic: { httpStatus: response.status, ok: payload?.ok === true,
+      error_code: Number.isInteger(payload?.error_code) ? payload.error_code : null,
+      description: safeDescription(payload?.description),
+      failureType: sent ? null : !payload || typeof payload.ok !== 'boolean' ? 'malformed-response' : response.status === 429 ? 'rate-limit' : 'telegram-api' } };
+  } catch (error) {
+    // No automatic resend after ambiguous delivery: sendMessage has no idempotency key.
+    return { status: 'failed', diagnostic: { httpStatus: null, ok: false, error_code: null, description: '',
+      failureType: ['TimeoutError', 'AbortError'].includes(error?.name) ? 'timeout' : 'network' } };
+  }
 }
 
 function visitorKeys(visitorId) {
@@ -424,17 +435,20 @@ export async function linkLeadToVisitor(lead, options = {}) {
   const timestamp = new Date(nowMs).toISOString();
   const ttl = visitorTtlSeconds(options.environment);
   const keys = visitorKeys(lead.visitorId);
-  if (!/^[a-f0-9-]{36}$/i.test(lead.id || '') || !CONCEPT_PATTERN.test(lead.conceptId || '')) return { linked: false, notification: 'skipped', intelligence: null };
-  const result = await redisPipeline([['EVAL', LINK_LEAD_SCRIPT, '5', keys.profile, `${V2_NAMESPACE}:session:${lead.visitorSessionId}`, `${V2_NAMESPACE}:lead:${lead.id}`, keys.history, V31_STATS_KEY, lead.visitorId, timestamp, lead.id, lead.conceptId, String(ttl), String(INTEREST_WEIGHTS.lead_created)]], options);
+  const templateLead = lead.source === 'template-catalog' && /^SV-TPL-[A-F0-9]{8}$/.test(lead.conceptId || '');
+  if (!/^[a-f0-9-]{36}$/i.test(lead.id || '') || !(templateLead || CONCEPT_PATTERN.test(lead.conceptId || ''))) return { linked: false, notification: 'skipped', intelligence: null };
+  const leadPath = templateLead && /^\/templates\/[a-z-]+$/.test(options.leadPath || '') ? options.leadPath : '/ai-website';
+  const result = await redisPipeline([['EVAL', LINK_LEAD_SCRIPT, '5', keys.profile, `${V2_NAMESPACE}:session:${lead.visitorSessionId}`, `${V2_NAMESPACE}:lead:${lead.id}`, keys.history, V31_STATS_KEY, lead.visitorId, timestamp, lead.id, lead.conceptId, String(ttl), String(INTEREST_WEIGHTS.lead_created), leadPath]], options);
   if (!Number(result[0]?.result)) return { linked: false, notification: 'skipped', intelligence: null };
   const intelligence = await readVisitor(lead.visitorId, { ...options, sessionId: lead.visitorSessionId });
-  const notification = Number(result[0]?.result) === 1 ? (await sendTelegram(buildLeadTelegramSummary(lead, intelligence), options)).status : 'skipped';
+  const notification = Number(result[0]?.result) === 1 && options.notify !== false ? (await sendTelegram(buildLeadTelegramSummary(lead, intelligence), options)).status : 'skipped';
   return { linked: true, notification, intelligence };
 }
 
 export function authorizeOwnerRequest(headerValue, environment = process.env) {
   const expected = environment.VISITOR_OWNER_API_TOKEN || '';
-  const provided = clean(headerValue, 300).replace(/^Bearer\s+/i, '');
+  if (typeof headerValue !== 'string' || !/^Bearer\s+\S+$/i.test(headerValue) || headerValue.length > 307) return false;
+  const provided = headerValue.replace(/^Bearer\s+/i, '');
   if (!expected || !provided) return false;
   const left = Buffer.from(expected);
   const right = Buffer.from(provided);

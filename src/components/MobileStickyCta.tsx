@@ -5,7 +5,7 @@ import { useSiteData } from '../hooks/useSiteData';
 
 export function MobileStickyCta() {
   const { data } = useSiteData();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const [isFooterVisible, setIsFooterVisible] = useState(false);
   const [hasHomeHeroLeftViewport, setHasHomeHeroLeftViewport] = useState(false);
 
@@ -50,7 +50,8 @@ export function MobileStickyCta() {
   }, [pathname]);
 
   const isHomeHeroVisible = pathname === '/' && !hasHomeHeroLeftViewport;
-  if (isFooterVisible || isHomeHeroVisible) return null;
+  const isTemplatePreview = /^\/templates\/[^/]+$/.test(pathname) && new URLSearchParams(search).get('view') === 'preview';
+  if (isFooterVisible || isHomeHeroVisible || isTemplatePreview) return null;
 
   return (
     <div className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+1rem)] z-40 px-4 sm:hidden">

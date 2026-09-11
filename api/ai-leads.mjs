@@ -1,6 +1,7 @@
 import { createLeadSummary, sanitizeAiWebsiteLead } from './_aiLeadValidation.mjs';
 import { isTelegramConfigured, linkLeadToVisitor, telegramConfiguration } from './_visitorIntelligenceCore.mjs';
 import { classifyRequestTraffic } from './_trafficPolicyV3.mjs';
+import { handleTemplateLead, templateLeadConfiguration } from './_templateLeads.mjs';
 
 const submissionWindows = new Map();
 
@@ -86,7 +87,8 @@ async function notifyTelegram(lead) {
 }
 
 export default async function handler(request, response) {
-  if (request.method === 'GET') return json(response, 200, { configured: configuration().storageConfigured, storage: 'private-redis', telegramConfigured: configuration().telegramConfigured });
+  if (request.method === 'GET') return json(response, 200, { configured: configuration().storageConfigured, storage: 'private-redis', telegramConfigured: configuration().telegramConfigured, templateCatalog: templateLeadConfiguration() });
+  if (request.body?.source === 'template-catalog' || request.query?.source === 'template-catalog') return handleTemplateLead(request,response);
   if (request.method !== 'POST') return json(response, 405, { error: 'Метод не поддерживается.' });
   const rawSize = Number(request.headers?.['content-length'] || 0);
   if (rawSize > 80000) return json(response, 413, { error: 'Заявка превышает допустимый размер.' });

@@ -105,6 +105,9 @@ export type SiteBuilderProject = {
   settings: {
     defaultBreakpoint: StudioBreakpoint;
     language: 'ru';
+    catalogCustomizer?: { version: 1; templateVersion: string; palette?: string; mode?: 'light' | 'dark' };
+    /** Local-only form and retry receipt, excluded from the submitted Studio snapshot. */
+    catalogEnquiry?: import('../leads/types').TemplateEnquiry;
   };
 };
 
@@ -121,4 +124,3 @@ export type StoredStudioAsset = StudioAssetMetadata & {
 export type ProjectListItem = Pick<SiteBuilderProject, 'id' | 'name' | 'templateId' | 'createdAt' | 'updatedAt'> & {
   pageCount: number;
 };
-

@@ -11,6 +11,9 @@ import { safeStudioHref } from '../utils/url';
 import { studioComponentGroups } from './componentCatalog';
 import { studioComponentLabels, studioRu, studioValueLabels, studioVisibleLabelTranslations } from '../i18n/ru';
 import '../styles/renderer.css';
+import { designComponents } from '../designs/config';
+import { designKeys, designLabels, type DesignBlockProps } from '../designs/types';
+import { customDesignVariables } from '../customizer/theme';
 
 type BaseProps = { responsive?: ResponsiveSettings; idAnchor?: string };
 type LinkItem = { label: string; href: string };
@@ -21,7 +24,7 @@ type PriceItem = { title: string; price: string; features: string };
 type PortfolioItem = { title: string; category: string };
 type FaqItem = { question: string; answer: string };
 
-export type StudioComponentProps = {
+export type StudioComponentProps = DesignBlockProps & {
   Section: BaseProps & { children: Slot; tone: 'default' | 'muted' | 'contrast'; minHeight: number };
   Container: BaseProps & { children: Slot; width: 'narrow' | 'default' | 'wide' };
   VerticalStack: BaseProps & { children: Slot; gap: number; align: 'stretch' | 'start' | 'center' | 'end' };
@@ -58,7 +61,7 @@ export type StudioComponentProps = {
   Footer: BaseProps & { brand: string; text: string; links: LinkItem[]; variant: 'dark' | 'light' | 'minimal' };
 };
 
-type StudioRootProps = { title: string };
+type StudioRootProps = { title: string; catalogDesign?: string; useThemeTokens?: boolean };
 type StudioMetadata = { theme?: StudioThemeTokens; assetUrls?: Record<string, string> };
 
 const responsiveField = {
@@ -144,16 +147,19 @@ export const studioConfig: Config<StudioComponentProps, StudioRootProps> = {
     layout: { title: studioRu.categories.layout, components: [...studioComponentGroups.layout], defaultExpanded: true },
     basic: { title: studioRu.categories.basic, components: [...studioComponentGroups.basic], defaultExpanded: true },
     business: { title: studioRu.categories.business, components: [...studioComponentGroups.business], defaultExpanded: true },
+    designs: { title: 'Каталог дизайнов', components: [...studioComponentGroups.designs], defaultExpanded: false },
   },
   root: {
-    fields: { title: { type: 'text', label: 'Название страницы', contentEditable: false } },
+    fields: { title: { type: 'text', label: 'Название страницы', contentEditable: false }, catalogDesign: { type: 'select', label: 'Композиция каталога', options: [{ label: 'Обычная Studio', value: '' }, ...designKeys.map((value) => ({ label: designLabels[value], value }))] } },
     defaultProps: { title: 'Страница SITEVL' },
-    render: ({ children, puck }) => {
+    render: ({ children, puck, catalogDesign, useThemeTokens }) => {
       const metadata = metadataOf(puck);
-      return <div className="sv-site" style={themeToCssVariables(metadata.theme || defaultStudioTheme)}>{children}</div>;
+      const theme=metadata.theme || defaultStudioTheme;
+      return <div className="sv-site" data-design={designKeys.some((key) => key === catalogDesign) ? catalogDesign : undefined} data-design-customized={useThemeTokens || undefined} data-button-preset={useThemeTokens ? theme.buttonPreset : undefined} style={{...themeToCssVariables(theme),...(useThemeTokens ? customDesignVariables(theme) : {})}}>{children}</div>;
     },
   },
   components: {
+    ...designComponents,
     Section: {
       label: studioComponentLabels.Section,
       fields: { ...baseFields, tone: { type: 'select', label: 'Фон', options: [{ label: 'Обычный', value: 'default' }, { label: 'Мягкий', value: 'muted' }, { label: 'Контрастный', value: 'contrast' }] }, minHeight: { type: 'number', label: 'Мин. высота', min: 0, max: 1200 }, children: { type: 'slot', allow: ['Container', 'VerticalStack', 'HorizontalStack', 'Grid', 'Columns', 'Card', 'Heading', 'RichText', 'Button', 'Image'] } },

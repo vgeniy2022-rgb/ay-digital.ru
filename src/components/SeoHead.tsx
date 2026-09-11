@@ -11,6 +11,7 @@ export type SeoHeadProps = {
   image?: string;
   type?: 'website' | 'article';
   noindex?: boolean;
+  nofollow?: boolean;
   structuredData?: unknown | unknown[];
 };
 
@@ -63,6 +64,7 @@ export function SeoHead(props: SeoHeadProps) {
   const description = props.description || routeSeo?.description || siteConfig.defaultDescription;
   const canonicalPath = props.canonicalPath || routeSeo?.canonicalPath || location.pathname;
   const noindex = props.noindex ?? routeSeo?.noindex ?? false;
+  const nofollow = props.nofollow ?? false;
   const type = props.type || routeSeo?.type || 'website';
   const image = absoluteAssetUrl(props.image || routeSeo?.image || siteConfig.defaultOgImage);
   const structuredData = props.structuredData ?? routeSeo?.structuredData;
@@ -73,7 +75,7 @@ export function SeoHead(props: SeoHeadProps) {
     document.title = title;
 
     setMeta('meta[name="description"]', 'content', description, () => createNamedMeta('description'));
-    setMeta('meta[name="robots"]', 'content', noindex ? 'noindex, follow' : 'index, follow', () => createNamedMeta('robots'));
+    setMeta('meta[name="robots"]', 'content', `${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}`, () => createNamedMeta('robots'));
 
     setMeta('link[rel="canonical"]', 'href', canonicalUrl, () => {
       const element = document.createElement('link');
@@ -131,7 +133,7 @@ export function SeoHead(props: SeoHeadProps) {
       script.textContent = JSON.stringify(cleaned);
       document.head.appendChild(script);
     });
-  }, [canonicalPath, canonicalUrl, description, image, noindex, structuredData, title, type]);
+  }, [canonicalPath, canonicalUrl, description, image, noindex, nofollow, structuredData, title, type]);
 
   return null;
 }

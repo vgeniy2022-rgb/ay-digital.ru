@@ -98,14 +98,14 @@ export async function createStaticSiteZip(project: SiteBuilderProject, assets: S
   downloadBlob(blob, `${safeFilename(project.name)}-site.zip`);
 }
 
-export async function createOwnerBundle(project: SiteBuilderProject, assets: StoredStudioAsset[], contact: Record<string, string>, thumbnail?: Blob) {
+export async function createOwnerBundle(project: SiteBuilderProject, assets: StoredStudioAsset[], contact: Record<string, string>, thumbnail?: Blob, readme?: string) {
   const zip = new JSZip();
   zip.file('project.sitevl.json', JSON.stringify(project, null, 2));
   zip.file('contact.json', JSON.stringify(contact, null, 2));
   zip.file('assets.json', JSON.stringify(project.assets, null, 2));
   assets.forEach((asset) => zip.file(`assets/${asset.id}-${safeFilename(asset.name)}`, asset.blob));
   if (thumbnail) zip.file('thumbnail.png', thumbnail);
-  zip.file('README.txt', 'Полный bundle проекта SITEVL Studio для передачи Александру. Облачная отправка не выполнялась: передайте этот ZIP вручную или через согласованный мессенджер.');
+  zip.file('README.txt', readme || 'Полный bundle проекта SITEVL Studio для передачи Александру. Облачная отправка не выполнялась: передайте этот ZIP вручную или через согласованный мессенджер.');
   const blob = await zip.generateAsync({ type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } });
   downloadBlob(blob, `${safeFilename(project.name)}-for-sitevl.zip`);
 }
@@ -113,4 +113,3 @@ export async function createOwnerBundle(project: SiteBuilderProject, assets: Sto
 function escapeHtml(value: string) {
   return value.replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character] || character));
 }
-

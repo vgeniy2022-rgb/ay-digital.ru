@@ -38,6 +38,10 @@ const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => 
 const StudioProjectsPage = lazy(() => import('./features/site-builder/pages/StudioProjectsPage').then((module) => ({ default: module.StudioProjectsPage })));
 const StudioEditorPage = lazy(() => import('./features/site-builder/pages/StudioEditorPage').then((module) => ({ default: module.StudioEditorPage })));
 const StudioPreviewPage = lazy(() => import('./features/site-builder/pages/StudioPreviewPage').then((module) => ({ default: module.StudioPreviewPage })));
+const TemplateCatalogPage = lazy(() => import('./features/site-builder/catalog/TemplateCatalogPage').then((module) => ({ default: module.TemplateCatalogPage })));
+const TemplateDetailPage = lazy(() => import('./features/site-builder/catalog/TemplateDetailPage').then((module) => ({ default: module.TemplateDetailPage })));
+const TemplateCustomizerPage = lazy(() => import('./features/site-builder/customizer/TemplateCustomizerPage').then((module) => ({ default: module.TemplateCustomizerPage })));
+const TemplateOwnerPage = lazy(() => import('./features/site-builder/leads/TemplateOwnerPage').then((module) => ({ default: module.TemplateOwnerPage })));
 
 function PublicRouteScrollReset({ pathname, hash }: { pathname: string; hash: string }) {
   useEffect(() => {
@@ -51,6 +55,15 @@ function PublicRouteScrollReset({ pathname, hash }: { pathname: string; hash: st
 
 export default function App() {
   const location = useLocation();
+
+  if (location.pathname.startsWith('/templates/customize/') || location.pathname.startsWith('/templates/owner/')) return <>
+    <SeoHead title="Дизайн сайта — SITEVL" description="Личная копия дизайна или закрытая заявка владельцу." canonicalPath="/templates" noindex nofollow />
+    <Suspense fallback={<main className="studio-loading">Открываем настройщик…</main>}><Routes>
+      <Route path="/templates/customize/:projectId" element={<TemplateCustomizerPage />} />
+      <Route path="/templates/owner/:leadId" element={<TemplateOwnerPage />} />
+      <Route path="*" element={<Navigate to="/templates" replace />} />
+    </Routes></Suspense>
+  </>;
 
   if (location.pathname === '/studio' || location.pathname.startsWith('/studio/')) {
     const isProjectsRoute = location.pathname === '/studio/projects';
@@ -112,6 +125,8 @@ export default function App() {
             <Route path="/mobile-apps" element={<MobileAppsPage />} />
             <Route path="/ai-website" element={<AiWebsitePage />} />
             <Route path="/services" element={<ServicesPage />} />
+            <Route path="/templates" element={<TemplateCatalogPage />} />
+            <Route path="/templates/:slug" element={<TemplateDetailPage />} />
             <Route path="/services/:slug" element={<Navigate to="/services" replace />} />
             <Route path="/useful" element={<UsefulIndexPage />} />
             <Route path="/useful/:slug" element={<UsefulArticlePage />} />

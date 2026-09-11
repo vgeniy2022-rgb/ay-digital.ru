@@ -27,6 +27,7 @@ test('Studio exposes the complete typed component catalogue', () => {
     'Heading', 'RichText', 'Button', 'Image', 'Icon', 'Video', 'Badge', 'List', 'Quote',
     'Header', 'Hero', 'Services', 'Features', 'Pricing', 'Portfolio', 'Gallery', 'Steps', 'Stats', 'Reviews',
     'Team', 'FAQ', 'Contact', 'LeadForm', 'MapPlaceholder', 'Footer',
+    'DesignHeader', 'DesignHero', 'DesignCollection', 'DesignStory', 'DesignFAQ', 'DesignContact', 'DesignFooter',
   ];
   assert.deepEqual([...studioComponentNames].sort(), expected.sort());
 });

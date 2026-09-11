@@ -10,6 +10,7 @@ import { routeSeo } from '../src/data/routeSeo.ts';
 import { seoLandingPages } from '../src/data/seoLandingPages.ts';
 import { usefulArticles, usefulIndexMeta } from '../src/data/useful.ts';
 import { structuredPrice } from '../src/utils/structuredPrice.ts';
+import { getTemplatePackage, publishedTemplates } from '../src/features/site-builder/catalog/catalog.ts';
 
 const rootDir = process.cwd();
 const distDir = join(rootDir, 'dist');
@@ -22,6 +23,16 @@ const siteName = siteConfig.siteName;
 const telegramUrl = siteConfig.telegramUrl;
 
 const baseRoutes = [
+  {
+    path: '/templates',
+    title: routeSeo['/templates'].title,
+    description: routeSeo['/templates'].description,
+    h1: 'Дизайны сайтов для вашего бизнеса',
+    noindex: routeSeo['/templates'].noindex,
+    priority: 0.7,
+    changefreq: 'monthly',
+    schemaType: 'CollectionPage',
+  },
   {
     path: '/',
     title: 'SITEVL — сайты и мобильные приложения для бизнеса',
@@ -296,6 +307,7 @@ const technicalRoutes = [
 ];
 
 const baseH1 = {
+  '/templates': 'Дизайны сайтов для вашего бизнеса',
   '/': pageMeta.home.title,
   '/services': pageMeta.services.title,
   '/mobile-apps': 'Разработка мобильных приложений для iOS и Android',
@@ -403,6 +415,17 @@ const baseStaticContent = {
 };
 
 const sourceRoutes = [
+  ...publishedTemplates.map((source) => ({
+    path: `/templates/${source.slug}`,
+    title: `${source.name} — дизайн сайта | SITEVL`,
+    description: source.description,
+    h1: source.name,
+    priority: 0.65,
+    changefreq: 'monthly',
+    schemaType: 'WebPage',
+    sourceKind: 'template',
+    source,
+  })),
   ...priceDirections.map((source) => ({
     path: source.path,
     title: source.seoTitle,
@@ -1046,6 +1069,18 @@ function renderCaseContent(source) {
 }
 
 function renderSourceContent(route) {
+  if (route.path === '/templates') {
+    return `<p>Выберите дизайн по сфере бизнеса, посмотрите страницы и адаптируйте сайт под свою задачу.</p>
+      ${publishedTemplates.length ? renderLinks(publishedTemplates.map((template) => ({ href: `/templates/${template.slug}`, label: template.name }))) : '<h2>Коллекция в подготовке</h2><p>Проверяем демонстрации перед публикацией. Готовых коммерческих дизайнов в каталоге пока нет.</p>'}
+      ${renderLinks([{ href: '/cases', label: 'Реальные кейсы' }, { href: '/prices/websites', label: 'Цены на разработку сайтов' }])}`;
+  }
+  if (route.sourceKind === 'template') {
+    const template = route.source;
+    const servicePackage = getTemplatePackage(template);
+    return `<p>${escapeHtml(template.description)}</p><h2>Возможности дизайна</h2>${renderList(template.features)}
+      <h2>${escapeHtml(servicePackage.name)}</h2><p>${escapeHtml(servicePackage.price)} — стартовая стоимость разработки, не цена покупки шаблона.</p>
+      ${renderLinks([{ href: '/templates', label: 'Все дизайны сайтов' }, { href: '/prices/websites', label: 'Что входит в разработку' }])}`;
+  }
   if (route.sourceKind === 'landing') return renderLandingContent(route);
   if (route.sourceKind === 'article') return renderArticleContent(route.source);
   if (route.sourceKind === 'local') return renderLocalContent(route.source);

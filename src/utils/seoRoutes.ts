@@ -1,3 +1,5 @@
+import { findCatalogTemplate } from '../features/site-builder/catalog/catalog';
+
 export type BreadcrumbItem = {
   label: string;
   href: string;
@@ -6,6 +8,7 @@ export type BreadcrumbItem = {
 const staticRouteLabels: Record<string, string> = {
   '/': 'Главная',
   '/services': 'Услуги',
+  '/templates': 'Дизайны сайтов',
   '/mobile-apps': 'Мобильные приложения',
   '/ai-website': 'AI-концепция сайта',
   '/prices': 'Цены',
@@ -102,6 +105,7 @@ function humanizeSegment(segment: string) {
 }
 
 export function getRouteLabel(pathname: string) {
+  if (pathname.startsWith('/templates/')) return findCatalogTemplate(pathname.slice('/templates/'.length))?.name || 'Дизайн недоступен';
   const segments = pathname.split('/').filter(Boolean);
   return routeLabels[pathname] || humanizeSegment(segments[segments.length - 1] || 'Страница');
 }

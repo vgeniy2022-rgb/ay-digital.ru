@@ -1,0 +1,407 @@
+/* Data-selected compositions. No page-specific renderer or global SITEVL styles. */
+.sv-site[data-design=barber] { --d-bg:#201e1b;--d-ink:#f4ecdb;--d-muted:#c0b7a7;--d-accent:#d7af72;--d-panel:#302d28;--d-line:#514b42; }
+.sv-site[data-design=nails] { --d-bg:#fff8f8;--d-ink:#512c41;--d-muted:#805f70;--d-accent:#9b3a65;--d-panel:#f5e6eb;--d-line:#e3c8d4; }
+.sv-site[data-design=detailing] { --d-bg:#101a24;--d-ink:#f1f7fb;--d-muted:#abbfce;--d-accent:#75d4ef;--d-panel:#1d2c39;--d-line:#394e5f; }
+.sv-site[data-design=tires] { --d-bg:#f4f3ee;--d-ink:#232522;--d-muted:#62675e;--d-accent:#b53627;--d-panel:#e7e8df;--d-line:#c6c9bf; }
+.sv-site[data-design=restaurant] { --d-bg:#192d27;--d-ink:#f8f0da;--d-muted:#b8c3b1;--d-accent:#e2c59b;--d-panel:#283e34;--d-line:#486051; }
+.sv-site[data-design=bakery] { --d-bg:#fff1d6;--d-ink:#512e20;--d-muted:#85604a;--d-accent:#aa4826;--d-panel:#f6ddb2;--d-line:#dcb68c; }
+.sv-site[data-design=language] { --d-bg:#f3f7fc;--d-ink:#203d59;--d-muted:#57718b;--d-accent:#ae3e35;--d-panel:#e2edf9;--d-line:#bed1e7; }
+.sv-site[data-design=training] { --d-bg:#f7f8fc;--d-ink:#202e52;--d-muted:#636f8b;--d-accent:#304eb4;--d-panel:#e7ebf6;--d-line:#c6cee3; }
+.sv-site:is([data-design=barber],[data-design=nails],[data-design=restaurant],[data-design=bakery]):not([data-design-customized]) :is(h1,h2,.sv-design-brand) { font-family:Georgia,serif; }
+.sv-site:is([data-design=detailing],[data-design=training]):not([data-design-customized]) :is(h1,h2) { font-family:Arial,sans-serif;font-weight:700; }
+.sv-site[data-design=language]:not([data-design-customized]) :is(h1,h2) { font-family:'Trebuchet MS',Arial,sans-serif;font-weight:600; }
+.sv-site[data-design=tires]:not([data-design-customized]) :is(h1,h2) { font-family:Impact,Arial,sans-serif;text-transform:uppercase; }
+.sv-site:is([data-design=barber],[data-design=restaurant],[data-design=detailing]):not([data-design-customized]) .sv-design-button { color:#142128; }
+.sv-site[data-design=nails]:not([data-design-customized]) .sv-design-button { border-radius:40px; }
+.sv-site[data-design=language]:not([data-design-customized]) .sv-design-button { border-radius:12px; }
+.sv-site[data-design] .sv-design-hero--editorial { grid-template-columns:1.3fr .8fr;align-items:end;padding-top:45px;gap:10%; }
+.sv-site[data-design] .sv-design-hero--editorial h1 { font-size:clamp(50px,7.7cqw,112px);font-style:italic; }
+.sv-design-hero--editorial .sv-design-hero-copy { border-top:1px solid var(--d-line);padding-top:28px; }
+.sv-design-hero--editorial .sv-design-hero-photo { padding:18px;border:1px solid var(--d-line); }
+.sv-design-hero--editorial .sv-design-hero-photo img { height:530px; }
+.sv-site[data-design] .sv-design-hero--portrait { grid-template-columns:.8fr 1.1fr;gap:10%;padding:50px 8% 80px; }
+.sv-design-hero--portrait .sv-design-hero-photo { grid-column:1;grid-row:1; }
+.sv-design-hero--portrait .sv-design-hero-copy { grid-column:2; }
+.sv-design-hero--portrait .sv-design-hero-photo img { height:550px;border-radius:180px 180px 16px 16px; }
+.sv-site[data-design] .sv-design-hero--portrait h1 { font-size:clamp(45px,6.2cqw,89px); }
+.sv-site[data-design] .sv-design-hero--cinema { display:block;padding-top:38px;padding-bottom:35px; }
+.sv-design-hero--cinema .sv-design-hero-copy { display:grid;grid-template-columns:1.5fr 1fr;column-gap:8%;align-items:end;margin-bottom:36px; }
+.sv-design-hero--cinema .sv-design-kicker { grid-column:1/-1; }
+.sv-design-hero--cinema .sv-design-actions { grid-column:2; }
+.sv-design-hero--cinema .sv-design-hero-photo img { height:390px;object-position:50% 55%; }
+.sv-site[data-design] .sv-design-hero--cinema h1 { grid-row:2/4;font-size:clamp(44px,6.3cqw,91px); }
+.sv-design-hero--cinema .sv-design-hero-copy p { margin-top:0!important; }
+.sv-site[data-design] .sv-design-hero--poster { grid-template-columns:1.1fr 1fr;padding:40px 5%;gap:5%;background:var(--d-panel); }
+.sv-site[data-design] .sv-design-hero--poster h1 { font-size:clamp(52px,7cqw,102px);letter-spacing:-.025em; }
+.sv-design-hero--poster .sv-design-kicker { display:inline-block;padding:8px 13px;border:1px solid var(--d-accent);color:var(--d-ink); }
+.sv-design-hero--poster .sv-design-hero-photo { border-bottom:10px solid var(--d-accent);padding-bottom:16px; }
+.sv-design-hero--poster .sv-design-hero-photo img { height:490px; }
+.sv-site[data-design] .sv-design-hero--cover { position:relative;isolation:isolate;display:grid;grid-template-columns:1fr;padding:65px 7%;min-height:710px; }
+.sv-design-hero--cover .sv-design-hero-photo { position:absolute;inset:0;z-index:-1; }
+.sv-design-hero--cover .sv-design-hero-photo img { height:100%;width:100%; }
+.sv-design-hero--cover .sv-design-hero-photo figcaption { position:absolute;bottom:15px;right:20px;left:20px;color:#fff!important;text-shadow:0 1px 3px #000; }
+.sv-design-hero--cover .sv-design-hero-copy { max-width:660px;background:var(--d-bg);padding:42px;border:1px solid var(--d-line); }
+.sv-site[data-design] .sv-design-hero--cover h1 { font-size:clamp(44px,5.2cqw,76px); }
+.sv-site[data-design] .sv-design-hero--panorama { display:flex;flex-direction:column;padding:45px 0 0;gap:38px;text-align:center; }
+.sv-design-hero--panorama .sv-design-hero-copy { max-width:1050px;padding:0 5%; }
+.sv-site[data-design] .sv-design-hero--panorama h1 { font-size:clamp(48px,7.7cqw,110px); }
+.sv-design-hero--panorama .sv-design-hero-copy p { margin:22px auto 0!important;max-width:580px; }
+.sv-design-hero--panorama .sv-design-actions { justify-content:center; }
+.sv-design-hero--panorama .sv-design-hero-photo { width:100%; }
+.sv-design-hero--panorama .sv-design-hero-photo img { height:370px; }
+.sv-design-hero--panorama figcaption { text-align:left;padding:0 5%; }
+.sv-site[data-design] .sv-design-hero--campus { margin:25px 3%;padding:45px 4%;gap:7%;background:var(--d-panel);border-radius:30px;grid-template-columns:1.2fr 1fr; }
+.sv-site[data-design] .sv-design-hero--campus h1 { font-size:clamp(44px,5.5cqw,80px); }
+.sv-design-hero--campus .sv-design-hero-photo img { height:480px;border-radius:45% 45% 12px 12px; }
+.sv-design-hero--campus .sv-design-kicker { color:var(--d-accent);font-weight:700; }
+.sv-site[data-design] .sv-design-hero--grid { grid-template-columns:1.2fr 1fr;gap:0;padding:0;align-items:stretch;min-height:650px; }
+.sv-design-hero--grid .sv-design-hero-copy { padding:55px 9%;border-bottom:1px solid var(--d-line); }
+.sv-site[data-design] .sv-design-hero--grid h1 { font-size:clamp(43px,5.5cqw,80px); }
+.sv-design-hero--grid .sv-design-hero-photo { border-left:1px solid var(--d-line);padding:35px;display:flex;flex-direction:column;justify-content:center;background:var(--d-panel); }
+.sv-design-hero--grid .sv-design-hero-photo img { height:450px; }
+.sv-site[data-design=barber] .sv-design-collection--list { border-top:1px solid var(--d-line); }
+.sv-site[data-design=barber] .sv-design-collection--list h3 { font-family:Georgia,serif;font-style:italic;font-size:30px; }
+.sv-site[data-design=nails] .sv-design-collection--cards .sv-design-item { border:0; }
+.sv-site[data-design=nails] .sv-design-collection--cards figure img { height:300px;border-radius:100px 100px 0 0; }
+.sv-site[data-design=detailing] .sv-design-collection--steps .sv-design-item-meta { font:50px/1.1 monospace;color:var(--d-accent); }
+.sv-site[data-design=tires] .sv-design-collection--list .sv-design-item-body { border-left:5px solid var(--d-accent);padding-left:25px; }
+.sv-site[data-design=restaurant] .sv-design-collection--menu { max-width:1200px;margin:auto; }
+.sv-site[data-design=restaurant] .sv-design-story figure img { border-radius:45% 45% 0 0;height:510px; }
+.sv-site[data-design=bakery] .sv-design-collection--products .sv-design-item { border:1px solid var(--d-line);padding:24px; }
+.sv-site[data-design=bakery] .sv-design-collection--products h3 { font-family:Georgia,serif; }
+.sv-site[data-design=language] .sv-design-collection--cards .sv-design-item { padding:26px;background:var(--d-panel);border:0;border-radius:18px; }
+.sv-site[data-design=training] .sv-design-collection--cards .sv-design-items { gap:0; }
+.sv-site[data-design=training] .sv-design-collection--cards .sv-design-item { border:1px solid var(--d-line);padding:30px; }
+.sv-site[data-design=training] .sv-design-collection--steps .sv-design-item-meta { font-size:40px;color:var(--d-accent); }
+.sv-design-comparison { margin-bottom:28px; }
+.sv-design-comparison-images { position:relative;aspect-ratio:2;overflow:hidden;border:1px solid var(--d-line); }
+.sv-design-comparison-images img { width:100%;height:100%;object-fit:contain;display:block; }
+.sv-design-comparison-before { position:absolute;inset:0; }
+.sv-design-comparison-line { position:absolute;top:0;bottom:0;width:3px;background:var(--d-accent);pointer-events:none; }
+.sv-design-comparison label { display:grid;gap:8px;margin-top:18px;font-size:14px; }
+.sv-design-comparison input { width:100%;accent-color:var(--d-accent);min-height:36px; }
+.sv-design-collection--comparison .sv-design-items { grid-template-columns:1fr 1fr; }
+.sv-design-form-row { display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+.sv-design-contact input { width:100%;min-width:0;max-width:100%;background:var(--d-bg);color:var(--d-ink);border:1px solid var(--d-line);padding:15px;font:16px Arial,sans-serif; }
+@container(max-width:720px) {
+ .sv-site[data-design] .sv-design-hero[class*='sv-design-hero--'] { padding:38px 6% 45px;min-height:0;gap:28px; }
+ .sv-site[data-design] .sv-design-hero[class*='sv-design-hero--'] h1 { font-size:clamp(39px,11.5cqw,65px); }
+ .sv-site[data-design] .sv-design-hero--editorial .sv-design-hero-photo { padding:12px; }
+ .sv-site[data-design] .sv-design-hero--portrait .sv-design-hero-photo { width:85%;align-self:flex-start; }
+ .sv-design-hero--portrait .sv-design-hero-photo { order:1; }
+ .sv-site[data-design] .sv-design-hero--cinema .sv-design-hero-copy { display:block; }
+ .sv-site[data-design] .sv-design-hero--cinema .sv-design-hero-photo img { height:240px; }
+ .sv-site[data-design] .sv-design-hero--cover { padding:32px 6% 300px; }
+ .sv-site[data-design] .sv-design-hero--cover .sv-design-hero-copy { padding:26px;background:var(--d-bg); }
+ .sv-site[data-design] .sv-design-hero--cover .sv-design-hero-photo img { height:100%; }
+ .sv-site[data-design] .sv-design-hero--panorama { padding-bottom:0;text-align:center; }
+ .sv-site[data-design] .sv-design-hero--panorama .sv-design-hero-photo img { height:250px; }
+ .sv-site[data-design] .sv-design-hero--campus { margin:14px;border-radius:20px; }
+ .sv-site[data-design] .sv-design-hero--grid { padding:0;gap:0; }
+ .sv-site[data-design] .sv-design-hero--grid .sv-design-hero-copy { padding:38px 6%; }
+ .sv-site[data-design] .sv-design-hero--grid .sv-design-hero-photo { padding:25px 6%; }
+ .sv-site[data-design=restaurant] .sv-design-story figure img { height:350px; }
+ .sv-design-collection--comparison .sv-design-items { grid-template-columns:1fr; }
+ .sv-design-form-row { grid-template-columns:1fr; }
+}
+
+/* Task 6: compositions only for the eight new designs. */
+.sv-site[data-design=photographer] { --d-bg:#f4f4f0;--d-ink:#262825;--d-muted:#656961;--d-accent:#724935;--d-panel:#e6e7e0;--d-line:#c8ccc0; }
+.sv-site[data-design=psychologist] { --d-bg:#fbf8f3;--d-ink:#39423e;--d-muted:#63716b;--d-accent:#466657;--d-panel:#edf0e9;--d-line:#cdd7ce; }
+.sv-site[data-design=tutor] { --d-bg:#f8f9ff;--d-ink:#283756;--d-muted:#5d6b87;--d-accent:#3858ad;--d-panel:#e9edf9;--d-line:#c5d0e5; }
+.sv-site[data-design=clothing] { --d-bg:#f8f5f0;--d-ink:#292321;--d-muted:#71675f;--d-accent:#813e2c;--d-panel:#ede5dc;--d-line:#d9cabe; }
+.sv-site[data-design=florist] { --d-bg:#fff8f2;--d-ink:#493640;--d-muted:#78626d;--d-accent:#963e62;--d-panel:#f4e6df;--d-line:#ddc6c9; }
+.sv-site[data-design=logistics] { --d-bg:#102b3b;--d-ink:#eff7fb;--d-muted:#b1c7d0;--d-accent:#81d6e0;--d-panel:#1d3d4d;--d-line:#416273; }
+.sv-site[data-design=wholesale] { --d-bg:#f6f8fa;--d-ink:#17334a;--d-muted:#607484;--d-accent:#27698e;--d-panel:#e6eef3;--d-line:#bed0dc; }
+.sv-site[data-design=lodge] { --d-bg:#f5f2e9;--d-ink:#283c34;--d-muted:#617165;--d-accent:#355e49;--d-panel:#e4eadd;--d-line:#c5d0bc; }
+.sv-site:is([data-design=photographer],[data-design=psychologist],[data-design=clothing],[data-design=florist],[data-design=lodge]):not([data-design-customized]) :is(h1,h2,.sv-design-brand) { font-family:Georgia,serif; }
+.sv-site[data-design=tutor]:not([data-design-customized]) :is(h1,h2) { font-family:'Trebuchet MS',Arial,sans-serif;font-weight:600; }
+.sv-site:is([data-design=logistics],[data-design=wholesale]):not([data-design-customized]) :is(h1,h2) { font-family:Arial,sans-serif;font-weight:700; }
+.sv-site[data-design=logistics]:not([data-design-customized]) .sv-design-button { color:#102b3b; }
+.sv-site:is([data-design=photographer],[data-design=psychologist],[data-design=tutor],[data-design=clothing],[data-design=florist],[data-design=logistics],[data-design=wholesale],[data-design=lodge]) :is(.sv-design-kicker,.sv-design-item-meta,.sv-design-brand small,figcaption,.sv-design-disclaimer) { font-size:12px; }
+.sv-site:is([data-design=photographer],[data-design=psychologist],[data-design=tutor],[data-design=clothing],[data-design=florist],[data-design=logistics],[data-design=wholesale],[data-design=lodge]) .sv-design-item p { font-size:16px; }
+
+/* Photographer: exhibition title above a wide frame, then a staggered gallery. */
+.sv-site[data-design] .sv-design-hero--exhibition { display:block;padding:45px 5% 20px; }
+.sv-design-hero--exhibition .sv-design-hero-copy { display:grid;grid-template-columns:1.5fr 1fr;column-gap:10%;align-items:end;margin-bottom:38px; }
+.sv-design-hero--exhibition .sv-design-kicker { grid-column:1/-1; }
+.sv-site[data-design] .sv-design-hero--exhibition h1 { grid-row:2/4;font-size:clamp(48px,6.5cqw,94px); }
+.sv-design-hero--exhibition .sv-design-actions { grid-column:2; }
+.sv-design-hero--exhibition .sv-design-hero-photo img { height:440px;object-position:50% 60%; }
+.sv-design-collection--gallery .sv-design-items { grid-template-columns:1.15fr .85fr;align-items:start;gap:48px; }
+.sv-design-collection--gallery .sv-design-item { border:0; }
+.sv-design-collection--gallery .sv-design-item:nth-child(even) { padding-top:90px; }
+.sv-design-collection--gallery .sv-design-item:nth-child(3n) { grid-column:1/-1;max-width:78%; }
+.sv-design-collection--gallery .sv-design-item figure img { height:auto;max-height:720px;object-fit:contain;object-position:left; }
+.sv-design-collection--gallery .sv-design-item-body { border-bottom:1px solid var(--d-line); }
+.sv-site[data-design=photographer] .sv-design-section-heading { border-top:1px solid var(--d-line);padding-top:26px; }
+.sv-site[data-design=photographer] .sv-design-collection--list h3 { font-family:Georgia,serif;font-style:italic; }
+
+/* Psychologist: a spacious personal letter, restrained imagery and soft panels. */
+.sv-site[data-design] .sv-design-hero--personal { grid-template-columns:1.2fr .75fr;gap:13%;padding:75px 9%; }
+.sv-site[data-design] .sv-design-hero--personal h1 { font-size:clamp(46px,5.7cqw,82px);line-height:1.09;letter-spacing:-.045em; }
+.sv-design-hero--personal .sv-design-hero-photo { padding:20px;border:1px solid var(--d-line);border-radius:180px 180px 0 0; }
+.sv-design-hero--personal .sv-design-hero-photo img { height:460px;border-radius:160px 160px 0 0; }
+.sv-site[data-design=psychologist] .sv-design-story { grid-template-columns:1.3fr .7fr;padding-inline:12%; }
+.sv-site[data-design=psychologist] .sv-design-story figure img { height:340px; }
+.sv-site[data-design=psychologist] .sv-design-collection--cards .sv-design-item { border:0;border-radius:24px;background:var(--d-panel);padding:28px; }
+.sv-site[data-design=psychologist] .sv-design-collection--steps .sv-design-item { border-top:2px solid var(--d-accent); }
+
+/* Tutor: squared-paper composition with the photo as an inset working note. */
+.sv-site[data-design] .sv-design-hero--notebook { margin:26px 4%;grid-template-columns:1.15fr .85fr;gap:7%;padding:52px 5%;border:1px solid var(--d-line);border-left:7px solid var(--d-accent);background:repeating-linear-gradient(0deg,transparent,transparent 39px,var(--d-line) 40px); }
+.sv-site[data-design] .sv-design-hero--notebook h1 { font-size:clamp(45px,5.3cqw,77px); }
+.sv-design-hero--notebook .sv-design-hero-photo { padding:15px;background:var(--d-panel);transform:rotate(2deg); }
+.sv-design-hero--notebook .sv-design-hero-photo img { height:310px; }
+.sv-design-hero--notebook .sv-design-hero-copy { background:var(--d-bg);padding:16px 0; }
+.sv-site[data-design=tutor] .sv-design-collection--cards .sv-design-items { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.sv-site[data-design=tutor] .sv-design-collection--cards .sv-design-item { background:var(--d-panel);padding:25px;border:1px solid var(--d-line); }
+.sv-site[data-design=tutor] .sv-design-collection--steps .sv-design-item-meta { font-size:50px;font-weight:700;color:var(--d-accent); }
+.sv-site[data-design=tutor] .sv-design-collection--schedule { border-block:1px solid var(--d-line); }
+
+/* Clothing: split editorial shop front, full-height photography and airy products. */
+.sv-site[data-design] .sv-design-hero--fashion { grid-template-columns:1fr 1fr;padding:0;gap:0;align-items:stretch; }
+.sv-design-hero--fashion .sv-design-hero-copy { padding:72px 11%;display:flex;flex-direction:column;justify-content:center; }
+.sv-site[data-design] .sv-design-hero--fashion h1 { font-size:clamp(50px,6.3cqw,91px);font-style:italic; }
+.sv-design-hero--fashion .sv-design-hero-photo { background:var(--d-panel); }
+.sv-design-hero--fashion .sv-design-hero-photo img { height:650px;object-position:45% 55%; }
+.sv-design-hero--fashion figcaption { padding:8px 20px 15px;margin:0!important; }
+.sv-site[data-design=clothing] .sv-design-collection--products figure img { height:410px;object-position:50% 55%; }
+.sv-site[data-design=clothing] .sv-design-collection--products .sv-design-item { border:0; }
+.sv-site[data-design=clothing] .sv-design-collection--products .sv-design-item-body { border-bottom:1px solid var(--d-line); }
+.sv-site[data-design=clothing] .sv-design-story { padding:65px 8%;gap:15%; }
+
+/* Florist: offset floral frame and large, soft-edged image cards. */
+.sv-site[data-design] .sv-design-hero--botanical { grid-template-columns:.9fr 1fr;gap:12%;padding:55px 8% 75px; }
+.sv-design-hero--botanical .sv-design-hero-photo { grid-column:1;grid-row:1;padding:15px;border:1px solid var(--d-line);border-radius:50% 50% 4px 4px; }
+.sv-design-hero--botanical .sv-design-hero-photo img { height:490px;border-radius:50% 50% 4px 4px;object-position:50% 62%; }
+.sv-design-hero--botanical .sv-design-hero-copy { grid-column:2; }
+.sv-site[data-design] .sv-design-hero--botanical h1 { font-size:clamp(51px,6.5cqw,94px); }
+.sv-site[data-design=florist] .sv-design-collection--cards .sv-design-item { padding:18px;background:var(--d-panel);border:0; }
+.sv-site[data-design=florist] .sv-design-collection--cards .sv-design-item img { height:330px;object-position:50% 65%; }
+.sv-site[data-design=florist] .sv-design-collection--cards .sv-design-item:nth-child(3) .sv-design-item-body { padding-top:55px; }
+.sv-site[data-design=florist] .sv-design-collection--steps { background:var(--d-panel); }
+.sv-site[data-design=florist] .sv-design-story { background:var(--d-bg); }
+
+/* Logistics: a route spine, transport image and technical rows; not a fake map. */
+.sv-site[data-design] .sv-design-hero--route { grid-template-columns:1.25fr .7fr;gap:10%;padding:55px 6%; }
+.sv-design-hero--route .sv-design-hero-copy { border-left:2px solid var(--d-accent);padding-left:35px; }
+.sv-site[data-design] .sv-design-hero--route h1 { font-size:clamp(49px,6.7cqw,97px); }
+.sv-design-hero--route .sv-design-kicker { font-family:monospace;color:var(--d-accent); }
+.sv-design-hero--route .sv-design-hero-photo { padding:15px;border:1px solid var(--d-line); }
+.sv-design-hero--route .sv-design-hero-photo img { height:510px;object-position:50% 53%; }
+.sv-site[data-design=logistics] .sv-design-collection--list { border-block:1px solid var(--d-line);background:var(--d-panel); }
+.sv-site[data-design=logistics] .sv-design-collection--cards .sv-design-item { border:1px solid var(--d-line);padding:24px; }
+.sv-site[data-design=logistics] .sv-design-collection--steps .sv-design-item-meta { font:48px monospace;color:var(--d-accent); }
+.sv-site[data-design=logistics] .sv-design-contact { border-top:4px solid var(--d-accent); }
+
+/* Wholesale: compact procurement heading, image strip and a two-column matrix. */
+.sv-site[data-design] .sv-design-hero--trade { padding:45px 5%;grid-template-columns:1.6fr .55fr;gap:8%;min-height:560px;align-items:stretch; }
+.sv-design-hero--trade .sv-design-hero-copy { align-self:center;border-top:5px solid var(--d-accent);padding-top:25px; }
+.sv-site[data-design] .sv-design-hero--trade h1 { font-size:clamp(43px,5.5cqw,80px);max-width:760px; }
+.sv-design-hero--trade .sv-design-hero-photo img { height:440px; }
+.sv-site[data-design=wholesale] #terms { padding-block:40px;background:var(--d-panel); }
+.sv-site[data-design=wholesale] .sv-design-collection--products .sv-design-items { grid-template-columns:repeat(2,minmax(0,1fr));gap:0; }
+.sv-site[data-design=wholesale] .sv-design-collection--products .sv-design-item { border:1px solid var(--d-line);padding:28px; }
+.sv-site[data-design=wholesale] .sv-design-collection--products .sv-design-item-meta { display:inline-block;border:1px solid var(--d-line);padding:6px 12px; }
+
+/* Lodge: landscape first, with the heading below rather than laid over the photo. */
+.sv-site[data-design] .sv-design-hero--retreat { display:flex;flex-direction:column;gap:0;padding:0; }
+.sv-design-hero--retreat .sv-design-hero-photo { order:-1;width:100%; }
+.sv-design-hero--retreat .sv-design-hero-photo img { height:360px;object-position:58% 55%; }
+.sv-design-hero--retreat figcaption { padding-inline:5%; }
+.sv-design-hero--retreat .sv-design-hero-copy { width:100%;padding:30px 5% 50px;display:grid;grid-template-columns:1.3fr 1fr;column-gap:9%;align-items:end; }
+.sv-design-hero--retreat .sv-design-kicker { grid-column:1/-1; }
+.sv-site[data-design] .sv-design-hero--retreat h1 { grid-row:2/4;font-size:clamp(48px,5.6cqw,81px); }
+.sv-design-hero--retreat .sv-design-actions { grid-column:2; }
+.sv-site[data-design=lodge] .sv-design-collection--cards .sv-design-items { grid-template-columns:repeat(2,minmax(0,1fr));gap:40px; }
+.sv-site[data-design=lodge] .sv-design-collection--cards .sv-design-item { border:0; }
+.sv-site[data-design=lodge] .sv-design-collection--cards .sv-design-item img { height:360px; }
+.sv-site[data-design=lodge] .sv-design-collection--gallery { background:var(--d-panel); }
+.sv-site[data-design=lodge] .sv-design-collection--schedule .sv-design-item-meta { font-family:Georgia,serif;font-size:24px;text-transform:none;color:var(--d-accent); }
+
+@container(max-width:720px) {
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--exhibition { padding:32px 6% 0; }
+ .sv-design-hero--exhibition .sv-design-hero-copy { display:block; }
+ .sv-design-hero--exhibition .sv-design-hero-photo img { height:250px; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--personal { padding:44px 8%;gap:35px; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--personal h1 { font-size:clamp(39px,10.5cqw,60px); }
+ .sv-design-hero--personal .sv-design-hero-photo { width:88%;align-self:center; }
+ .sv-design-hero--personal .sv-design-hero-photo img { height:340px; }
+ .sv-site[data-design=psychologist] .sv-design-story { grid-template-columns:1fr;padding-inline:8%; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--notebook { margin:16px 4%;padding:28px 6%; }
+ .sv-design-hero--notebook .sv-design-hero-photo { transform:none; }
+ .sv-design-hero--notebook .sv-design-hero-photo img { height:220px; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--fashion { padding:0;gap:0; }
+ .sv-site[data-design] .sv-design-hero--fashion .sv-design-hero-copy { padding:40px 6%; }
+ .sv-design-hero--fashion .sv-design-hero-photo img { height:350px; }
+ .sv-design-hero--botanical .sv-design-hero-photo { width:90%;align-self:center;order:1; }
+ .sv-design-hero--botanical .sv-design-hero-photo img { height:340px; }
+ .sv-site[data-design] .sv-design-hero--route .sv-design-hero-copy { padding-left:18px; }
+ .sv-design-hero--route .sv-design-hero-photo img { height:330px; }
+ .sv-design-hero--trade .sv-design-hero-photo img { height:260px; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--retreat { padding:0;gap:0; }
+ .sv-design-hero--retreat .sv-design-hero-photo img { height:290px; }
+ .sv-site[data-design] .sv-design-hero--retreat .sv-design-hero-copy { display:block;padding:30px 6% 45px; }
+ .sv-design-collection--gallery .sv-design-items { grid-template-columns:1fr;gap:30px; }
+ .sv-design-collection--gallery .sv-design-item:nth-child(even) { padding-top:0; }
+ .sv-design-collection--gallery .sv-design-item:nth-child(3n) { max-width:100%; }
+ .sv-site[data-design=tutor] .sv-design-collection--cards .sv-design-items,.sv-site[data-design=lodge] .sv-design-collection--cards .sv-design-items,.sv-site[data-design=wholesale] .sv-design-collection--products .sv-design-items { grid-template-columns:1fr; }
+ .sv-site[data-design=clothing] .sv-design-collection--products figure img { height:350px; }
+ .sv-site[data-design=florist] .sv-design-collection--cards .sv-design-item:nth-child(3) .sv-design-item-body { padding-top:25px; }
+ .sv-site[data-design=lodge] .sv-design-collection--cards .sv-design-item img { height:280px; }
+}
+
+/* Task 7: final eight compositions, isolated from the existing twenty-two. */
+.sv-site[data-design] img[src$="/tours-coast.webp"] { object-position:45% 60%; }
+.sv-site[data-design] img[src$="/tours-city.webp"] { object-position:50% 72%; }
+.sv-site[data-design] img[src$="/boat-hero.webp"] { object-position:70% 38%; }
+.sv-site[data-design] img[src$="/boat-deck.webp"] { object-position:50% 62%; }
+.sv-site[data-design] img[src$="/renovation-work.webp"] { object-position:55% 75%; }
+.sv-site[data-design] img[src$="/renovation-room.webp"] { object-position:50% 72%; }
+.sv-site[data-design] img[src$="/furniture-hero.webp"] { object-position:50% 52%; }
+.sv-site[data-design] img[src$="/furniture-detail.webp"] { object-position:52% 56%; }
+.sv-site[data-design] img[src$="/cleaning-hero.webp"] { object-position:52% 65%; }
+.sv-site[data-design] img[src$="/cleaning-detail.webp"] { object-position:56% 48%; }
+.sv-site[data-design] img[src$="/grooming-hero.webp"] { object-position:59% 50%; }
+.sv-site[data-design] img[src$="/grooming-detail.webp"] { object-position:50% 45%; }
+.sv-site[data-design] img[src$="/pet-hotel-hero.webp"] { object-position:49% 34%; }
+.sv-site[data-design] img[src$="/pet-hotel-cat.webp"] { object-position:55% 50%; }
+.sv-site[data-design] img[src$="/dog-training-hero.webp"] { object-position:54% 52%; }
+.sv-site[data-design] img[src$="/dog-training-walk.webp"] { object-position:63% 60%; }
+.sv-site[data-design] img[src$="/furniture-portfolio.webp"] { object-position:61% 61%; }
+.sv-site[data-design=tours] { --d-bg:#f9f4e8;--d-ink:#263d38;--d-muted:#65726a;--d-accent:#a14728;--d-panel:#ebe9d9;--d-line:#cbd1bd; }
+.sv-site[data-design=boat] { --d-bg:#0f2c43;--d-ink:#f4f8fa;--d-muted:#b4cad9;--d-accent:#c9e9f0;--d-panel:#1c4058;--d-line:#436479; }
+.sv-site[data-design=renovation] { --d-bg:#242724;--d-ink:#f5f1e6;--d-muted:#bfc2b4;--d-accent:#ecc56b;--d-panel:#343a32;--d-line:#575e51; }
+.sv-site[data-design=furniture] { --d-bg:#f5f0e6;--d-ink:#40362b;--d-muted:#77695b;--d-accent:#73583c;--d-panel:#e6dfd1;--d-line:#cfc2af; }
+.sv-site[data-design=cleaning] { --d-bg:#f3fbfc;--d-ink:#163e4d;--d-muted:#527380;--d-accent:#17668a;--d-panel:#dfedf2;--d-line:#b6d4de; }
+.sv-site[data-design=grooming] { --d-bg:#fff4e8;--d-ink:#4b342b;--d-muted:#80675a;--d-accent:#a14431;--d-panel:#f5e2ce;--d-line:#dfc2aa; }
+.sv-site[data-design=pethotel] { --d-bg:#f2f6ec;--d-ink:#334336;--d-muted:#687662;--d-accent:#4a6741;--d-panel:#e0e8d7;--d-line:#c1cfb6; }
+.sv-site[data-design=dogtrainer] { --d-bg:#f7f4e1;--d-ink:#283128;--d-muted:#62705a;--d-accent:#516522;--d-panel:#e6e9cf;--d-line:#c8cead; }
+.sv-site:is([data-design=tours],[data-design=furniture]):not([data-design-customized]) :is(h1,h2,.sv-design-brand) { font-family:Georgia,serif; }
+.sv-site:is([data-design=boat],[data-design=cleaning]):not([data-design-customized]) :is(h1,h2) { font-family:Arial,sans-serif;font-weight:700; }
+.sv-site:is([data-design=renovation],[data-design=dogtrainer]):not([data-design-customized]) :is(h1,h2) { font-family:Impact,Arial,sans-serif;text-transform:uppercase;letter-spacing:-.025em; }
+.sv-site:is([data-design=grooming],[data-design=pethotel]):not([data-design-customized]) :is(h1,h2) { font-family:'Trebuchet MS',Arial,sans-serif;font-weight:600; }
+.sv-site:is([data-design=boat],[data-design=renovation]):not([data-design-customized]) .sv-design-button { color:#172e36; }
+.sv-site:is([data-design=tours],[data-design=boat],[data-design=renovation],[data-design=furniture],[data-design=cleaning],[data-design=grooming],[data-design=pethotel],[data-design=dogtrainer]) :is(.sv-design-kicker,.sv-design-item-meta,.sv-design-brand small,figcaption,.sv-design-disclaimer) { font-size:12px; }
+.sv-site:is([data-design=tours],[data-design=boat],[data-design=renovation],[data-design=furniture],[data-design=cleaning],[data-design=grooming],[data-design=pethotel],[data-design=dogtrainer]) .sv-design-item p { font-size:16px; }
+
+/* A travel journal: image-led asymmetric spread, terracotta annotations. */
+.sv-site[data-design] .sv-design-hero--journey { grid-template-columns:1.1fr 1fr;gap:6%;padding:45px 5% 60px; }
+.sv-design-hero--journey .sv-design-hero-copy { grid-column:2;grid-row:1;padding:26px 0; }
+.sv-design-hero--journey .sv-design-hero-photo { grid-column:1;grid-row:1;align-self:stretch;border-bottom:5px solid var(--d-accent);padding-bottom:16px; }
+.sv-design-hero--journey .sv-design-hero-photo img { height:535px; }
+.sv-site[data-design] .sv-design-hero--journey h1 { font-size:clamp(48px,6.3cqw,91px);font-style:italic; }
+.sv-site[data-design=tours] .sv-design-collection--cards .sv-design-items { grid-template-columns:1fr 1fr;gap:40px; }
+.sv-site[data-design=tours] .sv-design-collection--cards .sv-design-item { border:0; }
+.sv-site[data-design=tours] .sv-design-collection--cards img { height:350px; }
+.sv-site[data-design=tours] .sv-design-collection--schedule { background:var(--d-panel); }
+.sv-site[data-design=tours] .sv-design-collection--schedule .sv-design-item-meta { font-family:Georgia,serif;font-size:24px;text-transform:none; }
+
+/* Wide water horizon above an offset solid information panel, no text on busy water. */
+.sv-site[data-design] .sv-design-hero--wake { display:flex;flex-direction:column;align-items:stretch;padding:0;gap:0; }
+.sv-design-hero--wake .sv-design-hero-photo { order:-1; }
+.sv-design-hero--wake .sv-design-hero-photo img { height:410px;object-position:50% 50%; }
+.sv-design-hero--wake figcaption { padding:0 5%; }
+.sv-design-hero--wake .sv-design-hero-copy { position:relative;z-index:1;margin:20px 5% 45px 16%;padding:34px 4%;border-left:4px solid var(--d-accent);display:grid;grid-template-columns:1.3fr 1fr;gap:0 7%;background:var(--d-panel); }
+.sv-design-hero--wake .sv-design-kicker { grid-column:1/-1; }
+.sv-site[data-design] .sv-design-hero--wake h1 { grid-row:2/4;font-size:clamp(44px,5.2cqw,75px); }
+.sv-design-hero--wake .sv-design-actions { grid-column:2; }
+.sv-site[data-design=boat] .sv-design-collection--menu { padding-block:55px;border-top:1px solid var(--d-line); }
+.sv-site[data-design=boat] .sv-design-story figure img { height:430px; }
+.sv-site[data-design=boat] .sv-design-collection--cards .sv-design-item { padding:25px;border:1px solid var(--d-line); }
+
+/* Renovation: drafting-board grid, numbered process and large project sheets. */
+.sv-site[data-design] .sv-design-hero--blueprint { grid-template-columns:1.35fr .75fr;align-items:stretch;gap:7%;padding:52px 5%;background:linear-gradient(90deg,transparent 49.9%,var(--d-line) 50%,transparent 50.1%); }
+.sv-design-hero--blueprint .sv-design-hero-copy { padding:18px 0;align-self:center; }
+.sv-site[data-design] .sv-design-hero--blueprint h1 { font-size:clamp(50px,7cqw,101px);max-width:820px; }
+.sv-design-hero--blueprint .sv-design-hero-photo { padding:22px;border:1px solid var(--d-line);align-self:center;background:var(--d-bg); }
+.sv-design-hero--blueprint .sv-design-hero-photo img { height:440px; }
+.sv-design-hero--blueprint .sv-design-kicker { color:var(--d-accent);border-top:3px solid var(--d-accent);padding-top:20px; }
+.sv-site[data-design=renovation] .sv-design-collection--gallery .sv-design-item { border:1px solid var(--d-line);padding:20px; }
+.sv-site[data-design=renovation] .sv-design-collection--steps { background:var(--d-panel); }
+.sv-site[data-design=renovation] .sv-design-collection--steps .sv-design-item-meta { font:58px/1 monospace;color:var(--d-accent); }
+.sv-site[data-design=renovation] .sv-design-collection--list .sv-design-item-body { padding:30px 0; }
+
+/* Furniture: restrained workshop masthead followed by a full-width material photograph. */
+.sv-site[data-design] .sv-design-hero--workshop { display:block;padding:40px 5% 0; }
+.sv-design-hero--workshop .sv-design-hero-copy { display:grid;grid-template-columns:1.55fr 1fr;column-gap:12%;align-items:end;padding-bottom:36px;border-top:1px solid var(--d-line);padding-top:30px; }
+.sv-design-hero--workshop .sv-design-kicker { grid-column:1/-1; }
+.sv-site[data-design] .sv-design-hero--workshop h1 { grid-row:2/4;font-size:clamp(49px,6.5cqw,94px); }
+.sv-design-hero--workshop .sv-design-actions { grid-column:2; }
+.sv-design-hero--workshop .sv-design-hero-photo img { height:450px; }
+.sv-site[data-design=furniture] .sv-design-collection--gallery .sv-design-items { grid-template-columns:1.3fr .7fr;gap:65px; }
+.sv-site[data-design=furniture] .sv-design-collection--products .sv-design-item { border:1px solid var(--d-line);padding:26px; }
+.sv-site[data-design=furniture] .sv-design-story { background:var(--d-bg);border-block:1px solid var(--d-line); }
+.sv-site[data-design=furniture] .sv-design-story figure img { height:510px; }
+
+/* Cleaning: compact clear service panel, generous white space and checklist rows. */
+.sv-site[data-design] .sv-design-hero--clarity { margin:28px 4%;padding:50px 4%;gap:7%;grid-template-columns:1.1fr 1fr;border-radius:28px;background:var(--d-panel);min-height:620px; }
+.sv-site[data-design] .sv-design-hero--clarity h1 { font-size:clamp(47px,6cqw,87px); }
+.sv-design-hero--clarity .sv-design-hero-photo img { height:450px;border-radius:12px 90px 12px 12px; }
+.sv-site[data-design=cleaning] .sv-design-collection--cards .sv-design-item { background:var(--d-panel);padding:28px;border:0;border-top:5px solid var(--d-accent);border-radius:0 0 16px 16px; }
+.sv-site[data-design=cleaning] .sv-design-collection--list .sv-design-item-body { padding:28px; }
+.sv-site[data-design=cleaning] .sv-design-collection--list .sv-design-item:nth-child(odd) { background:var(--d-panel); }
+.sv-site[data-design=cleaning] .sv-design-contact { border-radius:30px;margin:0 4% 45px;padding-inline:5%; }
+
+/* Grooming: friendly, rounded photo on a terracotta-edged studio card. */
+.sv-site[data-design] .sv-design-hero--groom { padding:55px 7%;gap:9%;grid-template-columns:1.05fr 1fr; }
+.sv-design-hero--groom .sv-design-hero-photo { padding:18px;border:2px solid var(--d-line);border-radius:44% 44% 18px 18px;background:var(--d-panel); }
+.sv-design-hero--groom .sv-design-hero-photo img { height:470px;border-radius:44% 44% 8px 8px; }
+.sv-site[data-design] .sv-design-hero--groom h1 { font-size:clamp(48px,6.1cqw,88px); }
+.sv-site[data-design=grooming] .sv-design-collection--menu { border-block:1px solid var(--d-line); }
+.sv-site[data-design=grooming] .sv-design-collection--steps .sv-design-item { background:var(--d-panel);border:0;border-radius:25px;padding:26px; }
+.sv-site[data-design=grooming] .sv-design-story { background:var(--d-bg); }
+.sv-site[data-design=grooming] .sv-design-story figure img { border-radius:24px;height:420px; }
+
+/* Pet hotel: a calm photo first, letter-like heading and separate animal cards. */
+.sv-site[data-design] .sv-design-hero--boarding { grid-template-columns:1fr 1fr;gap:10%;padding:60px 8%; }
+.sv-design-hero--boarding .sv-design-hero-photo { grid-column:1;grid-row:1; }
+.sv-design-hero--boarding .sv-design-hero-copy { grid-column:2; }
+.sv-design-hero--boarding .sv-design-hero-photo img { height:480px;border-radius:8px 8px 120px 8px; }
+.sv-site[data-design] .sv-design-hero--boarding h1 { font-size:clamp(46px,5.7cqw,82px);line-height:1.08; }
+.sv-site[data-design=pethotel] .sv-design-collection--cards .sv-design-items { grid-template-columns:1fr 1fr;gap:34px; }
+.sv-site[data-design=pethotel] .sv-design-collection--cards .sv-design-item { background:var(--d-panel);border:0;border-radius:20px;overflow:hidden; }
+.sv-site[data-design=pethotel] .sv-design-collection--cards .sv-design-item-body { padding:28px; }
+.sv-site[data-design=pethotel] .sv-design-collection--cards img { height:340px; }
+.sv-site[data-design=pethotel] .sv-design-collection--schedule { background:var(--d-panel);border-block:1px solid var(--d-line); }
+.sv-site[data-design=pethotel] .sv-design-story { background:var(--d-bg); }
+
+/* Dog trainer: bold outdoor poster, photo band and practical lesson cards. */
+.sv-site[data-design] .sv-design-hero--partner { grid-template-columns:1.3fr 1fr;gap:0;padding:0;align-items:stretch; }
+.sv-design-hero--partner .sv-design-hero-copy { padding:55px 9%;background:var(--d-panel);border-bottom:7px solid var(--d-accent);display:flex;flex-direction:column;justify-content:center; }
+.sv-site[data-design] .sv-design-hero--partner h1 { font-size:clamp(52px,7cqw,101px);line-height:.99; }
+.sv-design-hero--partner .sv-design-hero-photo { padding:30px;background:var(--d-bg);align-self:center; }
+.sv-design-hero--partner .sv-design-hero-photo img { height:520px; }
+.sv-site[data-design=dogtrainer] .sv-design-collection--cards .sv-design-items { gap:0; }
+.sv-site[data-design=dogtrainer] .sv-design-collection--cards .sv-design-item { padding:30px;border:1px solid var(--d-line); }
+.sv-site[data-design=dogtrainer] .sv-design-collection--schedule { background:var(--d-panel); }
+.sv-site[data-design=dogtrainer] .sv-design-story { background:var(--d-bg); }
+
+@container(max-width:720px) {
+ .sv-design-hero--journey .sv-design-hero-photo { order:1; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--journey .sv-design-hero-photo img { height:320px; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--wake { padding:0;gap:0; }
+ .sv-site[data-design] .sv-design-hero--wake .sv-design-hero-photo img { height:280px; }
+ .sv-site[data-design] .sv-design-hero--wake .sv-design-hero-copy { display:block;margin:20px 6% 40px;padding:24px 6%; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--blueprint { background:none; }
+ .sv-site[data-design] .sv-design-hero--blueprint .sv-design-hero-photo { padding:15px;border:1px solid var(--d-line); }
+ .sv-site[data-design] .sv-design-hero--blueprint .sv-design-hero-photo img { height:300px; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--workshop { padding:32px 6% 0; }
+ .sv-site[data-design] .sv-design-hero--workshop .sv-design-hero-copy { display:block;padding-bottom:30px; }
+ .sv-site[data-design] .sv-design-hero--workshop .sv-design-hero-photo img { height:260px; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--clarity { margin:16px 4%;padding:30px 6%;border-radius:20px; }
+ .sv-site[data-design] .sv-design-hero--clarity .sv-design-hero-photo img { height:280px; }
+ .sv-site[data-design] .sv-design-hero--groom .sv-design-hero-photo { padding:12px; }
+ .sv-site[data-design] .sv-design-hero--groom .sv-design-hero-photo img { height:320px; }
+ .sv-design-hero--boarding .sv-design-hero-photo { order:1; }
+ .sv-site[data-design] .sv-design-hero--boarding .sv-design-hero-photo img { height:320px; }
+ .sv-site[data-design] .sv-design-hero.sv-design-hero--partner { padding:0;gap:0; }
+ .sv-site[data-design] .sv-design-hero--partner .sv-design-hero-copy { padding:38px 6%; }
+ .sv-site[data-design] .sv-design-hero--partner .sv-design-hero-photo { padding:26px 6%; }
+ .sv-site[data-design] .sv-design-hero--partner .sv-design-hero-photo img { height:340px; }
+ .sv-site[data-design=tours] .sv-design-collection--cards .sv-design-items,.sv-site[data-design=pethotel] .sv-design-collection--cards .sv-design-items,.sv-site[data-design=furniture] .sv-design-collection--gallery .sv-design-items { grid-template-columns:1fr;gap:28px; }
+ .sv-site[data-design=cleaning] .sv-design-collection--list .sv-design-item-body { padding:20px; }
+ .sv-site[data-design=tours] .sv-design-collection--cards img,.sv-site[data-design=pethotel] .sv-design-collection--cards img { height:280px; }
+ .sv-site[data-design=furniture] .sv-design-story figure img { height:350px; }
+ .sv-site[data-design=grooming] .sv-design-story figure img { height:340px; }
+}

@@ -91,7 +91,7 @@
 .studio-template-grid > button > span { margin-top: 9px; color: var(--studio-muted); font-size: 13px; line-height: 1.45; }
 
 .studio-editor-shell { position: fixed; z-index: 300; inset: 0; overflow: hidden; --puck-color-azure-05: #2f7cff; --puck-color-grey-01: #111318; --puck-color-grey-02: #181b21; --puck-color-grey-03: #20242c; --puck-color-grey-04: #303641; }
-.studio-topbar { display: grid; width: 100%; min-width: 0; min-height: 54px; grid-template-columns: minmax(260px, .8fr) auto auto minmax(300px, 1fr); align-items: center; gap: 8px; border-bottom: 1px solid var(--studio-border); padding: 6px 8px; color: var(--studio-text); background: #111318; }
+.studio-topbar { display: grid; width: 100%; min-width: 0; min-height: 54px; grid-template-columns: minmax(260px, 1fr) auto auto; align-items: center; gap: 8px; border-bottom: 1px solid var(--studio-border); padding: 6px 8px; color: var(--studio-text); background: #111318; }
 .studio-topbar button { border: 1px solid transparent; color: inherit; background: transparent; cursor: pointer; }
 .studio-topbar button:hover { border-color: var(--studio-border); background: var(--studio-panel-2); }
 .studio-topbar svg { width: 16px; height: 16px; }
@@ -103,7 +103,7 @@
 .studio-topbar__project small { color: var(--studio-muted); font-size: 10px; }
 .studio-topbar__project small.is-saved { color: var(--studio-green); }
 .studio-topbar__project small.is-error { color: #ff6f78; }
-.studio-topbar__native { display: flex; min-width: 0; align-items: center; justify-content: center; }
+.studio-topbar__native { display: flex; min-width: 0; align-items: center; justify-content: center; order: 4; grid-column: 1/-1; }
 .studio-topbar__width { display: flex; height: 34px; align-items: center; border: 1px solid var(--studio-border); border-radius: 7px; padding: 0 8px; color: var(--studio-muted); font-size: 10px; }
 .studio-topbar__width input { width: 54px; border: 0; color: #fff; text-align: right; background: transparent; font-size: 11px; outline: none; }
 .studio-topbar__actions { display: flex; min-width: 0; align-items: center; justify-content: flex-end; gap: 3px; }

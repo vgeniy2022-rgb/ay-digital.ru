@@ -177,7 +177,7 @@ if alias and redis.call('HGET', alias, 'visitorId') == ARGV[1] then KEYS[2] = al
 local visit = redis.call('HGET', KEYS[2], 'visitNumber')
 redis.call('HSET', KEYS[1], 'lastVisit', ARGV[2], 'leadSubmitted', '1', 'leadId', ARGV[3], 'lastConceptId', ARGV[4])
 redis.call('HINCRBY', KEYS[1], 'leads', '1')
-redis.call('RPUSH', KEYS[4], cjson.encode({event='lead_created', at=ARGV[2], path='/ai-website', conceptId=ARGV[4], leadId=ARGV[3], visitNumber=tonumber(visit)}))
+redis.call('RPUSH', KEYS[4], cjson.encode({event='lead_created', at=ARGV[2], path=ARGV[7] or '/ai-website', conceptId=ARGV[4], leadId=ARGV[3], visitNumber=tonumber(visit)}))
 redis.call('LTRIM', KEYS[4], '-100', '-1')
 redis.call('EXPIRE', KEYS[1], ARGV[5]); redis.call('EXPIRE', KEYS[4], ARGV[5])
 redis.call('SET', KEYS[3], '1', 'EX', ARGV[5])

@@ -1,4 +1,5 @@
 import { absoluteUrl, siteConfig } from '../config/site';
+import { findCatalogTemplate, templateCatalogMeta } from '../features/site-builder/catalog/catalog';
 
 type RouteSeo = {
   title: string;
@@ -49,6 +50,7 @@ const homeStructuredData = {
 };
 
 export const routeSeo: Record<string, RouteSeo> = {
+  '/templates': templateCatalogMeta,
   '/': {
     title: 'SITEVL — разработка сайтов и приложений для бизнеса',
     description: 'Разработка сайтов и мобильных приложений для бизнеса во Владивостоке и удалённо. Прямая работа со специалистом, понятные цены и поддержка после запуска.',
@@ -208,5 +210,15 @@ export function createLandingSeo(path: string, title: string, description: strin
 }
 
 export function getRouteSeo(pathname: string) {
+  if (pathname.startsWith('/templates/')) {
+    const template = findCatalogTemplate(pathname.slice('/templates/'.length));
+    return {
+      title: template ? `${template.name} — дизайн сайта | SITEVL` : 'Дизайн не найден — SITEVL',
+      description: template?.description || 'Этот дизайн ещё не опубликован или ссылка устарела. Посмотрите каталог дизайнов SITEVL.',
+      canonicalPath: pathname,
+      image: template?.cover.src,
+      noindex: !template,
+    } satisfies RouteSeo;
+  }
   return routeSeo[pathname];
 }

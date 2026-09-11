@@ -67,7 +67,10 @@ export function migrateProject(input: unknown): SiteBuilderProject {
     theme: isRecord(project.theme) ? { ...defaultStudioTheme, ...project.theme } : defaultStudioTheme,
     pages,
     assets: Array.isArray(project.assets) ? project.assets : [],
-    settings: { defaultBreakpoint: project.settings?.defaultBreakpoint || 'desktop', language: 'ru' },
+    settings: { defaultBreakpoint: project.settings?.defaultBreakpoint || 'desktop', language: 'ru',
+      ...(project.settings?.catalogEnquiry ? {catalogEnquiry: project.settings.catalogEnquiry} : {}),
+      ...(project.settings?.catalogCustomizer?.version === 1 ? { catalogCustomizer: { version: 1 as const, templateVersion: String(project.settings.catalogCustomizer.templateVersion).slice(0, 20), palette: ['original','ocean','berry','forest','sand'].includes(project.settings.catalogCustomizer.palette || '') ? project.settings.catalogCustomizer.palette : 'original', mode: project.settings.catalogCustomizer.mode === 'dark' ? 'dark' as const : 'light' as const } } : {}),
+    },
   };
 }
 

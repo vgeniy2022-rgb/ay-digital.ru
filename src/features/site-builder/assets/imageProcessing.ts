@@ -1,7 +1,7 @@
 const acceptedImageTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/avif']);
 const maxFileSize = 12 * 1024 * 1024;
 
-export async function optimizeStudioImage(file: File) {
+export async function optimizeStudioImage(file: File, options: { maxPixels?: number } = {}) {
   if (!acceptedImageTypes.has(file.type)) throw new Error(`Файл «${file.name}» имеет неподдерживаемый формат.`);
   if (file.size > maxFileSize) throw new Error(`Файл «${file.name}» больше 12 МБ.`);
 
@@ -13,6 +13,7 @@ export async function optimizeStudioImage(file: File) {
       element.onerror = () => reject(new Error(`Не удалось прочитать «${file.name}».`));
       element.src = sourceUrl;
     });
+    if (!image.naturalWidth || !image.naturalHeight || image.naturalWidth * image.naturalHeight > (options.maxPixels ?? Infinity)) throw new Error('Изображение слишком большое: максимум 32 мегапикселя. Уменьшите его перед загрузкой.');
     const maxSide = 2200;
     const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
     const canvas = document.createElement('canvas');
@@ -27,4 +28,3 @@ export async function optimizeStudioImage(file: File) {
     URL.revokeObjectURL(sourceUrl);
   }
 }
-

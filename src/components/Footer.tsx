@@ -49,6 +49,7 @@ export function Footer() {
                   {item.label}
                 </Link>
               ))}
+              <Link className="transition hover:text-white" to="/templates">Дизайны сайтов</Link>
             </div>
           </div>
           <div>

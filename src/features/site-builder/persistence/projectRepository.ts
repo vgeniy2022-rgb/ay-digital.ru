@@ -172,3 +172,20 @@ export class IndexedDbAssetRepository implements AssetRepository {
 export const studioProjectRepository = new IndexedDbProjectRepository();
 export const studioAssetRepository = new IndexedDbAssetRepository();
 
+/** A local draft and newly attached bytes commit together, including quota failures. */
+export async function saveStudioProjectWithAssets(project: SiteBuilderProject, additions: StoredStudioAsset[]) {
+  if (additions.some(asset=>asset.projectId!==project.id || !project.assets.some(meta=>meta.id===asset.id))) throw new Error('Файл не принадлежит этому проекту.');
+  const normalized=migrateProject(project);
+  const database=await openDatabase();
+  const transaction=database.transaction([projectsStore,assetsStore],'readwrite');
+  const done=transactionDone(transaction);
+  try {
+    additions.forEach(asset=>transaction.objectStore(assetsStore).put(asset));
+    transaction.objectStore(projectsStore).put(normalized);
+  } catch(error) {
+    transaction.abort();
+    await done.catch(()=>{});
+    throw error;
+  }
+  await done;
+}
