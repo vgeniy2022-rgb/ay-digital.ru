@@ -206,6 +206,11 @@ const landingRoutes = [
 ].map(([path, title, description]) => ({ path, title, description, priority: 0.82, changefreq: 'weekly', schemaType: 'Service' }));
 
 const technicalRoutes = [
+  ...['/preview','/preview/grocery',...Array.from({length:5},(_,i)=>`/preview/grocery/${i+1}`)].map(path=>({
+    path, title: 'Предревью — интерактивные концепции | SITEVL',
+    description: 'Демонстрационные концепции продуктового магазина. Не действующий магазин: заказы и контакты не отправляются.',
+    noindex: true, schemaType: 'WebPage',
+  })),
   {
     path: '/studio',
     title: 'SITEVL Studio — визуальный конструктор сайтов',

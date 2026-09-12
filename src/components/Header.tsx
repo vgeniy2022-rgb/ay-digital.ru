@@ -38,7 +38,7 @@ export function Header() {
                 key={item.href}
                 to={item.href}
                 className={({ isActive }) =>
-                  `rounded-xl px-3 py-2 text-sm font-semibold transition ${
+                  `rounded-xl px-2 py-2 text-xs min-[1400px]:px-3 min-[1400px]:text-sm font-semibold transition ${
                     isActive ? 'bg-slate-100 text-ink' : 'text-muted hover:bg-slate-50 hover:text-ink'
                   }`
                 }

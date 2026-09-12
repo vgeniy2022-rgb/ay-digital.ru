@@ -109,6 +109,7 @@ export const homeHero = {
 export const navItems: NavItem[] = [
   { label: 'Услуги', href: '/services' },
   { label: 'Дизайны сайтов', href: '/templates' },
+  { label: 'Предревью', href: '/preview' },
   { label: 'Приложения', href: '/mobile-apps' },
   { label: 'Цены', href: '/prices' },
   { label: 'Кейсы', href: '/cases' },

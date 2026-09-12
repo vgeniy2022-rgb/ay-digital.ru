@@ -9,6 +9,8 @@ const staticRouteLabels: Record<string, string> = {
   '/': 'Главная',
   '/services': 'Услуги',
   '/templates': 'Дизайны сайтов',
+  '/preview': 'Предревью',
+  '/preview/grocery': 'Интернет-магазин продуктов',
   '/mobile-apps': 'Мобильные приложения',
   '/ai-website': 'AI-концепция сайта',
   '/prices': 'Цены',

@@ -210,6 +210,7 @@ export function createLandingSeo(path: string, title: string, description: strin
 }
 
 export function getRouteSeo(pathname: string) {
+  if (pathname === '/preview' || pathname.startsWith('/preview/')) return {title:'Предревью — интерактивные концепции сайтов | SITEVL',description:'Предварительные интерактивные дизайн-концепции для обсуждения будущих проектов.',canonicalPath:pathname,noindex:true};
   if (pathname.startsWith('/templates/')) {
     const template = findCatalogTemplate(pathname.slice('/templates/'.length));
     return {

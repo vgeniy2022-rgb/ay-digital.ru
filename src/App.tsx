@@ -42,6 +42,9 @@ const TemplateCatalogPage = lazy(() => import('./features/site-builder/catalog/T
 const TemplateDetailPage = lazy(() => import('./features/site-builder/catalog/TemplateDetailPage').then((module) => ({ default: module.TemplateDetailPage })));
 const TemplateCustomizerPage = lazy(() => import('./features/site-builder/customizer/TemplateCustomizerPage').then((module) => ({ default: module.TemplateCustomizerPage })));
 const TemplateOwnerPage = lazy(() => import('./features/site-builder/leads/TemplateOwnerPage').then((module) => ({ default: module.TemplateOwnerPage })));
+const PreviewIndexPage = lazy(() => import('./features/preview/PreviewPages').then(module => ({default:module.PreviewIndexPage})));
+const GroceryProjectPage = lazy(() => import('./features/preview/PreviewPages').then(module => ({default:module.GroceryProjectPage})));
+const GroceryPreviewPage = lazy(() => import('./features/preview/PreviewPages').then(module => ({default:module.GroceryPreviewPage})));
 
 function PublicRouteScrollReset({ pathname, hash }: { pathname: string; hash: string }) {
   useEffect(() => {
@@ -55,6 +58,11 @@ function PublicRouteScrollReset({ pathname, hash }: { pathname: string; hash: st
 
 export default function App() {
   const location = useLocation();
+
+  if (location.pathname.startsWith('/preview/grocery/')) return <>
+    <SeoHead title="Предревью продуктового магазина — SITEVL" description="Интерактивная демонстрационная концепция. Заказы не отправляются." noindex nofollow />
+    <Suspense fallback={<div className="p-8">Открываем концепцию…</div>}><Routes><Route path="/preview/grocery/:variant" element={<GroceryPreviewPage/>}/><Route path="*" element={<Navigate to="/preview/grocery" replace/>}/></Routes></Suspense>
+  </>;
 
   if (location.pathname.startsWith('/templates/customize/') || location.pathname.startsWith('/templates/owner/')) return <>
     <SeoHead title="Дизайн сайта — SITEVL" description="Личная копия дизайна или закрытая заявка владельцу." canonicalPath="/templates" noindex nofollow />
@@ -125,6 +133,8 @@ export default function App() {
             <Route path="/mobile-apps" element={<MobileAppsPage />} />
             <Route path="/ai-website" element={<AiWebsitePage />} />
             <Route path="/services" element={<ServicesPage />} />
+            <Route path="/preview" element={<PreviewIndexPage/>}/>
+            <Route path="/preview/grocery" element={<GroceryProjectPage/>}/>
             <Route path="/templates" element={<TemplateCatalogPage />} />
             <Route path="/templates/:slug" element={<TemplateDetailPage />} />
             <Route path="/services/:slug" element={<Navigate to="/services" replace />} />

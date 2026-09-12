@@ -1,0 +1,74 @@
+{
+  "market": {
+    "source": "https://www.pexels.com/photo/1656663/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "apples": {
+    "source": "https://www.pexels.com/photo/209439/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "tomatoes": {
+    "source": "https://www.pexels.com/photo/533280/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "cucumbers": {
+    "source": "https://www.pexels.com/photo/2329440/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "bananas": {
+    "source": "https://www.pexels.com/photo/1093038/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "strawberries": {
+    "source": "https://www.pexels.com/photo/934066/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "cherries": {
+    "source": "https://www.pexels.com/photo/109274/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "potatoes": {
+    "source": "https://www.pexels.com/photo/10112133/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "mandarins": {
+    "source": "https://www.pexels.com/photo/207085/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "walnuts": {
+    "source": "https://www.pexels.com/photo/33811984/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "almonds": {
+    "source": "https://www.pexels.com/photo/1013420/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "rice": {
+    "source": "https://www.pexels.com/photo/4110251/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "buckwheat": {
+    "source": "https://www.pexels.com/photo/6810963/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "herbs": {
+    "source": "https://www.pexels.com/photo/1309426/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "grapes": {
+    "source": "https://www.pexels.com/photo/708777/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "peaches": {
+    "source": "https://www.pexels.com/photo/2253550/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "watermelon": {
+    "source": "https://www.pexels.com/photo/1313267/",
+    "license": "https://www.pexels.com/license/"
+  },
+  "apricots": {
+    "source": "https://www.pexels.com/photo/10112100/",
+    "license": "https://www.pexels.com/license/"
+  }
+}
